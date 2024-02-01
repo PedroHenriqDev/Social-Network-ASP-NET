@@ -15,7 +15,6 @@ namespace SocialWeave.Attributes
             bool hasLetter = password.Any(char.IsLetter);
 
             return hasCapital && hasTiny && hasNumber && hasLetter;
-
         }
     }
 }
