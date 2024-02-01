@@ -1,4 +1,4 @@
-namespace SocialWeave.Models
+namespace SocialWeave.Models.ViewModels
 {
     public class ErrorViewModel
     {
