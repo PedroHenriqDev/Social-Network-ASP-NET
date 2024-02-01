@@ -10,8 +10,8 @@ namespace SocialWeave.Models.ConcreteClasses
         public string Text {  get; set; }
         public int Like {  get; set; }
         public DateTime Date { get; set; }
-        public User user { get; set; }
-        public Post post { get; set; }
+        public User User { get; set; }
+        public Post Post { get; set; }
 
         public Comment() 
         {
@@ -20,7 +20,10 @@ namespace SocialWeave.Models.ConcreteClasses
 
         public Comment(string text, int like, DateTime date, User user, Post post)
         {
-            
+            Text = text;
+            Like = like;
+            Date = date;
+            User = user;    
         }
         
     }

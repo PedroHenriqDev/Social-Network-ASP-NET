@@ -2,11 +2,22 @@
 
 namespace SocialWeave.Models.AbstractClasses
 {
-    public class Post
+    abstract public class Post<T>
     {
-        public Guid Id { get; set; }
-        public string Description { get; set; }
-        public DateTime Date { get; set; }
-        public List<Comment> comments {  get; set; }
+        abstract public T Id { get; set; }
+        abstract public T Description { get; set; }
+        abstract public T Date { get; set; }
+        abstract public List<T> Comments {  get; set; }
+
+        public Post() 
+        {
+        }
+
+        public Post(T id, T description, T date) 
+        {
+            Id = id;
+            Description = description;
+            Date = date;
+        }
     }
 }
