@@ -1,4 +1,8 @@
-﻿using SocialWeave.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
+using SocialWeave.Data;
+using SocialWeave.Exceptions;
+using SocialWeave.Models.ConcreteClasses;
 
 namespace SocialWeave.Models.Services
 {
@@ -6,11 +10,12 @@ namespace SocialWeave.Models.Services
     {
         private readonly ApplicationDbContext _context;
 
-        public UserService(ApplicationDbContext context) 
+        public UserService(ApplicationDbContext context)
         {
             _context = context;
         }
 
+      
 
     }
 }

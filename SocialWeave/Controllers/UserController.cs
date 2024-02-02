@@ -1,6 +1,13 @@
-﻿namespace SocialWeave.Controllers
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace SocialWeave.Controllers
 {
-    public class UserController
+    public class UserController : Controller
     {
+        public IActionResult Index()
+        {
+            return View();
+        }
+
     }
 }
