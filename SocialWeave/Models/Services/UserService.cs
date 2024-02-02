@@ -15,7 +15,29 @@ namespace SocialWeave.Models.Services
             _context = context;
         }
 
-      
+        public async Task<bool> ValidateUserCredentialsAsync(User user)
+        {
+            User userDb = await FindUserByEmailAsync(user.Email);
+            if (userDb == null) 
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task<User> FindUserByEmailAsync(string Email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(x => x.Email == Email);
+        }
+
+        public CreateUser(User user) 
+        {
+            if(user == null) 
+            {
+
+            }
+        }
 
     }
 }
