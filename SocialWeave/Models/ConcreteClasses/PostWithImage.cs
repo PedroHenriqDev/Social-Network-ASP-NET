@@ -5,6 +5,8 @@ namespace SocialWeave.Models.ConcreteClasses
     sealed public class PostWithImage : Post
     {
         public byte[] Image { get; set; }
+        public ICollection<Like> Like { get; set; }
+        public ICollection<Dislike> dislikes { get; set; }
 
         public PostWithImage() 
         {

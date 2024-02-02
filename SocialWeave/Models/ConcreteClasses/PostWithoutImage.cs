@@ -1,4 +1,5 @@
 ﻿using SocialWeave.Models.AbstractClasses;
+using System.ComponentModel.DataAnnotations;
 
 namespace SocialWeave.Models.ConcreteClasses
 {
@@ -8,7 +9,7 @@ namespace SocialWeave.Models.ConcreteClasses
        {
        }
 
-        public PostWithoutImage(Guid id, string description, DateTime date) 
+        public PostWithoutImage(Guid id, [Required(ErrorMessage = "{0} is required")]string description, DateTime date) 
             : base(id, description, date)
         {
            

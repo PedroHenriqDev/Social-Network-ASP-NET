@@ -10,6 +10,8 @@ namespace SocialWeave.Models.AbstractClasses
         public string Description { get; set; }
         public DateTime Date { get; set; }
         public List<Comment> Comments {  get; set; }
+        public ICollection<Like> Like { get; set; }
+        public ICollection<Dislike> dislikes { get; set; }
 
         public Post() 
         {
