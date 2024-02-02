@@ -1,6 +1,6 @@
 ﻿namespace SocialWeave.Controllers
 {
-    public class LoginController
+    public class UserController
     {
     }
 }
