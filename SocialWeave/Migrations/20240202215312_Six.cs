@@ -14,21 +14,23 @@ namespace SocialWeave.Migrations
                 name: "PhoneNumber",
                 table: "Users",
                 type: "nvarchar(max)",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldType: "int");
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
+            migrationBuilder.AlterColumn<string>(
                 name: "PhoneNumber",
                 table: "Users",
-                type: "int",
+                type: "nvarchar(max)",
                 nullable: false,
+                defaultValue: "",
                 oldClrType: typeof(string),
-                oldType: "nvarchar(max)");
+                oldType: "nvarchar(max)",
+                oldNullable: true);
         }
     }
 }

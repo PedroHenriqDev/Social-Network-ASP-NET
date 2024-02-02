@@ -1,6 +1,6 @@
 ﻿@model SocialWeave.Models.ConcreteClasses.User
 
-<form method="post" asp-controller="User" asp-action="Register">
+<form method="post" asp-controller="User" asp-action="Register" onsubmit="return validateForm()">
     <div class="container">
         <main role="main" class="pb-3">
             <div class="login-container">
@@ -27,7 +27,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="ConfirmPassword" class="form-label text-light">Confirm Password: </label>
+                    <label for="ConfirmPassword" class="form-label">Confirm Password: </label>
                     <input type="password" class="form-control text-bg-dark" id="ConfirmPassword" placeholder="Confirm your password">
                     <span class="text-danger" id="confirmPasswordError"></span>
                 </div>

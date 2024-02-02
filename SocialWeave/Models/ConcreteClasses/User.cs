@@ -30,7 +30,7 @@ namespace SocialWeave.Models.ConcreteClasses
         public string Password { get; set; }
 
         [PhoneNumber(ErrorMessage = "Invalid phone number format")]
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
         public List<Post>? Posts { get; set; }
 
         public User() 

@@ -12,7 +12,7 @@ using SocialWeave.Data;
 namespace SocialWeave.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240202205430_Six")]
+    [Migration("20240202215312_Six")]
     partial class Six
     {
         /// <inheritdoc />
@@ -165,7 +165,6 @@ namespace SocialWeave.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Salt")
