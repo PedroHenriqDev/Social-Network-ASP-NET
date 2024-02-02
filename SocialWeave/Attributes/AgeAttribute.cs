@@ -9,7 +9,7 @@ namespace SocialWeave.Attributes
             if(value == null) return false;
 
             DateTime birthDate = (DateTime)value;
-            TimeSpan duration = birthDate.Subtract(DateTime.Now);
+            TimeSpan duration = DateTime.Now.Subtract(birthDate);
             return duration.TotalDays > 4748;
         }
     }

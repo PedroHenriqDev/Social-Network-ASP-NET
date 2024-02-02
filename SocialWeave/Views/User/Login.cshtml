@@ -1,24 +1,25 @@
 ﻿@model SocialWeave.Models.ConcreteClasses.User
 
+<form method="post" asp-controller="User" asp-action="Login">
 <div class="container">
     <main role="main" class="pb-3">
         <div class="login-container">
             <h2>Login</h2>
-            <form>
                 <div class="mb-3">
                     <label for="Email" class="form-label">Email: </label>
                     <input type="email" class="form-control" asp-for="Email" id="Email" placeholder="Enter your email">
                     <span class="text-danger" asp-validation-for="Email"></span>
                 </div>
                 <div class="mb-3">
-                    <label for="PasswordHash" class="form-label">Password: </label>
-                    <input type="password" class="form-control" asp-for="Password" id="PasswordHash" placeholder="Enter your password">
+                    <label for="Password" class="form-label">Password: </label>
+                    <input type="password" class="form-control" asp-for="Password" id="Password" placeholder="Enter your password">
                     <span class="text-danger" asp-validation-for="Password"></span>
                 </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-            </form>
-            <p class="signup-link mt-3">Don't have an account? <a href="#">Sign up</a></p>
+                <button type="submit" class="btn btn-primary w-50">Login</button>
+                <hr>
+                <a class="" asp-controller="User" asp-action="Register">Sign Up</a>
+            <p class="forgot-password-link mt-3"><a href="#">Forgot your password?</a></p>
         </div>
     </main>
 </div>
-
+</form>

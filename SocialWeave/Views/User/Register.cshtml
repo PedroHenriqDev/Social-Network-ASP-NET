@@ -1,0 +1,59 @@
+﻿@model SocialWeave.Models.ConcreteClasses.User
+
+<form method="post" asp-controller="User" asp-action="Register">
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="login-container">
+                <h2>Register</h2>
+                <div class="mb-3">
+                    <label for="Name" class="form-label">Name:</label>
+                    <input type="text" class="form-control" asp-for="Name" id="Name" placeholder="Enter your name">
+                    <span class="text-danger" asp-validation-for="Name"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="Email" class="form-label">Email:</label>
+                    <input type="email" class="form-control" asp-for="Email" id="Email" placeholder="Enter your email">
+                    <span class="text-danger" asp-validation-for="Email"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="BirthDate" class="form-label">Birth Date:</label>
+                    <input type="date" class="form-control" asp-for="BirthDate" id="BirthDate">
+                    <span class="text-danger" asp-validation-for="BirthDate"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="Password" class="form-label">Password:</label>
+                    <input type="password" class="form-control" asp-for="Password" id="Password" placeholder="Enter your password">
+                    <span class="text-danger" asp-validation-for="Password"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="ConfirmPassword" class="form-label ">Confirm Password: </label>
+                    <input type="password" class="form-control" id="ConfirmPassword" placeholder="Confirm your password">
+                    <span class="text-danger" id="confirmPasswordError"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="PhoneNumber" class="form-label">Phone Number:</label>
+                    <input type="text" class="form-control" asp-for="PhoneNumber" id="PhoneNumber" placeholder="Optional">
+                    <span class="text-danger" asp-validation-for="PhoneNumber"></span>
+                </div>
+                <button type="submit" class="btn btn-success w-50   ">Register</button>
+                <a class="w-50" asp-controller="User" asp-action="Login">Login</a>
+            </div>
+        </main>
+    </div>
+</form>
+
+<script>
+    function validateForm() {
+        var password = document.getElementById("PasswordHash").value;
+        var confirmPassword = document.getElementById("ConfirmPassword").value;
+
+        if (password !== confirmPassword) {
+            document.getElementById("confirmPasswordError").innerText = "Passwords do not match.";
+            return false;
+        }
+
+        document.getElementById("confirmPasswordError").innerText = "";
+        return true;
+    }
+</script>
