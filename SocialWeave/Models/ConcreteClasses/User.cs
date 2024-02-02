@@ -4,6 +4,7 @@ using SocialWeave.Models.AbstractClasses;
 using System.ComponentModel.DataAnnotations;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Numerics;
+using System.ComponentModel;
 
 namespace SocialWeave.Models.ConcreteClasses
 {
@@ -23,6 +24,7 @@ namespace SocialWeave.Models.ConcreteClasses
 
         [Required(ErrorMessage = "{0} is required!")]
         [Age(ErrorMessage = "It's mandatory be at least 16 years old!")]
+        [DisplayName("Birth Date")]
         public DateTime BirthDate {  get; set; }
 
         [Required(ErrorMessage = "{0} is required!")]
@@ -30,6 +32,7 @@ namespace SocialWeave.Models.ConcreteClasses
         public string Password { get; set; }
 
         [PhoneNumber(ErrorMessage = "Invalid phone number format")]
+        [DisplayName("Phone")]
         public string? PhoneNumber { get; set; }
         public List<Post>? Posts { get; set; }
 
