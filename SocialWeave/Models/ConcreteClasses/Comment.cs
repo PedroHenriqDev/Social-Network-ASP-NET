@@ -2,14 +2,15 @@
 using Microsoft.Identity.Client;
 using SocialWeave.Models.AbstractClasses;
 using SocialWeave.Models.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace SocialWeave.Models.ConcreteClasses
 {
     public class Comment : IComment
     {
         public Guid Id { get; set; }
+        [Required(ErrorMessage = "{0} is required!")] 
         public string Text {  get; set; }
-        public int Like {  get; set; }
         public DateTime Date { get; set; }
         public User User { get; set; }
         public ICollection<Like> Likes { get; set; }
@@ -19,10 +20,9 @@ namespace SocialWeave.Models.ConcreteClasses
         {
         }
 
-        public Comment(string text, int like, DateTime date,User user)
+        public Comment(string text, DateTime date,User user)
         {
             Text = text;
-            Like = like;
             Date = date;
             User = user;
         }
