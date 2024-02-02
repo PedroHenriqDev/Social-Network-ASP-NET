@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SocialWeave.Data;
 using SocialWeave.Exceptions;
 using SocialWeave.Models.ConcreteClasses;
+using SocialWeave.Models.ViewModels;
 using System.Data;
 
 namespace SocialWeave.Models.Services
@@ -22,9 +23,9 @@ namespace SocialWeave.Models.Services
         /// <summary>
         /// Finds a user by email asynchronously.
         /// </summary>
-        private async Task<User> FindUserByEmailAsync(User user)
+        public async Task<User> FindUserByEmailAsync(string email)
         {
-            return await _context.Users.FirstOrDefaultAsync(x => x.Email == user.Email);
+            return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
         }
 
         /// <summary>
@@ -41,10 +42,10 @@ namespace SocialWeave.Models.Services
         /// </summary>
         /// <param name="user">The user with the credentials to be validated.</param>
         /// <returns>True if credentials are valid, False otherwise.</returns>
-        public async Task<bool> ValidateUserCredentialsAsync(User user)
+        public async Task<bool> ValidateUserCredentialsAsync(UserViewModel userVM)
         {
-            User userDb = await FindUserByEmailAsync(user);
-               return BCrypt.Net.BCrypt.Verify(user.Password, userDb.Password) && userDb != null;
+            User userDb = await FindUserByEmailAsync(userVM.Email);
+            return BCrypt.Net.BCrypt.Verify(userVM.Password, userDb.Password) && userDb != null;
         }
 
         /// <summary>
@@ -53,22 +54,20 @@ namespace SocialWeave.Models.Services
         /// <param name="user">The user to be created.</param>
         /// <exception cref="UserException">Exception thrown if there is an error creating the user.</exception>
         /// <exception cref="IntegrityException">Exception thrown if a concurrency error occurs in the database.</exception>
-        public async Task CreateUserAsync(User user)
+        public async Task<bool> CreateUserAsync(User user)
         {
             try
             {
-                if (user == null)
+                if(await FindUserByEmailAsync(user.Email) != null) 
                 {
-                    throw new UserException("Error in creating user!");
+                    return false;
                 }
+
                 SetCryptPassword(user);
                 user.Id = Guid.NewGuid();
                 await _context.AddAsync(user);
                 await _context.SaveChangesAsync();
-            }
-            catch (UserException e)
-            {
-                throw new UserException(e.Message);
+                return true;
             }
             catch (DBConcurrencyException e)
             {

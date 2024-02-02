@@ -33,14 +33,13 @@ namespace SocialWeave.Controllers
         /// <returns>Redirects to the home page if login is successful; otherwise, redirects to the login page.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(User user)
+        public async Task<IActionResult> Login(UserViewModel userVM)
         {
-            ModelState.Remove(nameof(user.Salt));
-            ModelState.Remove(nameof(user.PhoneNumber));
-            ModelState.Remove(nameof(user.BirthDate));
-            ModelState.Remove(nameof(user.Name));
-            if (ModelState.IsValid && await _userService.ValidateUserCredentialsAsync(user))
+           
+            if (ModelState.IsValid && await _userService.ValidateUserCredentialsAsync(userVM))
             {
+
+                User user = await _userService.FindUserByEmailAsync(userVM.Email);
                 // Create claims for the authenticated user
                 var claims = new List<Claim>()
                 {
@@ -59,7 +58,7 @@ namespace SocialWeave.Controllers
 
                 return RedirectToAction("Index", "Home");
             }
-            return View(user);
+            return View(userVM);
         }
 
         public IActionResult Register() 
@@ -73,9 +72,8 @@ namespace SocialWeave.Controllers
         {
             ModelState.Remove(nameof(user.Salt));
             ModelState.Remove(nameof(user.Posts));
-            if (ModelState.IsValid) 
+            if (ModelState.IsValid && await _userService.CreateUserAsync(user)) 
             {
-                await _userService.CreateUserAsync(user);
                 return RedirectToAction(nameof(Login));
             }
             return View();
