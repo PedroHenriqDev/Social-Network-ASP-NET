@@ -10,21 +10,16 @@ namespace SocialWeave.Models.ConcreteClasses
         public string Text {  get; set; }
         public int Like {  get; set; }
         public DateTime Date { get; set; }
-        public User User { get; set; }
-        public Post Post { get; set; }
 
         public Comment() 
         {
-
         }
 
-        public Comment(string text, int like, DateTime date, User user, Post post)
+        public Comment(string text, int like, DateTime date)
         {
             Text = text;
             Like = like;
             Date = date;
-            User = user;    
         }
-        
     }
 }

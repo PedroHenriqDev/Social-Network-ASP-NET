@@ -1,19 +1,21 @@
 ﻿using SocialWeave.Models.ConcreteClasses;
+using System.ComponentModel.DataAnnotations;
 
 namespace SocialWeave.Models.AbstractClasses
 {
-    abstract public class Post<T>
+    abstract public class Post
     {
-        abstract public T Id { get; set; }
-        abstract public T Description { get; set; }
-        abstract public T Date { get; set; }
-        abstract public List<T> Comments {  get; set; }
+        [Key]
+        public Guid Id { get; set; }
+        public string Description { get; set; }
+        public DateTime Date { get; set; }
+        public List<Comment> Comments {  get; set; }
 
         public Post() 
         {
         }
 
-        public Post(T id, T description, T date) 
+        public Post(Guid id, string description, DateTime date) 
         {
             Id = id;
             Description = description;

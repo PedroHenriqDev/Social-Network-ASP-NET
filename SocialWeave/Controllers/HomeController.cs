@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using SocialWeave.Models;
+using SocialWeave.Models.ViewModels;
 using System.Diagnostics;
 
 namespace SocialWeave.Controllers

@@ -4,20 +4,16 @@ namespace SocialWeave.Models.ConcreteClasses
 {
     sealed public class PostWithImage : Post
     {
-        public Guid Id { get; set; }
-        public string Description { get; set; }
-        public string Date { get; set; }
-        public List<Comment> Comments { get; set; }
+        public byte[] Image { get; set; }
 
         public PostWithImage() 
         {
         }
 
-        public PostWithImage(Guid id, string description, string date) 
+        public PostWithImage(Guid id, string description, DateTime date, byte[] image) 
+            : base(id, description, date)
         {
-            Id = id;
-            Description = description;
-            Date = date;
+            Image = image;
         }
     }
 }
