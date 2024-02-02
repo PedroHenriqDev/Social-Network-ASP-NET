@@ -16,8 +16,9 @@ namespace SocialWeave.Controllers
     {
         private readonly UserService _userService;
 
-        public UserController()
+        public UserController(UserService userService)
         {
+            _userService = userService;
         }
 
         public IActionResult Login()
@@ -34,14 +35,18 @@ namespace SocialWeave.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(User user)
         {
+            ModelState.Remove(nameof(user.Salt));
+            ModelState.Remove(nameof(user.PhoneNumber));
+            ModelState.Remove(nameof(user.BirthDate));
+            ModelState.Remove(nameof(user.Name));
             if (ModelState.IsValid && await _userService.ValidateUserCredentialsAsync(user))
             {
                 // Create claims for the authenticated user
                 var claims = new List<Claim>()
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Name)
+                    new Claim(ClaimTypes.NameIdentifier, user.Email)
                 };
-
+                    
                 // Create a ClaimsIdentity and set authentication properties
                 var claimsIdentity = new ClaimsIdentity(claims,
                     CookieAuthenticationDefaults.AuthenticationScheme);
@@ -71,9 +76,9 @@ namespace SocialWeave.Controllers
             if (ModelState.IsValid) 
             {
                 await _userService.CreateUserAsync(user);
-                return RedirectToAction("User", "Login");
+                return RedirectToAction(nameof(Login));
             }
-            return RedirectToAction(nameof(Register));  
+            return View();
         }
 
         /// <summary>
@@ -86,6 +91,5 @@ namespace SocialWeave.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Message = message }); ;
         }
-
     }
 }

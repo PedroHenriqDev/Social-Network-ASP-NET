@@ -27,13 +27,13 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="ConfirmPassword" class="form-label ">Confirm Password: </label>
-                    <input type="password" class="form-control" id="ConfirmPassword" placeholder="Confirm your password">
+                    <label for="ConfirmPassword" class="form-label text-light">Confirm Password: </label>
+                    <input type="password" class="form-control text-bg-dark" id="ConfirmPassword" placeholder="Confirm your password">
                     <span class="text-danger" id="confirmPasswordError"></span>
                 </div>
                 <div class="mb-3">
                     <label for="PhoneNumber" class="form-label">Phone Number:</label>
-                    <input type="text" class="form-control" asp-for="PhoneNumber" id="PhoneNumber" placeholder="Optional">
+                    <input type="tel" class="form-control" asp-for="PhoneNumber" id="PhoneNumber" placeholder="Optional">
                     <span class="text-danger" asp-validation-for="PhoneNumber"></span>
                 </div>
                 <button type="submit" class="btn btn-success w-50   ">Register</button>
@@ -45,8 +45,9 @@
 
 <script>
     function validateForm() {
-        var password = document.getElementById("PasswordHash").value;
+        var password = document.getElementById("Password").value;
         var confirmPassword = document.getElementById("ConfirmPassword").value;
+
 
         if (password !== confirmPassword) {
             document.getElementById("confirmPasswordError").innerText = "Passwords do not match.";

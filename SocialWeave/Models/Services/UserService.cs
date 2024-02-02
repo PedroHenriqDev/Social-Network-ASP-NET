@@ -44,8 +44,7 @@ namespace SocialWeave.Models.Services
         public async Task<bool> ValidateUserCredentialsAsync(User user)
         {
             User userDb = await FindUserByEmailAsync(user);
-            SetCryptPassword(user);
-            return BCrypt.Net.BCrypt.Verify(user.Password, userDb.Password) && userDb != null;
+               return BCrypt.Net.BCrypt.Verify(user.Password, userDb.Password) && userDb != null;
         }
 
         /// <summary>

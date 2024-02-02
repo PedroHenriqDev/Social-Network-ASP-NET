@@ -26,18 +26,18 @@ namespace SocialWeave.Models.ConcreteClasses
         public DateTime BirthDate {  get; set; }
 
         [Required(ErrorMessage = "{0} is required!")]
-        [StrongPassword(ErrorMessage= "Password must have, Uppercase, Lowercase, Numbers, Letter")]
+        [StrongPassword(ErrorMessage= "Password must have, Numbers, Letter")]
         public string Password { get; set; }
 
         [PhoneNumber(ErrorMessage = "Invalid phone number format")]
-        public int? PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
         public List<Post>? Posts { get; set; }
 
         public User() 
         {
         }
 
-        public User(Guid id, string name, string email, string password, int phoneNumber, DateTime birthDate) 
+        public User(Guid id, string name, string email, string password, string phoneNumber, DateTime birthDate) 
         {
             Id = id;
             Name = name;
