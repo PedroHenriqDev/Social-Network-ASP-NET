@@ -93,6 +93,12 @@ namespace SocialWeave.Controllers
             return View();
         }
 
+        #region Controller Send Email To Recovery Password
+        /// <summary>
+        /// Handles the HTTP POST request for the ForgotPassword view, allowing users to request a password reset email.
+        /// </summary>
+        /// <param name="model">The view model containing user input data.</param>
+        /// <returns>If the email is successfully sent, redirects to the ForgotPasswordConfirmation view; otherwise, returns to the ForgotPassword view with an error message.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
@@ -100,7 +106,6 @@ namespace SocialWeave.Controllers
             if (ModelState.IsValid)
             {
                 var result = await _userService.SendPasswordResetEmailAsync(model.Email);
-
                 if (result)
                 {
                     return RedirectToAction(nameof(ForgotPasswordConfirmation));
@@ -118,6 +123,7 @@ namespace SocialWeave.Controllers
         {
             return View();
         }
+        #endregion
 
 
         /// <summary>

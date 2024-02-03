@@ -101,6 +101,8 @@ namespace SocialWeave.Models.Services
             }
         }
 
+        #region Send Email
+        //OBS: It will only be possible to obtain one hosting application!
         /// <summary>
         /// Sends a password reset email to the user with the provided email address.
         /// </summary>
@@ -123,7 +125,17 @@ namespace SocialWeave.Models.Services
             var callbackUrl = GeneratePasswordResetCallbackUrl(user.Email, token);
 
             // Get the email address from the configuration
-            var fromAddress = new MailAddress(_configuration["SmtpSettings:Email"], "SocialWeave");
+            var fromAddressString = _configuration["SmtpSettings:Email"];
+
+            // Validate if the email address from the configuration is not null or empty
+            if (string.IsNullOrEmpty(fromAddressString))
+            {
+                // Log or handle the error and return false
+                return false;
+            }
+
+            // Create a new MailAddress for the sender
+            var fromAddress = new MailAddress(fromAddressString, "SocialWeave");
             // Create a new MailAddress for the recipient
             var toAddress = new MailAddress(email);
             var subject = "Reset Your Password";
@@ -172,6 +184,8 @@ namespace SocialWeave.Models.Services
             var urlHelper = _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
             return urlHelper.Action("ResetPassword", "User", new { token = token, email = email }, protocol: _httpContextAccessor.HttpContext.Request.Scheme);
         }
+
+        #endregion  
     }
 }
 
