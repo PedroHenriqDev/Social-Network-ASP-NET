@@ -5,10 +5,11 @@ using System.ComponentModel.DataAnnotations;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Numerics;
 using System.ComponentModel;
+using Microsoft.AspNetCore.Identity;
 
 namespace SocialWeave.Models.ConcreteClasses
 {
-    public class User
+    public class User : IdentityUser
     {
         public string Salt {  get; set; }
 

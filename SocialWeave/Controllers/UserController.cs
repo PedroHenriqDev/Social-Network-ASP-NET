@@ -66,18 +66,59 @@ namespace SocialWeave.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Handles HTTP POST requests for user registration.
+        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(User user) 
+        public async Task<IActionResult> Register(User user)
         {
+            // Remove sensitive information from the model's ModelState
             ModelState.Remove(nameof(user.Salt));
             ModelState.Remove(nameof(user.Posts));
-            if (ModelState.IsValid && await _userService.CreateUserAsync(user)) 
+
+            // Checks if the model is valid and attempts to create the user
+            if (ModelState.IsValid && await _userService.CreateUserAsync(user))
             {
+                // Redirects to the Login action if registration is successful
                 return RedirectToAction(nameof(Login));
             }
+
+            // Returns the registration view if there are model errors or if user creation fails
             return View();
         }
+
+        public IActionResult ForgotPassword() 
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _userService.SendPasswordResetEmailAsync(model.Email);
+
+                if (result)
+                {
+                    return RedirectToAction(nameof(ForgotPasswordConfirmation));
+                }
+                else
+                {
+                    ModelState.AddModelError("", "No is possible send the email!");
+                }
+            }
+
+            return View(model);
+        }
+
+        public IActionResult ForgotPasswordConfirmation() 
+        {
+            return View();
+        }
+
 
         /// <summary>
         /// Displays the error view with the specified error message.
