@@ -56,11 +56,11 @@ namespace SocialWeave.Migrations
 
             migrationBuilder.RenameTable(
                 name: "Like",
-                newName: "likes");
+                newName: "Likes");
 
             migrationBuilder.RenameTable(
                 name: "Dislike",
-                newName: "dislikes");
+                newName: "Dislikes");
 
             migrationBuilder.RenameTable(
                 name: "Comment",
@@ -68,33 +68,33 @@ namespace SocialWeave.Migrations
 
             migrationBuilder.RenameIndex(
                 name: "IX_Like_UserId",
-                table: "likes",
-                newName: "IX_likes_UserId");
+                table: "Likes",
+                newName: "IX_Likes_UserId");
 
             migrationBuilder.RenameIndex(
                 name: "IX_Like_PostId",
-                table: "likes",
-                newName: "IX_likes_PostId");
+                table: "Likes",
+                newName: "IX_Likes_PostId");
 
             migrationBuilder.RenameIndex(
                 name: "IX_Like_CommentId",
-                table: "likes",
-                newName: "IX_likes_CommentId");
+                table: "Likes",
+                newName: "IX_Likes_CommentId");
 
             migrationBuilder.RenameIndex(
                 name: "IX_Dislike_UserId",
-                table: "dislikes",
-                newName: "IX_dislikes_UserId");
+                table: "Dislikes",
+                newName: "IX_Dislikes_UserId");
 
             migrationBuilder.RenameIndex(
                 name: "IX_Dislike_PostId",
-                table: "dislikes",
-                newName: "IX_dislikes_PostId");
+                table: "Dislikes",
+                newName: "IX_Dislikes_PostId");
 
             migrationBuilder.RenameIndex(
                 name: "IX_Dislike_CommentId",
-                table: "dislikes",
-                newName: "IX_dislikes_CommentId");
+                table: "Dislikes",
+                newName: "IX_Dislikes_CommentId");
 
             migrationBuilder.RenameIndex(
                 name: "IX_Comment_UserId",
@@ -107,13 +107,13 @@ namespace SocialWeave.Migrations
                 newName: "IX_Comments_PostId");
 
             migrationBuilder.AddPrimaryKey(
-                name: "PK_likes",
-                table: "likes",
+                name: "PK_Likes",
+                table: "Likes",
                 column: "Id");
 
             migrationBuilder.AddPrimaryKey(
-                name: "PK_dislikes",
-                table: "dislikes",
+                name: "PK_Dislikes",
+                table: "Dislikes",
                 column: "Id");
 
             migrationBuilder.AddPrimaryKey(
@@ -137,44 +137,44 @@ namespace SocialWeave.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dislikes_Comments_CommentId",
-                table: "dislikes",
+                name: "FK_Dislikes_Comments_CommentId",
+                table: "Dislikes",
                 column: "CommentId",
                 principalTable: "Comments",
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dislikes_Posts_PostId",
-                table: "dislikes",
+                name: "FK_disLikes_Posts_PostId",
+                table: "disLikes",
                 column: "PostId",
                 principalTable: "Posts",
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dislikes_Users_UserId",
-                table: "dislikes",
+                name: "FK_disLikes_Users_UserId",
+                table: "disLikes",
                 column: "UserId",
                 principalTable: "Users",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_likes_Comments_CommentId",
-                table: "likes",
+                name: "FK_Likes_Comments_CommentId",
+                table: "Likes",
                 column: "CommentId",
                 principalTable: "Comments",
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_likes_Posts_PostId",
-                table: "likes",
+                name: "FK_Likes_Posts_PostId",
+                table: "Likes",
                 column: "PostId",
                 principalTable: "Posts",
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_likes_Users_UserId",
-                table: "likes",
+                name: "FK_Likes_Users_UserId",
+                table: "Likes",
                 column: "UserId",
                 principalTable: "Users",
                 principalColumn: "Id",

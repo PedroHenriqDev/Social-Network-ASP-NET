@@ -26,14 +26,30 @@ namespace SocialWeave.Models.Services
             await _context.SaveChangesAsync();
         }
 
-        public void RemovePost(Post post) 
+        public async Task RemovePost(Post post)
         {
-            foreach(var comment in post.Comments) 
+            if (post == null) 
+            {
+                throw new NullReferenceException("It is not possible to delete a null post");
+            }
+
+            foreach (var comment in post.Comments) 
             {
                 _context.Comments.Remove(comment);
             }
 
+            foreach(var like in post.Like) 
+            {
+                _context.Likes.Remove(like);
+            }
 
+            foreach(var dislike in post.Dislikes) 
+            {
+                _context.Dislikes.Remove(dislike);
+            }
+
+            _context.Remove(post);
+            await _context.SaveChangesAsync();
         }
 
     }

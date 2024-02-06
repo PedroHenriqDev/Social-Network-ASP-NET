@@ -22,6 +22,7 @@ namespace SocialWeave.Models.ConcreteClasses
         [Required(ErrorMessage = "{0} is required!")]
         [StringLength(50, MinimumLength = 1, ErrorMessage = "The name must be 1 to 20 characters long!")]
         public string Name { get; set; }
+
         [Required(ErrorMessage = "{0} is required!")]
         public string Email { get; set; }
 
