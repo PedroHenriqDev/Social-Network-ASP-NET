@@ -12,8 +12,8 @@ using SocialWeave.Data;
 namespace SocialWeave.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240206173038_Teen")]
-    partial class Teen
+    [Migration("20240206191746_FirstDef")]
+    partial class FirstDef
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,7 +108,7 @@ namespace SocialWeave.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("dislikes");
+                    b.ToTable("Dislikes");
                 });
 
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Like", b =>
@@ -134,7 +134,7 @@ namespace SocialWeave.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("likes");
+                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.User", b =>
@@ -146,7 +146,7 @@ namespace SocialWeave.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DateCreation")
+                    b.Property<DateTime?>("DateCreation")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")

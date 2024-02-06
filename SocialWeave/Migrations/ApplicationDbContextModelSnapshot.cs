@@ -105,7 +105,7 @@ namespace SocialWeave.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("dislikes");
+                    b.ToTable("Dislikes");
                 });
 
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Like", b =>
@@ -131,7 +131,7 @@ namespace SocialWeave.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("likes");
+                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.User", b =>
@@ -143,7 +143,7 @@ namespace SocialWeave.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DateCreation")
+                    b.Property<DateTime?>("DateCreation")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")

@@ -51,6 +51,5 @@ namespace SocialWeave.Models.Services
             _context.Remove(post);
             await _context.SaveChangesAsync();
         }
-
     }
 }

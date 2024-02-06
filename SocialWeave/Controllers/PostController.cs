@@ -15,8 +15,19 @@ namespace SocialWeave.Controllers
             _postService = postService;
         }
 
+        public IActionResult ChoosePostType()
+        {
+            return View();
+        }
+
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public IActionResult ChosePostWithImage() 
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ChosePostWithoutImage()
         {
             return View();
         }
