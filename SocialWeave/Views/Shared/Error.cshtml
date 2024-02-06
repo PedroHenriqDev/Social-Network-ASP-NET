@@ -1,1 +1,14 @@
-﻿
+﻿@model SocialWeave.Models.ViewModels.ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h1><span style="font-weight: bold; color: red;">@ViewData["Title"]</span></h1>
+<h2><span style="font-weight: bold; color: red;">@Model.Message</span></h2>
+
+@if (Model.ShowRequestId)
+{
+    <p>
+        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+    </p>
+}

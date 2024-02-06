@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SocialWeave.Models.ConcreteClasses;
 using SocialWeave.Models.Services;
 using SocialWeave.Models.ViewModels;
+using SocialWeave.Exceptions;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -43,7 +44,7 @@ namespace SocialWeave.Controllers
                 // Create claims for the authenticated user
                 var claims = new List<Claim>()
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Email)
+                    new Claim(ClaimTypes.NameIdentifier, user.Name)
                 };
                     
                 // Create a ClaimsIdentity and set authentication properties
@@ -72,11 +73,12 @@ namespace SocialWeave.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(User user)
-        {
+        {                     
             // Remove sensitive information from the model's ModelState
             ModelState.Remove(nameof(user.Salt));
             ModelState.Remove(nameof(user.Posts));
-
+            ModelState.Remove(nameof(user.ResetToken));
+            ModelState.Remove(nameof(user.DateCreation));
             // Checks if the model is valid and attempts to create the user
             if (ModelState.IsValid && await _userService.CreateUserAsync(user))
             {
@@ -88,12 +90,37 @@ namespace SocialWeave.Controllers
             return View();
         }
 
-        public IActionResult ForgotPassword() 
+        public async Task<IActionResult> LogoutGet() 
+        {
+            return View(await _userService.FindUserByEmailAsync(User.Identity.Name));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LogoutPost() 
+        {
+            try
+            {
+                if (Request.Method != "POST")
+                {
+                    throw new RequestException("An brutal error ocurred in this request!");
+                }
+
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                return RedirectToAction(nameof(Login));
+            }
+            catch (RequestException ex) 
+            {
+                return RedirectToAction(nameof(Error), new {message = ex.Message});
+            }
+        } 
+
+        #region Controller Send Email To Recovery Password
+        public IActionResult ForgotPassword()
         {
             return View();
         }
 
-        #region Controller Send Email To Recovery Password
         /// <summary>
         /// Handles the HTTP POST request for the ForgotPassword view, allowing users to request a password reset email.
         /// </summary>
@@ -123,8 +150,8 @@ namespace SocialWeave.Controllers
         {
             return View();
         }
-        #endregion
 
+        #endregion
 
         /// <summary>
         /// Displays the error view with the specified error message.

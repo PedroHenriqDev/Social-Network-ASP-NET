@@ -9,13 +9,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace SocialWeave.Models.ConcreteClasses
 {
-    public class User : IdentityUser
+    public class User
     {
         public string Salt {  get; set; }
 
         [Required]
         [Key]
         public Guid Id { get; set; }
+
+        public DateTime DateCreation { get; set; }
 
         [Required(ErrorMessage = "{0} is required!")]
         [StringLength(50, MinimumLength = 1, ErrorMessage = "The name must be 1 to 20 characters long!")]
@@ -31,6 +33,8 @@ namespace SocialWeave.Models.ConcreteClasses
         [Required(ErrorMessage = "{0} is required!")]
         [StrongPassword(ErrorMessage= "Password must have, Numbers, Letter")]
         public string Password { get; set; }
+
+        public string? ResetToken {  get; set; }
 
         [PhoneNumber(ErrorMessage = "Invalid phone number format")]
         [DisplayName("Phone")]

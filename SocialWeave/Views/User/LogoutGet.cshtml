@@ -1,0 +1,19 @@
+﻿﻿@{
+    ViewData["title"] = "Logout Confirm";
+}
+
+<div class="container bg-dark p-5 rounded-5">
+    <div class="mb-5 text-center">
+        <h1 class="text-light">@ViewData["title"]</h1>
+        <h2 class="text-light">
+            Are you sure you want to leave?
+        </h2>
+    </div>
+
+    <form method="post" asp-controller="User" asp-action="LogoutPost">
+        <div class="d-flex gap-5 mt-5">
+            <button type="submit" class="btn btn-primary w-50">Logout</button>
+            <a class="btn btn-danger w-50" asp-controller="Home" asp-action="Index">Return</a>
+        </div>
+    </form>
+</div>
