@@ -1,1 +1,53 @@
-﻿
+﻿@model SocialWeave.Models.ViewModels.PostViewModel
+@{
+    ViewData["Title"] = "New Post";
+}
+
+<style>
+    .container {
+        margin-top: 100px;
+    }
+
+    #imagePreview {
+        max-width: 100%;
+        height: auto;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-4 purple-gradient">
+                <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+                <form asp-action="CreatePost" asp-controller="Post" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label">Image file input:</label>
+                        <input class="form-control" type="file" id="formFile" name="ImageFile" accept="image/*" onchange="previewImage(event)">
+                        <div id="imagePreview"></div>
+                    </div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">Description:</label>
+                        <textarea class="form-control" rows="5" asp-for="Description"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Add post</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('imagePreview');
+            output.innerHTML = '<img src="' + reader.result + '" class="img-fluid" alt="Preview">';
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
