@@ -7,6 +7,7 @@ using SocialWeave.Models.ViewModels;
 using SocialWeave.Exceptions;
 using System.Diagnostics;
 using System.Security.Claims;
+using System.Data;
 
 namespace SocialWeave.Controllers
 {
@@ -44,7 +45,7 @@ namespace SocialWeave.Controllers
                 // Create claims for the authenticated user
                 var claims = new List<Claim>()
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Name)
+                    new Claim(ClaimTypes.Name, user.Name)
                 };
                     
                 // Create a ClaimsIdentity and set authentication properties
@@ -73,26 +74,39 @@ namespace SocialWeave.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(User user)
-        {                     
+        {
             // Remove sensitive information from the model's ModelState
-            ModelState.Remove(nameof(user.Salt));
-            ModelState.Remove(nameof(user.Posts));
-            ModelState.Remove(nameof(user.ResetToken));
-            ModelState.Remove(nameof(user.DateCreation));
-            // Checks if the model is valid and attempts to create the user
-            if (ModelState.IsValid && await _userService.CreateUserAsync(user))
+            try
             {
-                // Redirects to the Login action if registration is successful
-                return RedirectToAction(nameof(Login));
-            }
+                ModelState.Remove(nameof(user.Salt));
+                ModelState.Remove(nameof(user.Posts));
+                ModelState.Remove(nameof(user.ResetToken));
+                ModelState.Remove(nameof(user.DateCreation));
+                // Checks if the model is valid and attempts to create the user
+                if (ModelState.IsValid)
+                {
+                    // Redirects to the Login action if registration is successful
+                    await _userService.CreateUserAsync(user);
+                    return RedirectToAction(nameof(Login));
+                }
+                // Returns the registration view if there are model errors or if user creation fails
+                return View();
 
-            // Returns the registration view if there are model errors or if user creation fails
-            return View();
+            }
+            catch(UserException ex) 
+            {
+                return View(user);
+            }
+            catch(IntegrityException ex) 
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
         }
 
         public async Task<IActionResult> LogoutGet() 
         {
-            return View(await _userService.FindUserByEmailAsync(User.Identity.Name));
+            var user = await _userService.FindUserByNameAsync(User.Identity.Name);
+            return View(user);
         }
 
         [HttpPost]

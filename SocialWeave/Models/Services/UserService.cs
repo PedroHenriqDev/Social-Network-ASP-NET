@@ -48,6 +48,14 @@ namespace SocialWeave.Models.Services
         }
 
         /// <summary>
+        /// Finds a user by name asynchronously.
+        /// </summary>
+        public async Task<User> FindUserByNameAsync(string name) 
+        {
+            return await _context.Users.FirstOrDefaultAsync(x => x.Name == name);
+        }
+
+        /// <summary>
         /// Sets the encrypted password for a user using BCrypt.
         /// </summary>
         public void SetCryptPassword(User user)
@@ -77,20 +85,24 @@ namespace SocialWeave.Models.Services
         /// <param name="user">The user to be created.</param>
         /// <exception cref="UserException">Exception thrown if there is an error creating the user.</exception>
         /// <exception cref="IntegrityException">Exception thrown if a concurrency error occurs in the database.</exception>
-        public async Task<bool> CreateUserAsync(User user)
+        public async Task CreateUserAsync(User user)
         {
             try
             {
                 if (await FindUserByEmailAsync(user.Email) != null)
                 {
-                    return false;
+                    throw new UserException("Existing email");
+                }
+
+                if(await  FindUserByNameAsync(user.Name) != null) 
+                {
+                    throw new UserException("Existing name");
                 }
 
                 SetCryptPassword(user);
                 user.Id = Guid.NewGuid();
                 await _context.AddAsync(user);
                 await _context.SaveChangesAsync();
-                return true;
             }
             catch (DBConcurrencyException e)
             {

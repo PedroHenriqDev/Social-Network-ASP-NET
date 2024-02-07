@@ -18,6 +18,7 @@ namespace SocialWeave.Models.ConcreteClasses
         public Guid Id { get; set; }
 
         [Required(ErrorMessage = "{0} is required!")]
+        [HasLetter(ErrorMessage = "The field {0} is mandatory to have at least one letter")]
         [StringLength(50, MinimumLength = 1, ErrorMessage = "The name must be 1 to 20 characters long!")]
         public string Name { get; set; }
 
@@ -34,7 +35,7 @@ namespace SocialWeave.Models.ConcreteClasses
         public string Password { get; set; }
 
         public string? ResetToken {  get; set; }
-        public DateTime? DateCreation { get; set; }
+        public DateTime? DateCreation { get; set; } = DateTime.Now;
 
         [PhoneNumber(ErrorMessage = "Invalid phone number format")]
         [DisplayName("Phone")]
