@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SocialWeave.Models.ConcreteClasses
 {
-    public class Comment : IComment
+    public class Comment : IFeedBack
     {
         public Guid Id { get; set; }
         [Required(ErrorMessage = "{0} is required!")] 

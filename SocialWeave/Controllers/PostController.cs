@@ -21,13 +21,13 @@ namespace SocialWeave.Controllers
         }
 
         [HttpGet]
-        public IActionResult ChosePostWithImage() 
+        public IActionResult CreatePostImage() 
         {
             return View();
         }
 
         [HttpGet]
-        public IActionResult ChosePostWithoutImage()
+        public IActionResult CreatePost()
         {
             return View();
         }

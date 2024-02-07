@@ -5,6 +5,7 @@
         <main role="main" class="pb-3">
             <div class="login-container">
                 <h2>Register</h2>
+                <hr />
                 <div class="mb-3">
                     <label for="Name" class="form-label">Name:</label>
                     <input type="text" class="form-control" asp-for="Name" id="Name" placeholder="Enter your name">
@@ -36,7 +37,10 @@
                     <input type="tel" class="form-control" asp-for="PhoneNumber" id="PhoneNumber" placeholder="Optional">
                     <span class="text-danger" asp-validation-for="PhoneNumber"></span>
                 </div>
-                <button type="submit" class="btn btn-success w-50   ">Register</button>
+                <div class="text-center">
+                <button type="submit" class="btn btn-success w-50">Register</button>
+                </div>
+                <hr />
                 <a class="w-50" asp-controller="User" asp-action="Login">Login</a>
             </div>
         </main>
