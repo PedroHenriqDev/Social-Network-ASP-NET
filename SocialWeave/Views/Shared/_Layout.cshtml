@@ -3,16 +3,17 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SocialWeave</title>
+    <title>@ViewData["Title"] - Social Weave</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SocialWeave.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SocialWeave</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Social Weave</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -20,31 +21,39 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-house mx-2"></i>Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="About"><i class="bi bi-person-workspace mx-2"></i>About</a>
                         </li>
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="LogoutGet">Logout</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Post" asp-action="ChoosePostType">New Post</a>
-                            </li>
-                        }
-                        else
-                        {
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="Login">Login</a>
-                        </li>
-                        }
                     </ul>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Post" asp-action="ChoosePostType"><i class="bi bi-plus-circle-dotted mx-1"></i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="LogoutGet"><i class="bi bi-box-arrow-in-left mx-1"></i></a>
+                            </li>
+                            <li class="nav-item my-auto">
+                                <h5 class="text-light my-0 mx-2"><strong><i class="bi bi-person-lines-fill"></i>@User.Identity.Name</strong></h5>
+                            </li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="Login"><i class="bi bi-box-arrow-in-right mx-2"></i>Login</a>
+                            </li>
+                        </ul>
+                    }
                 </div>
             </div>
-        </nav>a
+        </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

@@ -1,16 +1,17 @@
-﻿﻿@{
+﻿@{
     ViewData["title"] = "Choose the post type";
 }
 
-
 <div class="container purple-gradient p-5 rounded-5">
     <div class="mb-5 text-center">
-        <h1 class="text-light">@ViewData["title"]</h1>
+        <h2 class="text-capitalize">@ViewData["title"]</h2>
     </div>
-        <div class="d-flex gap-5 mt-5">
-        <a class="btn btn-primary w-50" asp-controller="Post" asp-action="CreatePost">Post Default</a>
-            <a class="btn btn-primary w-50" asp-controller="Post" asp-action="CreatePostImage">Post with image</a>
-        </div>
+    <div class="d-flex gap-3 justify-content-center">
+        <a class="btn btn-outline-primary btn-lg text-light" style="width: 200px;" asp-controller="Post" asp-action="CreatePost">
+            <i class="bi bi-file-earmark-text-fill fs-1 me-2"></i><strong>Default Post</strong>
+        </a>
+        <a class="btn btn-outline-primary btn-lg text-light" style="width: 200px;" asp-controller="Post" asp-action="CreatePostImage">
+            <i class="bi bi-file-earmark-richtext-fill fs-1 me-2"></i><strong>Image Post</strong>
+        </a>
+    </div>
 </div>
-
-

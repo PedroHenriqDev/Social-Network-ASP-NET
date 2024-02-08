@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
+using System.Net.Http;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SocialWeave.Models.Services
 {
@@ -101,6 +103,7 @@ namespace SocialWeave.Models.Services
 
                 SetCryptPassword(user);
                 user.Id = Guid.NewGuid();
+                
                 await _context.AddAsync(user);
                 await _context.SaveChangesAsync();
             }

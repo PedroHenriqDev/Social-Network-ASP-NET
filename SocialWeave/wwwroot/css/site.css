@@ -14,7 +14,7 @@ body {
 }
 
 .purple-gradient {
-    background: linear-gradient(180deg, #6A5ACD, #0000);
+    background: linear-gradient(180deg, #b200ff, #0000);
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {

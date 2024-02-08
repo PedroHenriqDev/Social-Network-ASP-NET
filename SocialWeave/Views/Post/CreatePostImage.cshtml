@@ -2,28 +2,92 @@
 @{
     ViewData["Title"] = "New Post";
 }
-
 <style>
     .container {
         margin-top: 100px;
     }
 
+    .card {
+        border: none;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #9C27B0, #673AB7);
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-label {
+        color: #fff;
+    }
+
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 20px;
+    }
+
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+    .custom-file-label {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px;
+    }
+
+    .custom-file-input {
+        color: #fff;
+        cursor: pointer;
+        border: none; 
+        background-color: #9C27B0; 
+    }
+
+        .custom-file-input:focus ~ .custom-file-label::after {
+            border-color: #fff;
+        }
+
+    .btn-primary {
+        background-color: #9C27B0; 
+        border: none;
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-size: 18px;
+    }
+
+        .btn-primary:hover {
+            background-color: #7B1FA2; 
+        }
+
+        .btn-primary:focus {
+            box-shadow: none;
+        }
+
+    .text-danger {
+        color: #FF5252;
+    }
+
     #imagePreview {
-        max-width: 100%;
-        height: auto;
         margin-top: 10px;
     }
 </style>
 
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card p-4 purple-gradient">
+            <div class="card p-4">
                 <h2 class="text-center mb-4">@ViewData["Title"]</h2>
                 <form asp-action="CreatePost" asp-controller="Post" method="post" enctype="multipart/form-data">
                     <div class="mb-3">
-                        <label for="formFile" class="form-label">Image file input:</label>
-                        <input class="form-control" type="file" id="formFile" name="ImageFile" accept="image/*" onchange="previewImage(event)">
+                        <label for="formFile" class="form-label">Choose Image:</label>
+                        <div class="custom-file">
+                            <input type="file" class="form-control custom-file-input" id="formFile" name="ImageFile" accept="image/*" onchange="previewImage(event)" style="display: none;">
+                            <label class="btn custom-file-label" for="formFile">Choose file...</label>
+                        </div>
                         <div id="imagePreview"></div>
                     </div>
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -33,7 +97,7 @@
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Add post</button>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-exposure"></i> Submit</button>
                     </div>
                 </form>
             </div>

@@ -43,7 +43,7 @@ namespace SocialWeave.Controllers
 
                 User user = await _userService.FindUserByEmailAsync(userVM.Email);
                 // Create claims for the authenticated user
-                var claims = new List<Claim>()
+                 var claims = new List<Claim>()
                 {
                     new Claim(ClaimTypes.Name, user.Name)
                 };
@@ -81,7 +81,7 @@ namespace SocialWeave.Controllers
                 ModelState.Remove(nameof(user.Salt));
                 ModelState.Remove(nameof(user.Posts));
                 ModelState.Remove(nameof(user.ResetToken));
-                ModelState.Remove(nameof(user.DateCreation));
+                ModelState.Remove(nameof(user.PictureProfile));
                 // Checks if the model is valid and attempts to create the user
                 if (ModelState.IsValid)
                 {
@@ -91,7 +91,6 @@ namespace SocialWeave.Controllers
                 }
                 // Returns the registration view if there are model errors or if user creation fails
                 return View();
-
             }
             catch(UserException ex) 
             {

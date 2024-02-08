@@ -12,8 +12,8 @@ using SocialWeave.Data;
 namespace SocialWeave.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240206221459_Second")]
-    partial class Second
+    [Migration("20240207203703_First")]
+    partial class First
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -164,6 +164,10 @@ namespace SocialWeave.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("PictureProfile")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("ResetToken")
                         .HasColumnType("nvarchar(max)");

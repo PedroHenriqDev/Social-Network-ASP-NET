@@ -17,6 +17,8 @@ namespace SocialWeave.Models.ConcreteClasses
         [Key]
         public Guid Id { get; set; }
 
+        public byte[]? PictureProfile { get; set; }
+
         [Required(ErrorMessage = "{0} is required!")]
         [HasLetter(ErrorMessage = "The field {0} is mandatory to have at least one letter")]
         [StringLength(50, MinimumLength = 1, ErrorMessage = "The name must be 1 to 20 characters long!")]

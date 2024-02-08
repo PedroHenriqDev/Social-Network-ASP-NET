@@ -162,6 +162,9 @@ namespace SocialWeave.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("PictureProfile")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("ResetToken")
                         .HasColumnType("nvarchar(max)");
 

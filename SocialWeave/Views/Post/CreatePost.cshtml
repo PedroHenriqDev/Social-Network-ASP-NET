@@ -7,12 +7,51 @@
     .container {
         margin-top: 100px;
     }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #9C27B0, #673AB7);
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-label {
+        color: #fff;
+    }
+
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 20px;
+    }
+
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+    .btn-primary {
+        background-color: #9C27B0;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-size: 18px;
+    }
+        .btn-primary:focus {
+            box-shadow: none;
+        }
+
+    .text-danger {
+        color: #FF5252;
+    }
 </style>
 
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card p-4 purple-gradient">
+            <div class="card p-4">
                 <h2 class="text-center mb-4">@ViewData["Title"]</h2>
                 <form asp-action="CreatePost" asp-controller="Post" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -22,7 +61,7 @@
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="btn btn-light">Add post</button>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-exposure"></i> Submit</button>
                     </div>
                 </form>
             </div>
