@@ -25,6 +25,10 @@ namespace SocialWeave.Controllers
 
         public IActionResult Login()
         {
+            if(Request.Method != "get") 
+            {
+                return NotFound();
+            }
             return View();
         }
 
@@ -104,7 +108,7 @@ namespace SocialWeave.Controllers
 
         public async Task<IActionResult> LogoutGet() 
         {
-            var user = await _userService.FindUserByNameAsync(User.Identity.Name);
+            User user = await _userService.FindUserByNameAsync(User.Identity.Name);
             return View(user);
         }
 

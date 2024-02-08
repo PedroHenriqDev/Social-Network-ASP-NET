@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialWeave.Data;
 using SocialWeave.Models.AbstractClasses;
+using SocialWeave.Models.ConcreteClasses;
+using SocialWeave.Models.ViewModels;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -16,12 +18,21 @@ namespace SocialWeave.Models.Services
             _context = context;
         }
 
-        public async Task CreatePostAsync(Post post) 
+        public async Task CreatePostAsync(PostViewModel postVM, User user) 
         {
-            if(post == null) 
+            if(postVM == null) 
             {
                 throw new NullReferenceException("It is not possible to create a null post");
             }
+
+            PostWithoutImage post = new PostWithoutImage()
+            {
+                Date = DateTime.Now,
+                User = user,
+                Description = postVM.Description,
+                Id = new Guid(),
+            };
+
             await _context.AddAsync(post);
             await _context.SaveChangesAsync();
         }
@@ -50,6 +61,11 @@ namespace SocialWeave.Models.Services
 
             _context.Remove(post);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Post>> FindPostsAsync(User user) 
+        {
+            return await _context.Posts.Where(x => x.User.Name != user.Name).Take(20).ToListAsync();
         }
     }
 }

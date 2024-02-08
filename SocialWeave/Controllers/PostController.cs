@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SocialWeave.Exceptions;
-using SocialWeave.Models.AbstractClasses;
 using SocialWeave.Models.Services;
-using System.Runtime.ExceptionServices;
+using SocialWeave.Models.ViewModels;
 
 namespace SocialWeave.Controllers
 {
     public class PostController : Controller
     {
         private readonly PostService _postService;
+        private readonly UserService _userService;
 
-        public PostController(PostService postService) 
+        public PostController(PostService postService, UserService userService) 
         {
             _postService = postService;
+            _userService = userService;
         }
 
         public IActionResult ChoosePostType()
@@ -34,7 +34,7 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Post post) 
+        public async Task<IActionResult> CreatePost(PostViewModel postVM) 
         {
             if (Request.Method != "POST") 
             {
@@ -43,13 +43,11 @@ namespace SocialWeave.Controllers
 
             if(ModelState.IsValid) 
             {
-                await _postService.CreatePostAsync(post);    
-                return View("Home", "Index");
+                await _postService.CreatePostAsync(postVM, await _userService.FindUserByNameAsync(User.Identity.Name));    
+                return RedirectToAction("Index", "Home");
             }
 
-            return View(nameof(Create));
+            return RedirectToAction(nameof(CreatePost));
         }
-
-
     }
 }
