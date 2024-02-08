@@ -13,7 +13,10 @@
                 </div>
                 <div class="mb-3">
                     <label for="Password" class="form-label">Password: </label>
-                    <input type="password" class="form-control" asp-for="Password" id="Password" placeholder="Enter your password">
+                    <div class="input-group">
+                        <input type="password" class="form-control" asp-for="Password" id="Password" placeholder="Enter your password">
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">Show</button>
+                    </div>
                     <span class="text-danger" asp-validation-for="Password"></span>
                 </div>
                 <div class="text-center">
@@ -28,6 +31,18 @@
                         <a class="" asp-controller="User" asp-action="ForgotPassword">Forgot Password</a>
                     </div>
                 </div>
+            </div>
         </main>
     </div>
 </form>
+
+@section Scripts {
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            var passwordInput = document.getElementById('Password');
+            var type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.textContent = type === 'password' ? 'Show' : 'Hide';
+        });
+    </script>
+}

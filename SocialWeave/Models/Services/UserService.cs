@@ -88,7 +88,7 @@ namespace SocialWeave.Models.Services
         /// <exception cref="UserException">Exception thrown if there is an error creating the user.</exception>
         /// <exception cref="IntegrityException">Exception thrown if a concurrency error occurs in the database.</exception>
         public async Task CreateUserAsync(User user)
-        {
+            {
             try
             {
                 if (await FindUserByEmailAsync(user.Email) != null)

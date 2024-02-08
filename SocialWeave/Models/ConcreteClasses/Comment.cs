@@ -1,19 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Identity.Client;
-using SocialWeave.Models.AbstractClasses;
 using System.ComponentModel.DataAnnotations;
-using SocialWeave.Models.AbstractClasses;
+using SocialWeave.Models.Interfaces;
 
 namespace SocialWeave.Models.ConcreteClasses
 {
-    sealed public class Comment : Feedback
+    sealed public class Comment : IFeedback
     {
         public Guid Id { get; set; }
+        public User User { get; set; }
+
         [Required(ErrorMessage = "{0} is required!")] 
         public string Text {  get; set; }
+
         public DateTime Date { get; set; }
-        public User User { get; set; }
-        public ICollection<Like> Likes { get; set; }
         
         public Comment() 
         {
@@ -23,7 +23,6 @@ namespace SocialWeave.Models.ConcreteClasses
         {
             Text = text;
             Date = date;
-            User = user;
         }
     }
 }

@@ -1,26 +1,40 @@
-﻿@model IEnumerable<SocialWeave.Models.AbstractClasses.Post>
+﻿@using SocialWeave.Extensions
+@using SocialWeave.Models.ConcreteClasses
+
+@model IEnumerable<SocialWeave.Models.AbstractClasses.Post>
 
 @if (User.Identity.IsAuthenticated)
 {
     <div class="container text-center">
         @if (Model != null)
         {
-
-
             @foreach (var post in Model)
             {
                 <div class="post">
                     @if (post.User.PictureProfile == null)
                     {
                         <div class="post-header text-xxl-start">
-                            <h5><i class="bi bi-person-circle mx-2"></i>@post.User.Name</h5>
+                            <h5><i class="bi bi-person-circle mx-2"></i>@post.User.Name.CutName()</h5>
                         </div>
                     }
                     <div class="post-content text-xxl-start">
-                        <p>@post.Description</p>
+                        <p>@post.Description.CutDescription()</p>
                     </div>
-                    <div class="text-xxl-start">
-                        <a asp-action="Like" asp-controller="Post"><i class="bi bi-heart"></i></a>
+                    <div class="post-header text-xxl-start">
+                        </div>
+                        <div class="text-xxl-start">
+                        @if (post.Likes != null && post.Likes.Any(l => l.User.Name == User.Identity.Name))
+                        {
+                            <form method="post" asp-action="Dislike" asp-route-id="@post.Id" asp-controller="Post">
+                                <button type="submit" class="btn btn-link"><i class="bi bi-heart-fill text-danger"></i></button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form method="post" asp-action="Like" asp-route-id="@post.Id" asp-controller="Post">
+                                <button type="submit" class="btn btn-link"><i class="bi bi-heart text-danger"></i></button>
+                            </form>
+                        }
                     </div>
                 </div>
             }
@@ -28,11 +42,9 @@
         else
         {
             <div class="text-center">
-
                 <h4><strong>No new posts</strong></h4>
                 <a asp-action="Index" asp-controller="Home"><i class="bi bi-arrow-clockwise"></i></a>
             </div>
-
         }
     </div>
 }
@@ -47,7 +59,7 @@ else
 <style>
     .container {
         margin-top: 100px;
-        max-width: 600px; /* Define a largura máxima do contêiner */
+        max-width: 600px; 
     }
 
     .post {
@@ -58,7 +70,7 @@ else
         padding: 20px;
         max-width: 500px;
         margin-left: auto;
-        margin-right: auto; 
+        margin-right: auto;
     }
 
     .post-header {
@@ -69,11 +81,11 @@ else
 
         .post-header h3 {
             margin-top: 0;
-            color: #fff; /* Cor do texto branco */
+            color: #fff; 
         }
 
     .post-content p {
         margin-bottom: 0;
-        color: #fff; /* Cor do texto branco */
+        color: #fff; 
     }
 </style>

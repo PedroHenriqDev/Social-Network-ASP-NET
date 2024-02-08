@@ -13,7 +13,8 @@ namespace SocialWeave.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Post> Posts { get; set; }
-        public DbSet<Feedback> Feedbacks { get; set; } // DbSet para Feedback
+        public DbSet<Like> Likes { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,11 +24,6 @@ namespace SocialWeave.Data
                 .HasDiscriminator<string>("PostType")
                 .HasValue<PostWithoutImage>("PostWithoutImage")
                 .HasValue<PostWithImage>("PostWithImage");
-
-            modelBuilder.Entity<Feedback>()
-                .HasDiscriminator<string>("FeedbackType")
-                .HasValue<Comment>("Comment")
-                .HasValue<Like>("Like");
         }
     }
 }

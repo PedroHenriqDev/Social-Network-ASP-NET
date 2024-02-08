@@ -17,7 +17,7 @@ namespace SocialWeave.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PictureProfile = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PictureProfile = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -58,9 +58,9 @@ namespace SocialWeave.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -73,36 +73,6 @@ namespace SocialWeave.Migrations
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Comments_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Dislikes",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CommentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Dislikes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Dislikes_Comments_CommentId",
-                        column: x => x.CommentId,
-                        principalTable: "Comments",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Dislikes_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Dislikes_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -150,21 +120,6 @@ namespace SocialWeave.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Dislikes_CommentId",
-                table: "Dislikes",
-                column: "CommentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Dislikes_PostId",
-                table: "Dislikes",
-                column: "PostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Dislikes_UserId",
-                table: "Dislikes",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Likes_CommentId",
                 table: "Likes",
                 column: "CommentId");
@@ -188,9 +143,6 @@ namespace SocialWeave.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Dislikes");
-
             migrationBuilder.DropTable(
                 name: "Likes");
 

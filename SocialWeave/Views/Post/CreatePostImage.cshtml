@@ -82,11 +82,11 @@
             <div class="card p-4">
                 <h2 class="text-center mb-4">@ViewData["Title"]</h2>
                 <form asp-action="CreatePost" asp-controller="Post" method="post" enctype="multipart/form-data">
-                    <div class="mb-3">
+                    <div class="mb-3 text-center">
                         <label for="formFile" class="form-label">Choose Image:</label>
                         <div class="custom-file">
                             <input type="file" class="form-control custom-file-input" id="formFile" name="ImageFile" accept="image/*" onchange="previewImage(event)" style="display: none;">
-                            <label class="btn custom-file-label" for="formFile">Choose file...</label>
+                            <label class="btn custom-file-label" for="formFile"><i class="bi bi-images"></i></label>
                         </div>
                         <div id="imagePreview"></div>
                     </div>

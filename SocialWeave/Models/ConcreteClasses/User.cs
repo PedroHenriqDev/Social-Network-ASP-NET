@@ -2,10 +2,10 @@
 using SocialWeave.Attributes;
 using SocialWeave.Models.AbstractClasses;
 using System.ComponentModel.DataAnnotations;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Numerics;
 using System.ComponentModel;
 using Microsoft.AspNetCore.Identity;
+using SocialWeave.Models.Interfaces;
 
 namespace SocialWeave.Models.ConcreteClasses
 {
@@ -16,7 +16,6 @@ namespace SocialWeave.Models.ConcreteClasses
         [Required]
         [Key]
         public Guid Id { get; set; }
-
         public byte[]? PictureProfile { get; set; }
 
         [Required(ErrorMessage = "{0} is required!")]
@@ -43,7 +42,6 @@ namespace SocialWeave.Models.ConcreteClasses
         [DisplayName("Phone")]
         public string? PhoneNumber { get; set; }
         public List<Post>? Posts { get; set; }
-        public List<Feedback>? Feedbacks { get; set; }
 
         public User() 
         {

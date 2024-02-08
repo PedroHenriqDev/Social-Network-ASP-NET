@@ -29,7 +29,7 @@
 
                 <div class="mb-3">
                     <label for="ConfirmPassword" class="form-label">Confirm Password: </label>
-                    <input type="password" class="form-control text-bg-dark" id="ConfirmPassword" placeholder="Confirm your password">
+                    <input type="password" class="form-control" id="ConfirmPassword" placeholder="Confirm your password">
                     <span class="text-danger" id="confirmPasswordError"></span>
                 </div>
                 <div class="mb-3">
@@ -38,7 +38,7 @@
                     <span class="text-danger" asp-validation-for="PhoneNumber"></span>
                 </div>
                 <div class="text-center">
-                <button type="submit" class="btn btn-success w-50">Register</button>
+                    <button type="submit" class="btn btn-success w-50">Register</button>
                 </div>
                 <hr />
                 <a class="w-50" asp-controller="User" asp-action="Login">Login</a>
@@ -47,18 +47,19 @@
     </div>
 </form>
 
-<script>
-    function validateForm() {
-        var password = document.getElementById("Password").value;
-        var confirmPassword = document.getElementById("ConfirmPassword").value;
+@section Scripts {
+    <script>
+        function validateForm() {
+            var password = document.getElementById("Password").value;
+            var confirmPassword = document.getElementById("ConfirmPassword").value;
 
+            if (password !== confirmPassword) {
+                document.getElementById("confirmPasswordError").innerText = "Passwords do not match.";
+                return false;
+            }
 
-        if (password !== confirmPassword) {
-            document.getElementById("confirmPasswordError").innerText = "Passwords do not match.";
-            return false;
+            document.getElementById("confirmPasswordError").innerText = "";
+            return true;
         }
-
-        document.getElementById("confirmPasswordError").innerText = "";
-        return true;
-    }
-</script>
+    </script>
+}

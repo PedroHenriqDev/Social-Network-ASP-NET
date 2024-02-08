@@ -22,31 +22,6 @@ namespace SocialWeave.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SocialWeave.Models.AbstractClasses.Feedback", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("FeedbackType")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Feedbacks");
-
-                    b.HasDiscriminator<string>("FeedbackType").HasValue("Feedback");
-
-                    b.UseTphMappingStrategy();
-                });
-
             modelBuilder.Entity("SocialWeave.Models.AbstractClasses.Post", b =>
                 {
                     b.Property<Guid>("Id")
@@ -77,6 +52,60 @@ namespace SocialWeave.Migrations
                     b.HasDiscriminator<string>("PostType").HasValue("Post");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Comment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Like", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CommentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.User", b =>
@@ -122,48 +151,6 @@ namespace SocialWeave.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Comment", b =>
-                {
-                    b.HasBaseType("SocialWeave.Models.AbstractClasses.Feedback");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("PostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasIndex("PostId");
-
-                    b.HasDiscriminator().HasValue("Comment");
-                });
-
-            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Like", b =>
-                {
-                    b.HasBaseType("SocialWeave.Models.AbstractClasses.Feedback");
-
-                    b.Property<Guid?>("CommentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("PostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasIndex("CommentId");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("Feedbacks", t =>
-                        {
-                            t.Property("PostId")
-                                .HasColumnName("Like_PostId");
-                        });
-
-                    b.HasDiscriminator().HasValue("Like");
-                });
-
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.PostWithImage", b =>
                 {
                     b.HasBaseType("SocialWeave.Models.AbstractClasses.Post");
@@ -182,17 +169,6 @@ namespace SocialWeave.Migrations
                     b.HasDiscriminator().HasValue("PostWithoutImage");
                 });
 
-            modelBuilder.Entity("SocialWeave.Models.AbstractClasses.Feedback", b =>
-                {
-                    b.HasOne("SocialWeave.Models.ConcreteClasses.User", "User")
-                        .WithMany("Feedbacks")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("SocialWeave.Models.AbstractClasses.Post", b =>
                 {
                     b.HasOne("SocialWeave.Models.ConcreteClasses.User", "User")
@@ -209,40 +185,49 @@ namespace SocialWeave.Migrations
                     b.HasOne("SocialWeave.Models.AbstractClasses.Post", null)
                         .WithMany("Comments")
                         .HasForeignKey("PostId");
+
+                    b.HasOne("SocialWeave.Models.ConcreteClasses.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Like", b =>
                 {
                     b.HasOne("SocialWeave.Models.ConcreteClasses.Comment", "Comment")
-                        .WithMany("Likes")
+                        .WithMany()
                         .HasForeignKey("CommentId");
 
                     b.HasOne("SocialWeave.Models.AbstractClasses.Post", "Post")
-                        .WithMany("Like")
+                        .WithMany("Likes")
                         .HasForeignKey("PostId");
+
+                    b.HasOne("SocialWeave.Models.ConcreteClasses.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Comment");
 
                     b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SocialWeave.Models.AbstractClasses.Post", b =>
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("Like");
+                    b.Navigation("Likes");
                 });
 
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.User", b =>
                 {
-                    b.Navigation("Feedbacks");
-
                     b.Navigation("Posts");
-                });
-
-            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Comment", b =>
-                {
-                    b.Navigation("Likes");
                 });
 #pragma warning restore 612, 618
         }

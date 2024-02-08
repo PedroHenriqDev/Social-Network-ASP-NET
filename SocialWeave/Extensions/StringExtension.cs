@@ -7,22 +7,26 @@ namespace SocialWeave.Extensions
 
         public static string CutName(this string thisString)
         {
-            if(thisString.Length <= 10) 
+            if (thisString.Length <= 10)
             {
                 return thisString;
             }
-
-            return thisString.Substring(0, 10) + "...";
+            else
+            {
+                return thisString.Substring(0, 10) + "...";
+            }
         }
 
         public static string CutDescription(this string thisString) 
         {
-            if(thisString.Length <= 40) 
+            if (thisString.Length <= 300)
             {
                 return thisString;
             }
-
-            return thisString.Substring(0, 40) + "...";
+            else
+            {
+                return thisString.Substring(0, 300) + "...";
+            }
         }
 
     }

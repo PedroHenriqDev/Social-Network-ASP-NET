@@ -36,21 +36,7 @@ namespace SocialWeave.Controllers
             return View();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Like(Guid id) 
-        {
-            try
-            {
-                await _postService.AddLikeAsync(await _postService.FindPostById(id), 
-                    await _userService.FindUserByNameAsync(User.Identity.Name));
-                return RedirectToAction("Index", "Home");
-            }
-            catch (NullReferenceException) 
-            {
-                return RedirectToAction("Index", "Home");
-            }
-        }
+    
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -68,6 +54,22 @@ namespace SocialWeave.Controllers
             }
 
             return RedirectToAction(nameof(CreatePost));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Like(Guid id)
+        {
+            try
+            {
+                await _postService.AddLikeInPostAsync(await _postService.FindPostById(id),
+                await _userService.FindUserByNameAsync(User.Identity.Name));
+                return RedirectToAction("Index", "Home");
+            }
+            catch (NullReferenceException)
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
     }
 }

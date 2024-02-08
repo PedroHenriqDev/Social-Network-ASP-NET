@@ -12,8 +12,8 @@ using SocialWeave.Data;
 namespace SocialWeave.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240207203949_Second")]
-    partial class Second
+    [Migration("20240208203116_First")]
+    partial class First
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,32 +83,6 @@ namespace SocialWeave.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Dislike", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CommentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("PostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CommentId");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Dislikes");
                 });
 
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Like", b =>
@@ -224,33 +198,14 @@ namespace SocialWeave.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Dislike", b =>
-                {
-                    b.HasOne("SocialWeave.Models.ConcreteClasses.Comment", null)
-                        .WithMany("Dislikes")
-                        .HasForeignKey("CommentId");
-
-                    b.HasOne("SocialWeave.Models.AbstractClasses.Post", null)
-                        .WithMany("Dislikes")
-                        .HasForeignKey("PostId");
-
-                    b.HasOne("SocialWeave.Models.ConcreteClasses.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Like", b =>
                 {
-                    b.HasOne("SocialWeave.Models.ConcreteClasses.Comment", null)
-                        .WithMany("Likes")
+                    b.HasOne("SocialWeave.Models.ConcreteClasses.Comment", "Comment")
+                        .WithMany()
                         .HasForeignKey("CommentId");
 
-                    b.HasOne("SocialWeave.Models.AbstractClasses.Post", null)
-                        .WithMany("Like")
+                    b.HasOne("SocialWeave.Models.AbstractClasses.Post", "Post")
+                        .WithMany("Likes")
                         .HasForeignKey("PostId");
 
                     b.HasOne("SocialWeave.Models.ConcreteClasses.User", "User")
@@ -258,6 +213,10 @@ namespace SocialWeave.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Comment");
+
+                    b.Navigation("Post");
 
                     b.Navigation("User");
                 });
@@ -265,15 +224,6 @@ namespace SocialWeave.Migrations
             modelBuilder.Entity("SocialWeave.Models.AbstractClasses.Post", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("Dislikes");
-
-                    b.Navigation("Like");
-                });
-
-            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Comment", b =>
-                {
-                    b.Navigation("Dislikes");
 
                     b.Navigation("Likes");
                 });

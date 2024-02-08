@@ -39,7 +39,7 @@ namespace SocialWeave.Models.Services
 
         public async Task<Post> FindPostById(Guid id) 
         {
-            return await _context.Posts.FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Posts.Include(x => x.User).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task RemovePost(Post post)
@@ -49,34 +49,30 @@ namespace SocialWeave.Models.Services
                 throw new NullReferenceException("It is not possible to delete a null post");
             }
 
-            foreach (var comment in post.Comments) 
+            foreach(var comment in post.Comments) 
             {
-                _context.Feedbacks.Remove(comment);
+                _context.Comments.Remove(comment);
             }
 
-            foreach(var like in post.Like) 
+            foreach (var like in post.Likes)
             {
-                _context.Feedbacks.Remove(like);
+                _context.Likes.Remove(like);
             }
 
             _context.Remove(post);
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddLikeAsync(Post post, User user) 
+        public async Task AddLikeInPostAsync(Post post, User user) 
         {
+
             if(post == null || user == null) 
             {
                 throw new NullReferenceException();
             }
 
-            Like like = new Like()
-            {
-                User = user,
-                Id = new Guid(),
-            };
-
-            await _context.Feedbacks.AddAsync(like);
+            Like like = new Like(new Guid(), user, post);
+            await _context.Likes.AddAsync(like);
             await _context.SaveChangesAsync();
         }
 
@@ -88,6 +84,8 @@ namespace SocialWeave.Models.Services
             }
 
             IEnumerable<Post> posts =  await _context.Posts.Include(x => x.User)
+                .Include(x => x.Comments)
+                .Include(x => x.Likes)
                 .Where(x => x.User.Name != user.Name)
                 .Take(20)
                 .ToListAsync();

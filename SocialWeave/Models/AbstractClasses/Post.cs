@@ -8,10 +8,12 @@ namespace SocialWeave.Models.AbstractClasses
         [Key]
         public Guid Id { get; set; }
         public string Description { get; set; }
+
         [Required(ErrorMessage = "{0} is required")]
         public DateTime Date { get; set; } = DateTime.Now;
-        public List<Comment>? Comments {  get; set; }
-        public ICollection<Like>? Like { get; set; }
+
+        public List<Like>? Likes { get; set; }
+        public IEnumerable<Comment>? Comments { get; set; }
         public User User { get; set; }
 
         public Post() 
@@ -24,5 +26,6 @@ namespace SocialWeave.Models.AbstractClasses
             Description = description;
             Date = date;
         }
+
     }
 }
