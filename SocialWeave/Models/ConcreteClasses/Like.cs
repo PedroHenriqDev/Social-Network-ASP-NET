@@ -1,11 +1,14 @@
-﻿using SocialWeave.Models.Interfaces;
+﻿using Microsoft.Identity.Client;
+using SocialWeave.Models.AbstractClasses;
 
 namespace SocialWeave.Models.ConcreteClasses
 {
-    public class Like : IFeedBack
+    sealed public class Like : Feedback
     {
         public Guid Id { get; set; }
         public User User { get; set; }
+        public Post? Post { get; set; }
+        public Comment? Comment { get; set; }
 
         public Like() 
         {

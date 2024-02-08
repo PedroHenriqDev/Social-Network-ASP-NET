@@ -8,6 +8,7 @@ namespace SocialWeave.Attributes
         {
             if(value == null) return false;
 
+
             string name = (string)value;
             bool hasLetter = name.Any(char.IsLetter);
             return hasLetter;

@@ -1,6 +1,40 @@
-﻿@if(User.Identity.IsAuthenticated)
+﻿@model IEnumerable<SocialWeave.Models.AbstractClasses.Post>
+
+@if (User.Identity.IsAuthenticated)
 {
-    
+    <div class="container text-center">
+        @if (Model != null)
+        {
+
+
+            @foreach (var post in Model)
+            {
+                <div class="post">
+                    @if (post.User.PictureProfile == null)
+                    {
+                        <div class="post-header text-xxl-start">
+                            <h5><i class="bi bi-person-circle mx-2"></i>@post.User.Name</h5>
+                        </div>
+                    }
+                    <div class="post-content text-xxl-start">
+                        <p>@post.Description</p>
+                    </div>
+                    <div class="text-xxl-start">
+                        <a asp-action="Like" asp-controller="Post"><i class="bi bi-heart"></i></a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center">
+
+                <h4><strong>No new posts</strong></h4>
+                <a asp-action="Index" asp-controller="Home"><i class="bi bi-arrow-clockwise"></i></a>
+            </div>
+
+        }
+    </div>
 }
 else
 {
@@ -9,3 +43,37 @@ else
         <a class="nav-link" style="font-size: 18px; margin-right: 15px;" asp-area="" asp-controller="User" asp-action="Login"><i class="bi bi-box-arrow-in-right mx-2"></i>Login</a>
     </div>
 }
+
+<style>
+    .container {
+        margin-top: 100px;
+        max-width: 600px; /* Define a largura máxima do contêiner */
+    }
+
+    .post {
+        border-radius: 10px;
+        background: linear-gradient(135deg, #6a0dad, #0000);
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        padding: 20px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto; 
+    }
+
+    .post-header {
+        border-bottom: 1px solid #fff;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+    }
+
+        .post-header h3 {
+            margin-top: 0;
+            color: #fff; /* Cor do texto branco */
+        }
+
+    .post-content p {
+        margin-bottom: 0;
+        color: #fff; /* Cor do texto branco */
+    }
+</style>

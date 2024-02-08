@@ -25,7 +25,7 @@ namespace SocialWeave.Controllers
 
         public IActionResult Login()
         {
-            if(Request.Method != "get") 
+            if(User.Identity.IsAuthenticated) 
             {
                 return NotFound();
             }
@@ -84,6 +84,7 @@ namespace SocialWeave.Controllers
             {
                 ModelState.Remove(nameof(user.Salt));
                 ModelState.Remove(nameof(user.Posts));
+                ModelState.Remove(nameof(user.Feedbacks));
                 ModelState.Remove(nameof(user.ResetToken));
                 ModelState.Remove(nameof(user.PictureProfile));
                 // Checks if the model is valid and attempts to create the user

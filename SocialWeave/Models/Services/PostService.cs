@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialWeave.Data;
+using SocialWeave.Exceptions;
 using SocialWeave.Models.AbstractClasses;
 using SocialWeave.Models.ConcreteClasses;
 using SocialWeave.Models.ViewModels;
@@ -10,7 +11,6 @@ namespace SocialWeave.Models.Services
 {
     public class PostService
     {
-
         private readonly ApplicationDbContext _context;
 
         public PostService(ApplicationDbContext context) 
@@ -37,6 +37,11 @@ namespace SocialWeave.Models.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<Post> FindPostById(Guid id) 
+        {
+            return await _context.Posts.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public async Task RemovePost(Post post)
         {
             if (post == null) 
@@ -46,26 +51,52 @@ namespace SocialWeave.Models.Services
 
             foreach (var comment in post.Comments) 
             {
-                _context.Comments.Remove(comment);
+                _context.Feedbacks.Remove(comment);
             }
 
             foreach(var like in post.Like) 
             {
-                _context.Likes.Remove(like);
-            }
-
-            foreach(var dislike in post.Dislikes) 
-            {
-                _context.Dislikes.Remove(dislike);
+                _context.Feedbacks.Remove(like);
             }
 
             _context.Remove(post);
             await _context.SaveChangesAsync();
         }
 
+        public async Task AddLikeAsync(Post post, User user) 
+        {
+            if(post == null || user == null) 
+            {
+                throw new NullReferenceException();
+            }
+
+            Like like = new Like()
+            {
+                User = user,
+                Id = new Guid(),
+            };
+
+            await _context.Feedbacks.AddAsync(like);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<Post>> FindPostsAsync(User user) 
         {
-            return await _context.Posts.Where(x => x.User.Name != user.Name).Take(20).ToListAsync();
+            if(user == null) 
+            {
+                throw new UserException(" ");
+            }
+
+            IEnumerable<Post> posts =  await _context.Posts.Include(x => x.User)
+                .Where(x => x.User.Name != user.Name)
+                .Take(20)
+                .ToListAsync();
+
+            if(posts.Count() == 0) 
+            {
+                throw new PostException(" ");
+            }
+            return posts;
         }
     }
 }

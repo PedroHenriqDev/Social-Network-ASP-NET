@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SocialWeave.Exceptions;
+using SocialWeave.Models.AbstractClasses;
+using SocialWeave.Models.ConcreteClasses;
 using SocialWeave.Models.Services;
 using SocialWeave.Models.ViewModels;
+using System.Runtime.ExceptionServices;
 
 namespace SocialWeave.Controllers
 {
@@ -30,6 +34,22 @@ namespace SocialWeave.Controllers
         public IActionResult CreatePost()
         {
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Like(Guid id) 
+        {
+            try
+            {
+                await _postService.AddLikeAsync(await _postService.FindPostById(id), 
+                    await _userService.FindUserByNameAsync(User.Identity.Name));
+                return RedirectToAction("Index", "Home");
+            }
+            catch (NullReferenceException) 
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]

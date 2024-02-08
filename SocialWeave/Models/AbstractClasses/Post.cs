@@ -12,7 +12,6 @@ namespace SocialWeave.Models.AbstractClasses
         public DateTime Date { get; set; } = DateTime.Now;
         public List<Comment>? Comments {  get; set; }
         public ICollection<Like>? Like { get; set; }
-        public ICollection<Dislike>? Dislikes { get; set; }
         public User User { get; set; }
 
         public Post() 

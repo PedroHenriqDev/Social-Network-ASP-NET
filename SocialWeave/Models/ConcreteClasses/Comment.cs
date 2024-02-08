@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Identity.Client;
 using SocialWeave.Models.AbstractClasses;
-using SocialWeave.Models.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using SocialWeave.Models.AbstractClasses;
 
 namespace SocialWeave.Models.ConcreteClasses
 {
-    public class Comment : IFeedBack
+    sealed public class Comment : Feedback
     {
         public Guid Id { get; set; }
         [Required(ErrorMessage = "{0} is required!")] 
@@ -14,8 +14,7 @@ namespace SocialWeave.Models.ConcreteClasses
         public DateTime Date { get; set; }
         public User User { get; set; }
         public ICollection<Like> Likes { get; set; }
-        public ICollection<Dislike> Dislikes { get; set; }
-
+        
         public Comment() 
         {
         }
