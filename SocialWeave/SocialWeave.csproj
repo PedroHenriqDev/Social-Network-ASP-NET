@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Extensions\DateTimeExtension.cs~RF15a3768.TMP" />
     <None Remove="Models\ConcreteClasses\xwrtydjj.ucc~" />
   </ItemGroup>
 
