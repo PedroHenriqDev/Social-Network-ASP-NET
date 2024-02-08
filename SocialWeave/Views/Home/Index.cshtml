@@ -19,24 +19,22 @@
                     }
                     <div class="post-content text-xxl-start">
                         <p>@post.Description.CutDescription()</p>
-                    </div>
-                    <div class="post-header text-xxl-start">
+                        <div class="post-header"></div>
+                        <div class="text-xxl-start d-flex align-items-center">
+                            @if (post.Likes != null && post.Likes.Any(l => l.User.Name == User.Identity.Name))
+                            {
+                                <form method="post" asp-action="Dislike" asp-route-id="@post.Id" asp-controller="Post" class="d-flex align-items-center">
+                                    <button type="submit" class="btn btn-purple"><i class="bi bi-heart-fill text-danger"><p class="m-0">@post.Likes.CountLikes()</p></i><p class="m-0"></button>
+                                </form>
+
+                            }
+                            else
+                            {
+                                <form method="post" asp-action="Like" asp-route-id="@post.Id" asp-controller="Post" class="d-flex align-items-center">
+                                    <button type="submit" class="btn btn-purple"><i class="bi bi-heart text-danger"></i><p class="m-0">@post.Likes.CountLikes()</p></button>
+                                </form>
+                            }
                         </div>
-                        <div class="text-xxl-start">
-                        @if (post.Likes != null && post.Likes.Any(l => l.User.Name == User.Identity.Name))
-                        {
-                            <form method="post" asp-action="Dislike" asp-route-id="@post.Id" asp-controller="Post">
-                                <button type="submit" class="btn btn-link"><i class="bi bi-heart-fill text-danger"></i></button>
-                                <p>@Model.Count()</p>
-                            </form>
-                        }
-                        else
-                        {
-                            <form method="post" asp-action="Like" asp-route-id="@post.Id" asp-controller="Post">
-                                <button type="submit" class="btn btn-link"><i class="bi bi-heart text-danger"></i></button>
-                                <p>@Model.Count()</p>
-                            </form>
-                        }
                     </div>
                 </div>
             }
@@ -61,7 +59,7 @@ else
 <style>
     .container {
         margin-top: 100px;
-        max-width: 600px; 
+        max-width: 600px;
     }
 
     .post {
@@ -83,11 +81,15 @@ else
 
         .post-header h3 {
             margin-top: 0;
-            color: #fff; 
+            color: #fff;
         }
 
     .post-content p {
         margin-bottom: 0;
-        color: #fff; 
+        color: #fff;
+    }
+
+    .btn-purple {
+        background-color: #6a0dad;
     }
 </style>
