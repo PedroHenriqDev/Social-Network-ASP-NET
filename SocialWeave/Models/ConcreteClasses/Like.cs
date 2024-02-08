@@ -11,6 +11,10 @@ namespace SocialWeave.Models.ConcreteClasses
         public Comment? Comment { get; set;}
         public Post? Post { get; set; }
 
+        public Like() 
+        {
+        }
+
         public Like(Guid id, User user, Post post)
         {
             Id = id;

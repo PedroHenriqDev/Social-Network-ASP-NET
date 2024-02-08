@@ -27,12 +27,14 @@
                         {
                             <form method="post" asp-action="Dislike" asp-route-id="@post.Id" asp-controller="Post">
                                 <button type="submit" class="btn btn-link"><i class="bi bi-heart-fill text-danger"></i></button>
+                                <p>@Model.Count()</p>
                             </form>
                         }
                         else
                         {
                             <form method="post" asp-action="Like" asp-route-id="@post.Id" asp-controller="Post">
                                 <button type="submit" class="btn btn-link"><i class="bi bi-heart text-danger"></i></button>
+                                <p>@Model.Count()</p>
                             </form>
                         }
                     </div>

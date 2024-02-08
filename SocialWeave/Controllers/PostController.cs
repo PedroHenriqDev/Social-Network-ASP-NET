@@ -36,8 +36,6 @@ namespace SocialWeave.Controllers
             return View();
         }
 
-    
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreatePost(PostViewModel postVM) 
@@ -67,6 +65,22 @@ namespace SocialWeave.Controllers
                 return RedirectToAction("Index", "Home");
             }
             catch (NullReferenceException)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Dislike(Guid id) 
+        {
+            try 
+            {
+                await _postService.RemoveLikeInPostAsync(await _postService.FindPostById(id),
+                await _userService.FindUserByNameAsync(User.Identity.Name));
+                return RedirectToAction("Index", "Home");
+            }
+            catch(NullReferenceException) 
             {
                 return RedirectToAction("Index", "Home");
             }

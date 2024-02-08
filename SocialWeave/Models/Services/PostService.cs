@@ -76,6 +76,24 @@ namespace SocialWeave.Models.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task RemoveLikeInPostAsync(Post post, User user)
+        {
+            if(user == null) 
+            {
+                throw new NullReferenceException();  
+            }
+
+            Like likeToRemove = await _context.Likes.FirstOrDefaultAsync(x => x.Post.Id == post.Id && x.User.Id == user.Id);
+
+            if (likeToRemove == null)
+            {
+                throw new NullReferenceException();
+            }
+
+            _context.Likes.Remove(likeToRemove);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<Post>> FindPostsAsync(User user) 
         {
             if(user == null) 
