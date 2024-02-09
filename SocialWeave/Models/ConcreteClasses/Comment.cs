@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using Microsoft.Identity.Client;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using SocialWeave.Models.Interfaces;
+using SocialWeave.Models.AbstractClasses;
 
 namespace SocialWeave.Models.ConcreteClasses
 {
@@ -10,19 +9,20 @@ namespace SocialWeave.Models.ConcreteClasses
         public Guid Id { get; set; }
         public User User { get; set; }
 
-        [Required(ErrorMessage = "{0} is required!")] 
+        [Required(ErrorMessage = "{0} is required!")]
+        [StringLength(100, MinimumLength = 1)]
         public string Text {  get; set; }
 
-        public DateTime Date { get; set; }
+        public Post? Post {  get; set; }
+        public DateTime Date { get; set; } = DateTime.Now;
         
         public Comment() 
         {
         }
 
-        public Comment(string text, DateTime date,User user)
+        public Comment(Guid id, string text, User user, Post post)
         {
             Text = text;
-            Date = date;
         }
     }
 }

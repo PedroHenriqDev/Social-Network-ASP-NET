@@ -54,7 +54,7 @@ namespace SocialWeave.Models.Services
         /// </summary>
         public async Task<User> FindUserByNameAsync(string name) 
         {
-            return await _context.Users.FirstOrDefaultAsync(x => x.Name == name);
+            return await _context.Users.Include(x => x.Posts).FirstOrDefaultAsync(x => x.Name == name);
         }
 
         /// <summary>

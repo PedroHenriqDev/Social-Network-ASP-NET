@@ -16,30 +16,51 @@
                     </div>
                     @if (post.User.PictureProfile == null)
                     {
-                        <div class="post-header text-xxl-start">
+                        <div class="post-header text-xxl-start me-2">
                             <h5><i class="bi bi-person-circle mx-2"></i>@post.User.Name.CutName()</h5>
                         </div>
                     }
-                   
                     <div class="post-content text-xxl-start">
                         <p>@post.Description.CutDescription()</p>
                         <div class="post-header"></div>
-                        <div class="text-xxl-start d-flex align-items-center">
-                            @if (post.Likes != null && post.Likes.Any(l => l.User.Name == User.Identity.Name))
-                            {
-                                <form method="post" asp-action="Dislike" asp-route-id="@post.Id" asp-controller="Post" class="d-flex align-items-center">
-                                    <button type="submit" class="btn btn-purple"><i class="bi bi-heart-fill text-danger"><p class="m-0">@post.Likes.CountLikes()</p></i><p class="m-0"></button>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <button class="btn btn-outline-primary toggle-comments" data-post-id="@post.Id"><i class="bi bi-chat-left-text"></i></button>
+                            <div class="d-flex align-items-center">
+                                @if (post.Likes != null && post.Likes.Any(l => l.User.Name == User.Identity.Name))
+                                {
+                                    <form method="post" asp-action="Dislike" asp-route-id="@post.Id" asp-controller="Post" class="d-flex align-items-center me-3">
+                                        <button type="submit" class="btn btn-purple"><i class="bi bi-heart-fill text-danger"><p class="m-0">@post.Likes.CountLikes()</p></i></button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form method="post" asp-action="Like" asp-route-id="@post.Id" asp-controller="Post" class="d-flex align-items-center me-3">
+                                        <button type="submit" class="btn btn-purple"><i class="bi bi-heart text-danger"></i><p class="m-0 text-danger">@post.Likes.CountLikes()</p></button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                        <div class="text-xxl">
+                            <div class="post-comments" data-post-id="@post.Id" style="display: none;">
+                                
+                                    <div class="comment">
+                                            <p class="text-center text-primary">Comments</p>
+                                            <hr />
+                                        <a class="btn btn-outline-primary" asp-route-id="@post.Id" asp-action="CreateComment" asp-controller="Post"><i class="bi bi-chat-left text-primary"></i> + </a>
+                                    </div>
+                                @foreach (var comment in post.Comments)
+                                {
+                                    
+                                }
+                                <form class="add-comment-form" style="display: none;">
+                                    <input type="text" class="form-control" placeholder="Add a comment..." />
+                                    <button type="submit" class="btn btn-primary">Add</button>
                                 </form>
-                            }
-                            else
-                            {
-                                <form method="post" asp-action="Like" asp-route-id="@post.Id" asp-controller="Post" class="d-flex align-items-center">
-                                    <button type="submit" class="btn btn-purple"><i class="bi bi-heart text-danger"></i><p class="m-0">@post.Likes.CountLikes()</p></button>
-                                </form>
-                            }
+                            </div>
                         </div>
                     </div>
                 </div>
+                <hr />
             }
         }
         else
@@ -59,40 +80,14 @@ else
     </div>
 }
 
-<style>
-    .container {
-        margin-top: 100px;
-        max-width: 600px;
-    }
-
-    .post {
-        border-radius: 10px;
-        background: linear-gradient(135deg, #6a0dad, #0000);
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-        padding: 20px;
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .post-header {
-        border-bottom: 1px solid #fff;
-        margin-bottom: 10px;
-        padding-bottom: 10px;
-    }
-
-        .post-header h3 {
-            margin-top: 0;
-            color: #fff;
-        }
-
-    .post-content p {
-        margin-bottom: 0;
-        color: #fff;
-    }
-
-    .btn-purple {
-        background-color: #6a0dad;
-    }
-</style>
+@section Scripts {
+    <script>
+        document.querySelectorAll('.toggle-comments').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const postId = btn.getAttribute('data-post-id');
+                const comments = document.querySelector(`.post-comments[data-post-id="${postId}"]`);
+                comments.style.display = comments.style.display === 'none' ? 'block' : 'none';
+            });
+        });
+    </script>
+}
