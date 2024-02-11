@@ -22,6 +22,7 @@
                     }
                     <div class="post-content text-xxl-start">
                         <p>@post.Description.CutDescription()</p>
+                        <a class="btn btn-primary"
                         <div class="post-header"></div>
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <button class="btn btn-outline-primary toggle-comments" data-post-id="@post.Id"><i class="bi bi-chat-left-text"></i></button>
@@ -42,16 +43,35 @@
                         </div>
                         <div class="text-xxl">
                             <div class="post-comments" data-post-id="@post.Id" style="display: none;">
-                                
-                                    <div class="comment">
-                                            <p class="text-center text-primary">Comments</p>
-                                            <hr />
-                                        <a class="btn btn-outline-primary" asp-route-id="@post.Id" asp-action="CreateComment" asp-controller="Post"><i class="bi bi-chat-left text-primary"></i> + </a>
-                                    </div>
-                                @foreach (var comment in post.Comments)
-                                {
-                                    
-                                }
+                                <div class="comment">
+                                    <p class="text-center text-primary">Comments</p>
+                                    <a class="btn btn-outline-primary text-xxl-end" asp-route-id="@post.Id" asp-action="CreateComment" asp-controller="Post"><i class="bi bi-chat-left text-primary"></i> +</a>
+                                    <hr />
+                                    @if (post.Comments == null || !post.Comments.Any())
+                                    {
+                                        <h6 class="text-center">No exist comments in this post</h6>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-center">
+                                            @foreach (var comment in post.Comments)
+                                            {
+                                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                                    <div>
+                                                        <h9 class="text-primary d-inline-block"><i class="bi bi-person-circle mx-2 text-primary"></i>@comment.User.Name.CutName()</h9>
+                                                        <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
+                                                    </div>
+                                                    <div>
+                                                        @if (post.Comments == null || !post.Comments.Any())
+                                                        {
+                                                            <h6 class="text-center">No exist comments in this post</h6>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
                                 <form class="add-comment-form" style="display: none;">
                                     <input type="text" class="form-control" placeholder="Add a comment..." />
                                     <button type="submit" class="btn btn-primary">Add</button>

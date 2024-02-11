@@ -42,7 +42,7 @@ namespace SocialWeave.Models.Services
         }
 
         /// <summary>
-        /// Finds a user by email asynchronously.
+        /// Finds a user by email asynchronously.'
         /// </summary>
         public async Task<User> FindUserByEmailAsync(string email)
         {
