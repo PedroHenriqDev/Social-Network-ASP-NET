@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AspNetCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using SocialWeave.Data;
 using SocialWeave.Exceptions;
 using SocialWeave.Models.AbstractClasses;
@@ -119,6 +121,17 @@ namespace SocialWeave.Models.Services
             }
 
             _context.Likes.Remove(likeToRemove);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddConnectionAsync(User user, User currentUser) 
+        {
+            if(user == null || currentUser == null) 
+            {
+                throw new UserException("Impossible find this user!");
+            }
+
+            await _context.Connections.AddAsync(new Connection(user, currentUser));
             await _context.SaveChangesAsync();
         }
 
