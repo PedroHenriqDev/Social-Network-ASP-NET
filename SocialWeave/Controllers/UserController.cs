@@ -8,6 +8,7 @@ using SocialWeave.Exceptions;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Data;
+using SocialWeave.Models.AbstractClasses;
 
 namespace SocialWeave.Controllers
 {
@@ -130,7 +131,19 @@ namespace SocialWeave.Controllers
             {
                 return RedirectToAction(nameof(Error), new {message = ex.Message});
             }
-        } 
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddConnection() 
+        {
+            if(Request.Method != "POST")
+            {
+                return NotFound();
+            }
+
+            return View();
+        }
 
         #region Controller Send Email To Recovery Password
         public IActionResult ForgotPassword()

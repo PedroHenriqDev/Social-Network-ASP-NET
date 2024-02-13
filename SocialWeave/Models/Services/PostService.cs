@@ -148,6 +148,24 @@ namespace SocialWeave.Models.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task AddLikeInCommentAsync(Comment comment, User user)
+        {
+            if(comment == null) 
+            {
+                throw new NullReferenceException();
+            }
+
+            Like like = new Like()
+            {
+                Id = new Guid(),
+                User = user,
+                Comment = comment
+            };
+
+            await _context.Likes.AddAsync(like);
+            await _context.SaveChangesAsync();
+        }
+
         /// <summary>
         /// Finds posts asynchronously excluding those authored by the specified user.
         /// </summary>
@@ -172,6 +190,16 @@ namespace SocialWeave.Models.Services
                 throw new PostException("No posts found");
             }
             return posts;
+        }
+
+        public async Task<Comment> FindCommentByIdAsync(Guid id)
+        {
+            if(id == null) 
+            {
+                throw new NullReferenceException("Object null!");
+            }
+
+            return _context.Comments.FirstOrDefault(x => x.Id == id);
         }
     }
 }
