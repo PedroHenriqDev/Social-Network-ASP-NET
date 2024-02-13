@@ -106,7 +106,7 @@ namespace SocialWeave.Models.Services
         /// <param name="user">The user who liked the post.</param>
         public async Task RemoveLikeInPostAsync(Post post, User user)
         {
-            if (user == null)
+            if (user == null || user == null)
             {
                 throw new NullReferenceException("User cannot be null");
             }
@@ -115,7 +115,7 @@ namespace SocialWeave.Models.Services
 
             if (likeToRemove == null)
             {
-                throw new NullReferenceException("Like not found");
+                throw new NullReferenceException("Object null!");
             }
 
             _context.Likes.Remove(likeToRemove);
@@ -150,9 +150,9 @@ namespace SocialWeave.Models.Services
 
         public async Task AddLikeInCommentAsync(Comment comment, User user)
         {
-            if(comment == null) 
+            if(comment == null || user == null) 
             {
-                throw new NullReferenceException();
+                throw new NullReferenceException("Object null!");
             }
 
             Like like = new Like()
@@ -164,6 +164,24 @@ namespace SocialWeave.Models.Services
 
             await _context.Likes.AddAsync(like);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveLikeInCommentAsync(Comment comment, User user) 
+        {
+            if(comment == null || user == null) 
+            {
+                throw new NullReferenceException("Object null!");
+            }
+
+            Like likeToRemove = await _context.Likes.FirstOrDefaultAsync(x => x.Comment.Id == comment.Id && x.User.Id == user.Id);
+            
+            if(likeToRemove == null) 
+            {
+                throw new NullReferenceException("Object null");
+            }
+
+            _context.Likes.Remove(likeToRemove);
+            _context.SaveChanges();
         }
 
         /// <summary>
@@ -179,7 +197,6 @@ namespace SocialWeave.Models.Services
             }
 
             IEnumerable<Post> posts = await _context.Posts.Include(x => x.User)
-                .Include(x => x.Comments)
                 .Include(x => x.Likes)
                 .Where(x => x.User.Name != user.Name)
                 .Take(20)
@@ -189,9 +206,18 @@ namespace SocialWeave.Models.Services
             {
                 throw new PostException("No posts found");
             }
+
+            foreach (var post in posts)
+            {
+                post.Comments = await _context.Comments.Include(x => x.User)
+                    .Include(x => x.Likes)
+                    .Where(x => x.Post.Id == post.Id)
+                    .Take(20)
+                    .ToListAsync();
+            }
+
             return posts;
         }
-
         public async Task<Comment> FindCommentByIdAsync(Guid id)
         {
             if(id == null) 

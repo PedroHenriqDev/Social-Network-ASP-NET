@@ -3,6 +3,7 @@
 
 @model IEnumerable<SocialWeave.Models.AbstractClasses.Post>
 
+ 
 @if (User.Identity.IsAuthenticated)
 {
     <div class="container text-center">
@@ -11,21 +12,19 @@
             @foreach (var post in Model)
             {
                 <div class="post">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="post-header text-xxl-start">
+                            <h5><i class="bi bi-person-circle mx-2"></i>@post.User.Name.CutName()</h5>
+                        </div>
+                        <form method="post" asp-action="Like" asp-route-id="@post.Id" asp-controller="Post" class="align-self-start">
+                            <button type="submit" class="btn btn-outline-primary">Connect</button>
+                        </form>
+                    </div>
                     <div class="text-center">
                         <p>@post.Date.Duration()</p>
                     </div>
-                    @if (post.User.PictureProfile == null)
-                    {
-                        <div class="post-header text-xxl-start me-2">
-                            <h5><i class="bi bi-person-circle mx-2"></i>@post.User.Name.CutName()</h5>
-                        </div>
-                    }
                     <div class="post-content text-xxl-start">
                         <p>@post.Description.CutDescription()</p>
-                        <form method="post" asp-action="Like" asp-route-id="@post.Id" asp-controller="Post" class="d-flex align-items-center me-3">
-                            <button type="submit" class="btn btn-outline-primary">Connect</button>
-                        </form>
-                        <div class="post-header"></div>
                         <div class="d-flex justify-content-between mb-3">
                             <button class="btn btn-outline-primary toggle-comments" data-post-id="@post.Id"><i class="bi bi-chat-left-text"></i></button>
                             <div class="d-flex flex-column">
@@ -64,7 +63,7 @@
                                                         <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
                                                     </div>
                                                     <div class="comment-like ms-auto">
-                                                        @if (comment.Likes != null && post.Likes.Any(l => l.User.Name == User.Identity.Name))
+                                                        @if (comment.Likes != null && comment.Likes.Count() != 0 && post.Likes.Any(l => l.User.Name == User.Identity.Name))
                                                         {
                                                             <form method="post" asp-action="DislikeComment" asp-route-id="@comment.Id" asp-controller="Post">
                                                                 <button type="submit" class="btn btn-like-comment"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
@@ -91,7 +90,7 @@
                         </div>
                     </div>
                 </div>
-                <hr />
+                <hr /> 
             }
         }
         else
@@ -111,6 +110,7 @@ else
     </div>
 }
 
+
 @section Scripts {
     <script>
         document.querySelectorAll('.toggle-comments').forEach(btn => {
@@ -118,6 +118,12 @@ else
                 const postId = btn.getAttribute('data-post-id');
                 const comments = document.querySelector(`.post-comments[data-post-id="${postId}"]`);
                 comments.style.display = comments.style.display === 'none' ? 'block' : 'none';
+            });
+        });
+
+        document.querySelectorAll('.btn-like-comment').forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                event.stopPropagation();
             });
         });
     </script>

@@ -89,9 +89,9 @@ namespace SocialWeave.Controllers
                 await _userService.FindUserByNameAsync(User.Identity.Name));
                 return RedirectToAction("Index", "Home");
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
             }
         }
 
@@ -110,9 +110,9 @@ namespace SocialWeave.Controllers
                 await _userService.FindUserByNameAsync(User.Identity.Name));
                 return RedirectToAction("Index", "Home");
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException ex)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction(nameof(Error), new {message = ex.Message });
             }
         }
 
@@ -149,11 +149,45 @@ namespace SocialWeave.Controllers
             }
         }
 
-            /// <summary>
-            /// Displays the error page with the error details.
-            /// </summary>
-            /// <returns>The error page view.</returns>
-            [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LikeComment(Guid id) 
+        {
+            try 
+            {
+                await _postService.AddLikeInCommentAsync(await _postService.FindCommentByIdAsync(id), 
+                    await _userService.FindUserByNameAsync(User.Identity.Name));
+                return RedirectToAction("Index", "Home");
+            } 
+            catch(NullReferenceException ex) 
+            {
+                return RedirectToAction(nameof(Error), new {message = ex.Message });
+            }
+            
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DislikeComment(Guid id)
+        {
+            try
+            {
+                await _postService.RemoveLikeInCommentAsync(await _postService.FindCommentByIdAsync(id),
+                    await _userService.FindUserByNameAsync(User.Identity.Name));
+                return RedirectToAction("Index", "Home");
+            }
+            catch (NullReferenceException ex)
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
+
+        }
+
+        /// <summary>
+        /// Displays the error page with the error details.
+        /// </summary>
+        /// <returns>The error page view.</returns>
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
             public IActionResult Error()
             {
                 return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

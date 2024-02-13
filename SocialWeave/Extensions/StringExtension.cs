@@ -43,13 +43,13 @@ namespace SocialWeave.Extensions
 
         public static string CutComment(this string thisString)
         {
-            if (thisString.Length <= 30)
+            if (thisString.Length <= 100)
             {
                 return thisString;
             }
             else
             {
-                return thisString.Substring(0, 30) + "...";
+                return thisString.Substring(0, 100) + "...";
             }
         }
     }
