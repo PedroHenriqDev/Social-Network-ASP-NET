@@ -29,7 +29,7 @@ namespace SocialWeave.Models.Services
         /// <param name="user">The user creating the post.</param>
         public async Task CreatePostAsync(PostViewModel postVM, User user)
         {
-            if (postVM == null)
+            if (postVM == null || user == null)
             {
                 throw new NullReferenceException("It is not possible to create a null post");
             }
@@ -43,6 +43,26 @@ namespace SocialWeave.Models.Services
             };
 
             await _context.AddAsync(post);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task CreatePostAsync(PostImageViewModel postImageVM, User user) 
+        {
+            if(postImageVM == null || user == null) 
+            {
+                throw new NullReferenceException("It is not possible to create a null post");
+            }
+
+            PostWithImage post = new PostWithImage()
+            {
+                Date = DateTime.Now,
+                User = user,
+                Description = postImageVM.Description,
+                Id = Guid.NewGuid(),
+                Image = postImageVM.Image,
+            };
+
+            await _context.Posts.AddAsync(post);
             await _context.SaveChangesAsync();
         }
 

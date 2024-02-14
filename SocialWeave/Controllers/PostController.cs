@@ -76,6 +76,26 @@ namespace SocialWeave.Controllers
             return RedirectToAction(nameof(CreatePost));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreatePostImage(PostImageViewModel postImageVM) 
+        {
+            try 
+            {
+                if(ModelState.IsValid && Request.Method == "POST") 
+                {
+                    await _postService.CreatePostAsync(postImageVM, 
+                          await _userService.FindUserByNameAsync(User.Identity.Name));
+                    return RedirectToAction("Index", "Home");                  
+                }
+                    return View(postImageVM);
+            }
+            catch (NullReferenceException ex) 
+            {
+                return RedirectToAction(nameof(Error), new {message = ex.Message });
+            }
+        }
+
         /// <summary>
         /// Likes a post with the specified ID.
         /// </summary>
