@@ -79,20 +79,16 @@ namespace SocialWeave.Controllers
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(User user)
+        public async Task<IActionResult> Register(UserCreateViewModel userCreateVM)
         {
             // Remove sensitive information from the model's ModelState
             try
             {
-                ModelState.Remove(nameof(user.Salt));
-                ModelState.Remove(nameof(user.Posts));
-                ModelState.Remove(nameof(user.ResetToken));
-                ModelState.Remove(nameof(user.PictureProfile));
                 // Checks if the model is valid and attempts to create the user
                 if (ModelState.IsValid)
                 {
                     // Redirects to the Login action if registration is successful
-                    await _userService.CreateUserAsync(user);
+                    await _userService.CreateUserAsync(userCreateVM);
                     return RedirectToAction(nameof(Login));
                 }
                 // Returns the registration view if there are model errors or if user creation fails
@@ -100,7 +96,7 @@ namespace SocialWeave.Controllers
             }
             catch(UserException ex) 
             {
-                return View(user);
+                return View(userCreateVM);
             }
             catch(IntegrityException ex) 
             {
@@ -144,6 +140,18 @@ namespace SocialWeave.Controllers
             }
 
             return View();
+        }
+
+        [HttpGet]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UserPage() 
+        {
+            if (Request.Method != "Get") 
+            {
+                return NotFound();
+            }
+            return View();
+            
         }
 
         #region Controller Send Email To Recovery Password

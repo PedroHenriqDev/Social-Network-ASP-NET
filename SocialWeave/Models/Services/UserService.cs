@@ -95,23 +95,31 @@ namespace SocialWeave.Models.Services
         /// <param name="user">The user to be created.</param>
         /// <exception cref="UserException">Exception thrown if there is an error creating the user.</exception>
         /// <exception cref="IntegrityException">Exception thrown if a concurrency error occurs in the database.</exception>
-        public async Task CreateUserAsync(User user)
-            {
+        public async Task CreateUserAsync(UserCreateViewModel userCreateVM)
+        {
             try
             {
-                if (await FindUserByEmailAsync(user.Email) != null)
+                if(await  FindUserByEmailAsync(userCreateVM.Email) != null) 
                 {
                     throw new UserException("Existing email");
                 }
 
-                if(await  FindUserByNameAsync(user.Name) != null) 
+                if (await FindUserByNameAsync(userCreateVM.Name) != null)
                 {
                     throw new UserException("Existing name");
                 }
 
+                User user = new User()
+                {
+                    Name = userCreateVM.Name,
+                    Email = userCreateVM.Email,
+                    Password = userCreateVM.Password,
+                    PhoneNumber = userCreateVM.PhoneNumber,
+                    BirthDate = userCreateVM.BirthDate,
+                    Id = new Guid(),
+                };
+
                 SetCryptPassword(user);
-                user.Id = Guid.NewGuid();
-                
                 await _context.AddAsync(user);
                 await _context.SaveChangesAsync();
             }
