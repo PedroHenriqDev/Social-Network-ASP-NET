@@ -1,4 +1,6 @@
 ﻿using SocialWeave.Models.AbstractClasses;
+using System.Buffers.Text;
+using System.Reflection.Metadata.Ecma335;
 
 namespace SocialWeave.Models.ConcreteClasses
 {
@@ -14,6 +16,11 @@ namespace SocialWeave.Models.ConcreteClasses
             : base(id, description, date)
         {
             Image = image;
+        }
+
+        public string ConvertImageToBase64() 
+        {
+            return Convert.ToBase64String(Image);
         }
     }
 }

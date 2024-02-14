@@ -78,23 +78,32 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreatePostImage(PostImageViewModel postImageVM) 
+        public async Task<IActionResult> CreatePostImage(PostImageViewModel postImageVM, string imageBytes)
         {
-            try 
+            try
             {
-                if(ModelState.IsValid && Request.Method == "POST") 
+                
+                ModelState.Remove(nameof(postImageVM.Image));
+                if (ModelState.IsValid)
                 {
-                    await _postService.CreatePostAsync(postImageVM, 
-                          await _userService.FindUserByNameAsync(User.Identity.Name));
-                    return RedirectToAction("Index", "Home");                  
+                    var byteStrings = imageBytes.Split(',');
+                    var bytes = byteStrings.Select(s => byte.Parse(s)).ToArray();
+                    postImageVM.Image = bytes;
+
+                    var currentUser = await _userService.FindUserByNameAsync(User.Identity.Name);
+
+                    await _postService.CreatePostAsync(postImageVM, currentUser);
+
+                    return RedirectToAction("Index", "Home");
                 }
-                    return View(postImageVM);
+                return View();
             }
-            catch (NullReferenceException ex) 
+            catch (NullReferenceException ex)
             {
-                return RedirectToAction(nameof(Error), new {message = ex.Message });
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
             }
         }
+
 
         /// <summary>
         /// Likes a post with the specified ID.
@@ -134,7 +143,7 @@ namespace SocialWeave.Controllers
             }
             catch (NullReferenceException ex)
             {
-                return RedirectToAction(nameof(Error), new {message = ex.Message });
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
             }
         }
 
@@ -147,7 +156,7 @@ namespace SocialWeave.Controllers
             }
             catch (PostException ex)
             {
-                return RedirectToAction(nameof(Error), new {message = ex.Message});
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
             }
         }
 
@@ -165,7 +174,7 @@ namespace SocialWeave.Controllers
 
                 return View(commentVM);
             }
-            catch (NullReferenceException) 
+            catch (NullReferenceException)
             {
                 return View(commentVM);
             }
@@ -173,19 +182,19 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LikeComment(Guid id) 
+        public async Task<IActionResult> LikeComment(Guid id)
         {
-            try 
+            try
             {
-                await _postService.AddLikeInCommentAsync(await _postService.FindCommentByIdAsync(id), 
+                await _postService.AddLikeInCommentAsync(await _postService.FindCommentByIdAsync(id),
                     await _userService.FindUserByNameAsync(User.Identity.Name));
                 return RedirectToAction("Index", "Home");
-            } 
-            catch(NullReferenceException ex) 
-            {
-                return RedirectToAction(nameof(Error), new {message = ex.Message });
             }
-            
+            catch (NullReferenceException ex)
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
+
         }
 
         [HttpPost]
@@ -220,17 +229,17 @@ namespace SocialWeave.Controllers
             }
         }
 
-            /// <summary>
-            /// Displays the error page with the error details.
-            /// </summary>
-            /// <returns>The error page view.</returns>
-            [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-            public IActionResult Error()
-            {
-                return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-            }
+        /// <summary>
+        /// Displays the error page with the error details.
+        /// </summary>
+        /// <returns>The error page view.</returns>
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
     }
-    }
+}
 
 
 

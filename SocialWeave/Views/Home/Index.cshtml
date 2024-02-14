@@ -43,6 +43,9 @@
                             <div class="post-meta">
                                 <p>@post.Date.Duration()</p>
                             </div>
+                            <div class="post-content text-xxl-center">
+
+                            </div>
                         </div>
                         <div class="post-content text-xxl-start">
                             <p>@post.Description.CutDescription()</p>
@@ -124,15 +127,19 @@ else
     </div>
 }
 
-@foreach (var postImage in Model)
+@foreach (var post in Model)
 {
-    if (postImage is PostWithImage)
+    if (post is PostWithImage)
     {
+        PostWithImage postImage = post as PostWithImage;
         <div class="post" style="margin-bottom: 80px;">
             <div class="post-header">
                 <h5><i class="bi bi-person-circle mx-2"></i>@postImage.User.Name.CutName()</h5>
                 <div class="post-meta">
                     <p>@postImage.Date.Duration()</p>
+                </div>
+                <div class="post-content text-xxl-center">
+                    <img src="data:image/png;base64,@(Convert.ToBase64String(postImage.Image))" />
                 </div>
             </div>
             <div class="post-content text-xxl-start">
