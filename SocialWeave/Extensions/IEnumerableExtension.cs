@@ -1,10 +1,17 @@
-﻿namespace SocialWeave.Extensions
+﻿using Microsoft.EntityFrameworkCore;
+using SocialWeave.Data;
+using SocialWeave.Models.ConcreteClasses;
+using SocialWeave.Models.Services;
+using System.Runtime.CompilerServices;
+
+namespace SocialWeave.Extensions
 {
     /// <summary>
     /// Provides extension methods for <see cref="IEnumerable{T}"/> collections.
     /// </summary>
     public static class IEnumerableExtension
     {
+
         /// <summary>
         /// Counts the number of elements in the <see cref="IEnumerable{T}"/> collection and returns a string representation of the count.
         /// </summary>
@@ -47,6 +54,19 @@
                 string result = amount.ToString().Substring(0, 4) + " M";
                 return result;
             }
+        }
+
+        public static async Task<bool> IsConnectedAsync<T>(this IEnumerable<T> thisIEnumerable,
+            string userReceivedConnected,
+            string userConnected)
+        {
+            if (thisIEnumerable == null || userConnected == null || userReceivedConnected == null) return false;
+
+            ApplicationDbContext context = new ApplicationDbContext();
+            User resultUserConnected = await context.Users.FirstOrDefaultAsync(x => x.Name == userConnected);
+            User resultUserReceivedConnected = await context.Users.FirstOrDefaultAsync(x => x.Name == userConnected);
+            return await context.Connections.AnyAsync(x => x.UserConnectedId == resultUserConnected.Id
+            && x.UserReceivedConnectionId == resultUserReceivedConnected.Id);
         }
     }
 }

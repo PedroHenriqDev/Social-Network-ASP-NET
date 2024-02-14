@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Security.Claims;
 using System.Data;
 using SocialWeave.Models.AbstractClasses;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace SocialWeave.Controllers
 {

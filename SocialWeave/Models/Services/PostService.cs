@@ -1,5 +1,4 @@
-﻿using AspNetCore;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SocialWeave.Data;
 using SocialWeave.Exceptions;
@@ -8,6 +7,7 @@ using SocialWeave.Models.ConcreteClasses;
 using SocialWeave.Models.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -131,7 +131,7 @@ namespace SocialWeave.Models.Services
                 throw new UserException("Impossible find this user!");
             }
 
-            await _context.Connections.AddAsync(new Connection(user, currentUser));
+            await _context.Connections.AddAsync(new Connection(user, currentUser, new Guid()));
             await _context.SaveChangesAsync();
         }
 
@@ -211,6 +211,7 @@ namespace SocialWeave.Models.Services
 
             IEnumerable<Post> posts = await _context.Posts.Include(x => x.User)
                 .Include(x => x.Likes)
+                .Include(x => x.User.Connections)
                 .Where(x => x.User.Name != user.Name)
                 .Take(20)
                 .ToListAsync();
@@ -231,6 +232,7 @@ namespace SocialWeave.Models.Services
 
             return posts;
         }
+
         public async Task<Comment> FindCommentByIdAsync(Guid id)
         {
             if(id == null) 

@@ -12,7 +12,7 @@ using SocialWeave.Data;
 namespace SocialWeave.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240208203116_First")]
+    [Migration("20240213224450_First")]
     partial class First
     {
         /// <inheritdoc />
@@ -71,7 +71,8 @@ namespace SocialWeave.Migrations
 
                     b.Property<string>("Text")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -83,6 +84,27 @@ namespace SocialWeave.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Connection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserConnectedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserReceivedConnectionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserConnectedId");
+
+                    b.HasIndex("UserReceivedConnectionId");
+
+                    b.ToTable("Connections");
                 });
 
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Like", b =>
@@ -149,7 +171,12 @@ namespace SocialWeave.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Users");
                 });
@@ -185,7 +212,7 @@ namespace SocialWeave.Migrations
 
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Comment", b =>
                 {
-                    b.HasOne("SocialWeave.Models.AbstractClasses.Post", null)
+                    b.HasOne("SocialWeave.Models.AbstractClasses.Post", "Post")
                         .WithMany("Comments")
                         .HasForeignKey("PostId");
 
@@ -195,13 +222,34 @@ namespace SocialWeave.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Post");
+
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Connection", b =>
+                {
+                    b.HasOne("SocialWeave.Models.ConcreteClasses.User", "UserConnected")
+                        .WithMany()
+                        .HasForeignKey("UserConnectedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SocialWeave.Models.ConcreteClasses.User", "UserReceivedConnection")
+                        .WithMany()
+                        .HasForeignKey("UserReceivedConnectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("UserConnected");
+
+                    b.Navigation("UserReceivedConnection");
                 });
 
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Like", b =>
                 {
                     b.HasOne("SocialWeave.Models.ConcreteClasses.Comment", "Comment")
-                        .WithMany()
+                        .WithMany("Likes")
                         .HasForeignKey("CommentId");
 
                     b.HasOne("SocialWeave.Models.AbstractClasses.Post", "Post")
@@ -221,6 +269,13 @@ namespace SocialWeave.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.User", b =>
+                {
+                    b.HasOne("SocialWeave.Models.ConcreteClasses.User", null)
+                        .WithMany("Connections")
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("SocialWeave.Models.AbstractClasses.Post", b =>
                 {
                     b.Navigation("Comments");
@@ -228,8 +283,15 @@ namespace SocialWeave.Migrations
                     b.Navigation("Likes");
                 });
 
+            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Comment", b =>
+                {
+                    b.Navigation("Likes");
+                });
+
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.User", b =>
                 {
+                    b.Navigation("Connections");
+
                     b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618

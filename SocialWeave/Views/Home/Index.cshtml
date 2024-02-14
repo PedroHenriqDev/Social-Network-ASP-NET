@@ -11,6 +11,13 @@
         margin: 40px 0;
     }
 
+    .post {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 40px;
+    }
+
     .post-header {
         display: flex;
         align-items: center;
@@ -36,9 +43,6 @@
                         <div class="post-meta">
                             <p>@post.Date.Duration()</p>
                         </div>
-                        <form method="post" asp-action="AddConnection" asp-route-id="@post.User.Id" asp-controller="Post" class="align-self-start">
-                            <button type="submit" class="btn btn-outline-primary">Connect</button>
-                        </form>\
                     </div>
                     <div class="post-content text-xxl-start">
                         <p>@post.Description.CutDescription()</p>
@@ -62,7 +66,7 @@
                         <div class="text-xxl">
                             <div class="post-comments" data-post-id="@post.Id" style="display: none;">
                                 <div class="comment">
-                                    <hr />
+                                    <div class="custom-border"></div>
                                     <p class="text-center text-primary">Comments</p>
                                     @if (post.Comments == null || !post.Comments.Any())
                                     {
@@ -107,7 +111,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="custom-border"></div>
             }
         }
         else

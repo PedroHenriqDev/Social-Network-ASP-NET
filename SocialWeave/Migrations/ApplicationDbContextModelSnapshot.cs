@@ -83,6 +83,27 @@ namespace SocialWeave.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Connection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserConnectedId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserReceivedConnectionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserConnectedId");
+
+                    b.HasIndex("UserReceivedConnectionId");
+
+                    b.ToTable("Connections");
+                });
+
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Like", b =>
                 {
                     b.Property<Guid>("Id")
@@ -201,6 +222,25 @@ namespace SocialWeave.Migrations
                     b.Navigation("Post");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Connection", b =>
+                {
+                    b.HasOne("SocialWeave.Models.ConcreteClasses.User", "UserConnected")
+                        .WithMany()
+                        .HasForeignKey("UserConnectedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SocialWeave.Models.ConcreteClasses.User", "UserReceivedConnection")
+                        .WithMany()
+                        .HasForeignKey("UserReceivedConnectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("UserConnected");
+
+                    b.Navigation("UserReceivedConnection");
                 });
 
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Like", b =>
