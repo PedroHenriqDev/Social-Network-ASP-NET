@@ -201,11 +201,11 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddConnection(Guid id)
+        public async Task<IActionResult> AddAdmiration(Guid id)
         {
             try
             {
-                await _postService.AddConnectionAsync(await _userService.FindUserByIdAsync(id), await _userService.FindUserByNameAsync(User.Identity.Name));
+                await _postService.AddAdmirationAsync(await _userService.FindUserByIdAsync(id), await _userService.FindUserByNameAsync(User.Identity.Name));
                 return RedirectToAction("Index", "Home");
             }
             catch (UserException ex)

@@ -150,7 +150,15 @@ namespace SocialWeave.Controllers
             {
                 return NotFound();
             }
-            return View(await _userService.FindUserByNameAsync(User.Identity.Name));
+
+            UserPageViewModel userPageVM = new UserPageViewModel
+            {
+                User = await _userService.FindUserByNameAsync(User.Identity.Name),
+                CountAdmirer = await _userService.CountAdmirersAsync(await _userService.FindUserByNameAsync(User.Identity.Name)),
+                CountAdmired = await _userService.CountAdmiredAsync(await _userService.FindUserByNameAsync(User.Identity.Name))
+            };
+
+            return View(userPageVM);
         }
 
         [HttpGet]

@@ -148,14 +148,14 @@ namespace SocialWeave.Models.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddConnectionAsync(User user, User currentUser) 
+        public async Task AddAdmirationAsync(User user, User currentUser) 
         {
             if(user == null || currentUser == null) 
             {
                 throw new UserException("Impossible find this user!");
             }
 
-            await _context.Connections.AddAsync(new Connection(user, currentUser, new Guid()));
+            await _context.Admirations.AddAsync(new Admiration(user, currentUser, new Guid()));
             await _context.SaveChangesAsync();
         }
 
@@ -235,7 +235,7 @@ namespace SocialWeave.Models.Services
 
             IEnumerable<Post> posts = await _context.Posts.Include(x => x.User)
                 .Include(x => x.Likes)
-                .Include(x => x.User.Connections)
+                .Include(x => x.User.Admirations)
                 .Where(x => x.User.Name != user.Name)
                 .Take(20)
                 .ToListAsync();

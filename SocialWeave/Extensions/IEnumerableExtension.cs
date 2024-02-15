@@ -53,18 +53,5 @@ namespace SocialWeave.Extensions
                 return result;
             }
         }
-
-        public static async Task<bool> IsConnectedAsync<T>(this IEnumerable<T> thisIEnumerable,
-            string userReceivedConnected,
-            string userConnected)
-        {
-            if (thisIEnumerable == null || userConnected == null || userReceivedConnected == null) return false;
-
-            ApplicationDbContext context = new ApplicationDbContext();
-            User resultUserConnected = await context.Users.FirstOrDefaultAsync(x => x.Name == userConnected);
-            User resultUserReceivedConnected = await context.Users.FirstOrDefaultAsync(x => x.Name == userConnected);
-            return await context.Connections.AnyAsync(x => x.UserConnectedId == resultUserConnected.Id
-            && x.UserReceivedConnectionId == resultUserReceivedConnected.Id);
-        }
     }
 }

@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using System.Net.Http;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using AspNetCore;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 
 namespace SocialWeave.Models.Services
 {
@@ -31,7 +33,7 @@ namespace SocialWeave.Models.Services
 
         public UserService(ApplicationDbContext context,
                IActionContextAccessor actionContextAccessor,
-               IHttpContextAccessor httpContextAccessor, 
+               IHttpContextAccessor httpContextAccessor,
                IUrlHelperFactory urlHelperFactory,
                IConfiguration configuration)
         {
@@ -53,9 +55,9 @@ namespace SocialWeave.Models.Services
         /// <summary>
         /// Finds a user by name asynchronously.
         /// </summary>
-        public async Task<User> FindUserByNameAsync(string name) 
+        public async Task<User> FindUserByNameAsync(string name)
         {
-            return await _context.Users.Include(x => x.Posts).Include(x => x.Connections).FirstOrDefaultAsync(x => x.Name == name);
+            return await _context.Users.Include(x => x.Posts).Include(x => x.Admirations).FirstOrDefaultAsync(x => x.Name == name);
         }
 
         /// <summary>
@@ -63,7 +65,12 @@ namespace SocialWeave.Models.Services
         /// </summary>
         public async Task<User> FindUserByIdAsync(Guid id)
         {
-            return await _context.Users.Include(x => x.Posts).Include(x => x.Connections).FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Users.Include(x => x.Posts).Include(x => x.Admirations).FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<Admiration> FindAdmirationByUserIdAsync(User userAdmired, User userAdmirer)
+        {
+            return await _context.Admirations.FirstOrDefaultAsync(x => x.UserAdmiredId == userAdmired.Id && x.UserAdmirerId == userAdmirer.Id);
         }
 
         /// <summary>
@@ -83,7 +90,7 @@ namespace SocialWeave.Models.Services
         public async Task<bool> ValidateUserCredentialsAsync(UserViewModel userVM)
         {
             User userDb = await FindUserByEmailAsync(userVM.Email);
-            if(userDb == null) 
+            if (userDb == null)
             {
                 return false;
             }
@@ -100,7 +107,7 @@ namespace SocialWeave.Models.Services
         {
             try
             {
-                if(await  FindUserByEmailAsync(userCreateVM.Email) != null) 
+                if (await FindUserByEmailAsync(userCreateVM.Email) != null)
                 {
                     throw new UserException("Existing email");
                 }
@@ -130,12 +137,12 @@ namespace SocialWeave.Models.Services
             }
         }
 
-        public async Task AddPictureProfileAsync(string imageBytes, User user) 
+        public async Task AddPictureProfileAsync(string imageBytes, User user)
         {
-           if(imageBytes == null || user == null) 
-           {
+            if (imageBytes == null || user == null)
+            {
                 throw new UserException("An error ocurred with reference null!");
-           }
+            }
 
             var byteStrings = imageBytes.Split(',');
             var bytes = byteStrings.Select(s => byte.Parse(s)).ToArray();
@@ -144,10 +151,10 @@ namespace SocialWeave.Models.Services
             _context.Update(user);
             await _context.SaveChangesAsync();
         }
-        
-        public async Task ChangeDescriptionAsync(string description, User user) 
+
+        public async Task ChangeDescriptionAsync(string description, User user)
         {
-            if(description == null || user == null)
+            if (description == null || user == null)
             {
                 throw new UserException("An error ocurred with reference null!");
             }
@@ -155,6 +162,100 @@ namespace SocialWeave.Models.Services
             user.Description = description;
             _context.Update(user);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveAdmirationAsync(User userAdmired, User userAdmirer) 
+        {
+            if(userAdmired == null || userAdmirer == null) 
+            {
+                throw new UserException("An error ocurred, null reference!");
+            }
+
+            Admiration admirationToRemove = await FindAdmirationByUserIdAsync(userAdmired, userAdmirer);
+            _context.Admirations.Remove(admirationToRemove);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddAdmirationAsync(User userAdmired, User userAdmirer)
+        {
+            if (userAdmired == null || userAdmirer == null)
+            {
+                throw new UserException("An error ocurred, null reference!");
+            }
+
+            Admiration admiration = new Admiration()
+            {
+                Id = new Guid(),
+                UserAdmiredId = userAdmired.Id,
+                UserAdmired = userAdmired,
+                UserAdmirerId = userAdmirer.Id,
+                UserAdmirer = userAdmirer
+            };
+
+            await _context.Admirations.AddAsync(admiration);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<string> CountAdmiredAsync(User user) 
+        {
+            if (user == null)
+            {
+                throw new UserException("User is null!");
+            }
+
+            var amountOfAdmired = await _context.Admirations.Where(x => x.UserAdmirerId == user.Id).ToListAsync();
+
+            if (amountOfAdmired.Count() < 1000)
+            {
+                return amountOfAdmired.Count().ToString();
+            }
+            else if (amountOfAdmired.Count() < 10000)
+            {
+                return amountOfAdmired.Count().ToString().Substring(0, 1) + " K";
+            }
+            else if (amountOfAdmired.Count() < 100000)
+            {
+                return amountOfAdmired.Count().ToString().Substring(0, 2) + " K";
+            }
+            else if (amountOfAdmired.Count() < 1000000)
+            {
+                return amountOfAdmired.Count().ToString().Substring(0, 3) + " K";
+            }
+            else
+            {
+                return amountOfAdmired.Count().ToString().Substring(0, 1) + " M";
+            }
+        }
+
+        public async Task<string> CountAdmirersAsync(User user)
+        {
+            if (user == null)
+            {
+                throw new UserException("User is null!");
+            }
+
+            var amountOfAdmirers = await _context.Admirations.Where(x => x.UserAdmirerId != user.Id && x.UserAdmiredId == user.Id).ToListAsync();
+
+            if (amountOfAdmirers.Count() < 999)
+            {
+                return amountOfAdmirers.Count().ToString();
+            }
+            else if (amountOfAdmirers.Count() < 9999)
+            {
+                return amountOfAdmirers.Count().ToString().Substring(0, 1) + " K";
+            }
+            else if (amountOfAdmirers.Count() < 99999) 
+            {
+                return amountOfAdmirers.Count().ToString().Substring(0, 2) + " K";
+            }
+            else if (amountOfAdmirers.Count() < 999999)
+            {
+                return amountOfAdmirers.Count().ToString().Substring(0, 3) + " K";
+            }
+            else 
+            {
+                return amountOfAdmirers.Count().ToString().Substring(0, 1) + " M";
+            }
         }
 
         #region Send Email

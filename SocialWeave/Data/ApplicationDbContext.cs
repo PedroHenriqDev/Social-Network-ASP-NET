@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SocialWeave.Helpers;
 using SocialWeave.Models.AbstractClasses;
 using SocialWeave.Models.ConcreteClasses;
 
@@ -18,7 +19,7 @@ namespace SocialWeave.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Like> Likes { get; set; }
-        public DbSet<Connection> Connections { get; set; }
+        public DbSet<Admiration> Admirations { get; set; }
         public DbSet<Comment> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,19 +31,19 @@ namespace SocialWeave.Data
                 .HasValue<PostWithoutImage>("PostWithoutImage")
                 .HasValue<PostWithImage>("PostWithImage");
 
-            modelBuilder.Entity<Connection>()
+            modelBuilder.Entity<Admiration>()
                 .HasKey(c => c.Id);
 
-            modelBuilder.Entity<Connection>()
-                .HasOne(c => c.UserConnected)
+            modelBuilder.Entity<Admiration>()
+                .HasOne(c => c.UserAdmired)
                 .WithMany()
-                .HasForeignKey(c => c.UserReceivedConnectionId)
+                .HasForeignKey(c => c.UserAdmiredId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Connection>()
-                .HasOne(c => c.UserReceivedConnection)
+            modelBuilder.Entity<Admiration>() 
+                .HasOne(c => c.UserAdmirer)
                 .WithMany()
-                .HasForeignKey(c => c.UserReceivedConnectionId)
+                .HasForeignKey(c => c.UserAdmirerId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
