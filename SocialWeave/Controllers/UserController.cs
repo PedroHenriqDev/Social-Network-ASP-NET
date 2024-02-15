@@ -175,7 +175,7 @@ namespace SocialWeave.Controllers
                 }
 
                 await _userService.AddPictureProfileAsync(imageBytes, await _userService.FindUserByNameAsync(User.Identity.Name));
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction(nameof(UserPage));
             }
             catch (UserException)
             {

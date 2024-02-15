@@ -156,7 +156,6 @@
                     </div>
                     <div class="post-content text-xxl-start">
                         <div class="d-flex justify-content-between mb-3" style="margin-top: 20px;">
-                            <!-- Adicionando margem inferior -->
                             <button class="btn btn-outline-primary toggle-comments" data-post-id="@postImage.Id"><i class="bi bi-chat-left-text"></i></button>
                             <div class="d-flex flex-column">
                                 @if (postImage.Likes != null && postImage.Likes.Any(l => l.User.Name == User.Identity.Name))

@@ -75,18 +75,10 @@ namespace SocialWeave.Controllers
         {
             try
             {
-                
                 ModelState.Remove(nameof(postImageVM.Image));
                 if (ModelState.IsValid)
                 {
-                    var byteStrings = imageBytes.Split(',');
-                    var bytes = byteStrings.Select(s => byte.Parse(s)).ToArray();
-                    postImageVM.Image = bytes;
-
-                    var currentUser = await _userService.FindUserByNameAsync(User.Identity.Name);
-
-                    await _postService.CreatePostAsync(postImageVM, currentUser);
-
+                    await _postService.CreatePostAsync(postImageVM, await _userService.FindUserByNameAsync(User.Identity.Name), imageBytes);
                     return RedirectToAction("Index", "Home");
                 }
                 return View();
