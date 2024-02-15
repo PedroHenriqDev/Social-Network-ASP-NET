@@ -1,15 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using SocialWeave.Exceptions;
-using SocialWeave.Models.AbstractClasses;
-using SocialWeave.Models.ConcreteClasses;
 using SocialWeave.Models.Services;
 using SocialWeave.Models.ViewModels;
 using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.ExceptionServices;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace SocialWeave.Controllers
 {

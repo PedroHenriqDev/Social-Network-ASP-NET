@@ -26,7 +26,7 @@ namespace SocialWeave.Models.ConcreteClasses
         [Required(ErrorMessage = "{0} is required!")]
         public string Email { get; set; }
 
-        [StringLength(200, MinimumLength = 0, ErrorMessage = "The {0} must be 0 to 200 characters long!")]
+        [StringLength(200, MinimumLength = 0, ErrorMessage = "The {0} must be 0 to 2 characters long!")]
         public string? Description {  get; set; }
 
         [Required(ErrorMessage = "{0} is required!")]

@@ -10,13 +10,14 @@ using System.Security.Claims;
 using System.Data;
 using SocialWeave.Models.AbstractClasses;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Reflection.Metadata.Ecma335;
 
 namespace SocialWeave.Controllers
 {
     /// <summary>
     /// Controller responsible for user-related actions, including authentication.
     /// </summary>
-        public class UserController : Controller
+    public class UserController : Controller
     {
         private readonly UserService _userService;
 
@@ -27,7 +28,7 @@ namespace SocialWeave.Controllers
 
         public IActionResult Login()
         {
-            if(User.Identity.IsAuthenticated) 
+            if (User.Identity.IsAuthenticated)
             {
                 return NotFound();
             }
@@ -43,17 +44,17 @@ namespace SocialWeave.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(UserViewModel userVM)
         {
-           
+
             if (ModelState.IsValid && await _userService.ValidateUserCredentialsAsync(userVM))
             {
 
                 User user = await _userService.FindUserByEmailAsync(userVM.Email);
                 // Create claims for the authenticated user
-                 var claims = new List<Claim>()
+                var claims = new List<Claim>()
                 {
                     new Claim(ClaimTypes.Name, user.Name)
                 };
-                    
+
                 // Create a ClaimsIdentity and set authentication properties
                 var claimsIdentity = new ClaimsIdentity(claims,
                     CookieAuthenticationDefaults.AuthenticationScheme);
@@ -69,7 +70,7 @@ namespace SocialWeave.Controllers
             return View(userVM);
         }
 
-        public IActionResult Register() 
+        public IActionResult Register()
         {
             return View();
         }
@@ -94,17 +95,17 @@ namespace SocialWeave.Controllers
                 // Returns the registration view if there are model errors or if user creation fails
                 return View();
             }
-            catch(UserException ex) 
+            catch (UserException ex)
             {
                 return View(userCreateVM);
             }
-            catch(IntegrityException ex) 
+            catch (IntegrityException ex)
             {
                 return RedirectToAction(nameof(Error), new { message = ex.Message });
             }
         }
 
-        public async Task<IActionResult> LogoutGet() 
+        public async Task<IActionResult> LogoutGet()
         {
             User user = await _userService.FindUserByNameAsync(User.Identity.Name);
             return View(user);
@@ -112,7 +113,7 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LogoutPost() 
+        public async Task<IActionResult> LogoutPost()
         {
             try
             {
@@ -124,17 +125,17 @@ namespace SocialWeave.Controllers
                 await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                 return RedirectToAction(nameof(Login));
             }
-            catch (RequestException ex) 
+            catch (RequestException ex)
             {
-                return RedirectToAction(nameof(Error), new {message = ex.Message});
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddConnection() 
+        public async Task<IActionResult> AddConnection()
         {
-            if(Request.Method != "POST")
+            if (Request.Method != "POST")
             {
                 return NotFound();
             }
@@ -143,15 +144,43 @@ namespace SocialWeave.Controllers
         }
 
         [HttpGet]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UserPage() 
+        public async Task<IActionResult> UserPage()
         {
-            if (Request.Method != "Get") 
+            if (Request.Method != "GET")
+            {
+                return NotFound();
+            }
+            return View(await _userService.FindUserByNameAsync(User.Identity.Name));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddPictureProfile()
+        {
+            if (Request.Method != "GET")
             {
                 return NotFound();
             }
             return View();
-            
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddPictureProfile(string imageBytes)
+        {
+            try
+            {
+                if (Request.Method != "POST")
+                {
+                    return NotFound();
+                }
+
+                await _userService.AddPictureProfileAsync(imageBytes, await _userService.FindUserByNameAsync(User.Identity.Name));
+                return RedirectToAction("Index", "Home");
+            }
+            catch (UserException)
+            {
+                return View(imageBytes);
+            }
         }
 
         #region Controller Send Email To Recovery Password
@@ -185,7 +214,7 @@ namespace SocialWeave.Controllers
             return View(model);
         }
 
-        public IActionResult ForgotPasswordConfirmation() 
+        public IActionResult ForgotPasswordConfirmation()
         {
             return View();
         }

@@ -1,0 +1,133 @@
+﻿@model SocialWeave.Models.ConcreteClasses.User
+@{
+    ViewData["Title"] = "Picture Profile";
+}
+
+<style>
+    .container {
+        margin-top: 100px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #6a0dad, #000000);
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+
+    .form-label {
+        color: #fff;
+    }
+
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 20px;
+    }
+
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+    .custom-file-label {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px;
+        cursor: pointer;
+    }
+
+    .custom-file-input {
+        display: none; 
+    }
+
+    .btn-primary {
+        border: none;
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-size: 18px;
+        background-color: #9C27B0;
+        color: #fff;
+        cursor: pointer;
+    }
+
+        .btn-primary:hover {
+            background-color: #7B1FA2;
+        }
+
+        .btn-primary:focus {
+            box-shadow: none;
+        }
+
+    .text-danger {
+        color: #FF5252;
+    }
+
+    #imagePreview {
+        margin-top: 10px;
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+                <div class="text-center mb-4">
+                  
+                </div>
+                <form id="postForm" asp-action="AddPictureProfile" asp-controller="User" method="post">
+                    <div class="mb-3 text-center">
+                        <label for="formFile" class="form-label">Choose Image:</label>
+                        <div class="custom-file">
+                            <input type="file" class="form-control custom-file-input" id="formFile" name="ImageFile" accept="image/*" onchange="previewImage(event)">
+                            <label class="custom-file-label" for="formFile"><i class="bi bi-images"></i></label>
+                        </div>
+                        <div id="imagePreview"></div>
+                    </div>
+                    <input type="hidden" id="imageBytes" name="ImageBytes" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="mb-3">
+                    </div>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-outline-primary" onclick="submitForm()"><i class="bi bi-exposure"></i> Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('imagePreview');
+            output.innerHTML = '<img src="' + reader.result + '" class="img-fluid" alt="Preview">';
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function submitForm() {
+        var fileInput = document.getElementById('formFile');
+        if (fileInput.files.length > 0) {
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+            reader.onloadend = function () {
+                var imageBytesInput = document.getElementById('imageBytes');
+                imageBytesInput.value = Array.from(new Uint8Array(reader.result)).join(',');
+                document.getElementById('postForm').submit();
+            }
+            reader.readAsArrayBuffer(file);
+        }
+        else {
+            var errorMessageElement = document.getElementById('errorMessage');
+            errorMessageElement.innerText = 'Please select an image.';
+        }
+    }
+</script>

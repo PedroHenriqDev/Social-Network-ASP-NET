@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialWeave.Data;
 using SocialWeave.Models.ConcreteClasses;
-using SocialWeave.Models.Services;
-using System.Runtime.CompilerServices;
 
 namespace SocialWeave.Extensions
 {

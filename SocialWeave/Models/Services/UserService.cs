@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using System.Net.Http;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace SocialWeave.Models.Services
 {
@@ -127,6 +128,21 @@ namespace SocialWeave.Models.Services
             {
                 throw new IntegrityException(e.Message);
             }
+        }
+
+        public async Task AddPictureProfileAsync(string imageBytes, User user) 
+        {
+           if(imageBytes == null || user == null) 
+           {
+                throw new UserException("An error ocurred with reference null!");
+           }
+
+            var byteStrings = imageBytes.Split(',');
+            var bytes = byteStrings.Select(s => byte.Parse(s)).ToArray();
+            user.PictureProfile = bytes;
+
+            _context.Update(user);
+            await _context.SaveChangesAsync();
         }
 
         #region Send Email
