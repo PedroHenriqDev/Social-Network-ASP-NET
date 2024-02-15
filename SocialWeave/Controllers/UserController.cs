@@ -183,6 +183,21 @@ namespace SocialWeave.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeDescription(string description)
+        {
+            try 
+            {
+                await _userService.ChangeDescriptionAsync(description, await _userService.FindUserByNameAsync(User.Identity.Name));
+                return RedirectToAction(nameof(UserPage));
+            }
+            catch (UserException ex) 
+            {
+                return RedirectToAction(nameof(UserPage));
+            }
+        }
+
         #region Controller Send Email To Recovery Password
         public IActionResult ForgotPassword()
         {

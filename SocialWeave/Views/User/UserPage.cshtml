@@ -4,15 +4,15 @@
 @model SocialWeave.Models.ConcreteClasses.User
 
 <div class="text-center">
-@if(User.Identity.Name == Model.Name)
-{
+    @if (User.Identity.Name == Model.Name)
+    {
 
-    <h4 class="text-light">Your profile</h4>
-}
-else
-{
-    <h4>Profile of @Model.Name</h4>
-}
+        <h4 class="text-light">Your profile</h4>
+    }
+    else
+    {
+        <h4>Profile of @Model.Name</h4>
+    }
 </div>
 
 <div class="user-profile">
@@ -41,20 +41,46 @@ else
 
 @if (User.Identity.Name == Model.Name)
 {
-    <form asp-action="ChangeDescription" asp-controller="User" method="post">
-        <div class="description-container">
-            <div class="description-text">
-            <label asp-for="Description" class="form-label">Description:</label>
-            <textarea class="form-control bg-black text-light" rows="5" asp-for="Description"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
-        </div>
+    <form id="changeDescriptionForm" asp-action="ChangeDescription" asp-controller="User" method="post">
+        <div class="description-birthdate-container">
+            <div class="description-container text-center ">
+                <div class="description-text">
+                    <label asp-for="Description" class="form-label">Description:</label>
+                    <textarea id="descriptionTextArea" class="form-control bg-black text-light" rows="5" asp-for="Description"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="birthdate-container">
+                <div class="text-end">
+                    <p>Birth Date: </p>
+                    <h9>@Model.BirthDate.ToString("dd/MM/yyyy")</h9>
+                </div>
+            </div>
         </div>
     </form>
 }
 else
 {
-    
+    <div class="description-container text-center">
+        <div class="description-text bg-black text-light p-2">
+            <label asp-for="Description" class="form-label">Description:</label>
+            <div class="form-control" readonly>
+                @Model.Description
+            </div>
+        </div>
+    </div>
 }
+
+@if(User.Identity.Name != Model.Name)
+{
+    <div class="text-center">
+        <form asp-action="AddConnection" asp-controller="User" method="post">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-outline-primary">Connect</button>
+        </form>
+    </div>
+}
+
 <div class="custom-border"></div>
 <style>
     .custom-border {
@@ -68,7 +94,7 @@ else
         border: 1px solid #ccc;
         border-radius: 8px;
         padding: 20px;
-        margin-bottom: 80px; 
+        margin-bottom: 80px;
     }
 
     .post-header {
@@ -81,16 +107,23 @@ else
         text-align: center;
     }
 
+    .description-birthdate-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
     .description-container {
         background-color: black;
-        padding: 10px;
-        margin-top: 20px;
         width: 40%;
     }
 
-    .description-text {
-        color: white;
+    .birthdate-container {
+        width: 40%;
+        margin-top: 20px;
+        text-align: end;
     }
+
+   
 </style>
 
 @if (Model == null)
@@ -100,6 +133,9 @@ else
         <a asp-action="Index" asp-controller="Home"><i class="bi bi-arrow-clockwise"></i></a>
     </div>
 }
+
+
+
 <div class="container text-center">
     @foreach (var post in Model.Posts)
     {
@@ -291,6 +327,12 @@ else
             btn.addEventListener('click', (event) => {
                 event.stopPropagation();
             });
+        });
+        document.getElementById('descriptionTextArea').addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault(); // Prevent line break
+                document.getElementById('changeDescriptionForm').submit(); // Submit the form
+            }
         });
     </script>
 }

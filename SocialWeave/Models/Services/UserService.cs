@@ -144,6 +144,18 @@ namespace SocialWeave.Models.Services
             _context.Update(user);
             await _context.SaveChangesAsync();
         }
+        
+        public async Task ChangeDescriptionAsync(string description, User user) 
+        {
+            if(description == null || user == null)
+            {
+                throw new UserException("An error ocurred with reference null!");
+            }
+
+            user.Description = description;
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+        }
 
         #region Send Email
         /// <summary>
