@@ -31,7 +31,11 @@ namespace SocialWeave.Extensions
         /// <returns>The modified string.</returns>
         public static string CutDescription(this string thisString)
         {
-            if (thisString.Length <= 500)
+            if(thisString == null) 
+            {
+                return " ";
+            }
+            else if (thisString.Length <= 500)
             {
                 return thisString;
             }
