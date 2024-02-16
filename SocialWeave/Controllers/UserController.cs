@@ -164,12 +164,16 @@ namespace SocialWeave.Controllers
                     return NotFound();
                 }
 
+                var user = await _userService.FindUserByNameAsync(User.Identity.Name);
+                var posts = user.Posts.OrderBy(x => x.Date).ToList();
+
                 UserPageViewModel userPageVM = new UserPageViewModel(_context,
-                    await _userService.FindUserByNameAsync(User.Identity.Name),
+                    user,
                     await _userService.CountAdmiredAsync(
-                    await _userService.FindUserByNameAsync(User.Identity.Name)),
+                    await _userService.FindUserByNameAsync(user.Name)),
                     await _userService.CountAdmirersAsync(
-                    await _userService.FindUserByNameAsync(User.Identity.Name)));
+                    await _userService.FindUserByNameAsync(user.Name)));
+                    userPageVM.User.Posts = posts;
 
                 return View(userPageVM);
             }
