@@ -15,8 +15,8 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using System.Net.Http;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using AspNetCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
+using SocialWeave.Models.AbstractClasses;
 
 namespace SocialWeave.Models.Services
 {
@@ -30,18 +30,21 @@ namespace SocialWeave.Models.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUrlHelperFactory _urlHelperFactory;
         private readonly IConfiguration _configuration;
+        private readonly PostService _postService;
 
         public UserService(ApplicationDbContext context,
                IActionContextAccessor actionContextAccessor,
                IHttpContextAccessor httpContextAccessor,
                IUrlHelperFactory urlHelperFactory,
-               IConfiguration configuration)
+               IConfiguration configuration,
+               PostService postService)
         {
             _context = context;
             _actionContextAccessor = actionContextAccessor;
             _httpContextAccessor = httpContextAccessor;
             _urlHelperFactory = urlHelperFactory;
             _configuration = configuration;
+            _postService = postService;
         }
 
         /// <summary>
@@ -57,7 +60,13 @@ namespace SocialWeave.Models.Services
         /// </summary>
         public async Task<User> FindUserByNameAsync(string name)
         {
-            return await _context.Users.Include(x => x.Posts).Include(x => x.Admirations).FirstOrDefaultAsync(x => x.Name == name);
+            User user = await _context.Users
+                .Include(x => x.Posts)
+                .Include(x => x.Admirations)
+                .FirstOrDefaultAsync(x => x.Name == name);
+
+            await _postService.CompletePostAsync(user);
+            return user;
         }
 
         /// <summary>
@@ -164,7 +173,7 @@ namespace SocialWeave.Models.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveAdmirationAsync(User userAdmired, User userAdmirer) 
+        public async Task RemoveAdmirationAsync(User userAdmirer, User userAdmired) 
         {
             if(userAdmired == null || userAdmirer == null) 
             {
@@ -176,7 +185,7 @@ namespace SocialWeave.Models.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddAdmirationAsync(User userAdmired, User userAdmirer)
+        public async Task AddAdmirationAsync(User userAdmirer, User userAdmired)
         {
             if (userAdmired == null || userAdmirer == null)
             {

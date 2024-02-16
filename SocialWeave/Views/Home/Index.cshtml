@@ -15,18 +15,24 @@
             border: 1px solid #ccc;
             border-radius: 8px;
             padding: 20px;
-            margin-bottom: 40px;
+            margin-bottom: 0px;
         }
 
         .post-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
         }
 
-        .post-meta {
-            text-align: center;
-        }
+
+    .btn-deep-dark {
+        background-color: #1a1a1a;
+        color: #ffffff;
+        border: 1px solid #ffffff;
+        border-radius: 4px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
     </style>
 
 
@@ -45,16 +51,29 @@
             {
                 if (post is PostWithoutImage)
                 {
-                    <div class="post" style="margin-bottom: 80px;">
-                        <div class="post-header">
-                            <h5><i class="bi bi-person-circle mx-2"></i>@post.User.Name.CutName()</h5>
-                            <div class="post-meta">
-                                <p>@post.Date.Duration()</p>
+                <div class="post" style="margin-bottom: 80px;">
+                    <div class="post-header">
+                        @if (post.User.PictureProfile == null)
+                        {
+                            <div class="text-xxl-start">
+                                <form asp-action="UserPageWithParams" asp-controller="User" method="get">
+                                    <input type="hidden" name="name" value="@post.User.Name" />
+                                    <button type="submit" class="btn text-light"><i class="bi bi-person-circle me-2"></i>@post.User.Name.CutName()</button>
+                                </form>
                             </div>
-                            <div class="post-content text-xxl-center">
+                        }
+                        else
+                        {
+                            <form asp-action="UserPageWithParams" asp-controller="User" method="get">
+                                <input type="hidden" name="name" value="@post.User.Name" />
+                                <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(post.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
+                            </form>
+                        }
+                        <div style="margin-right: 20px">
+                                <p >@post.Date.Duration()</p>
                             </div>
                         </div>
-                        <div class="post-content text-xxl-start">
+                        <div class="post-content text-xxl-center">
                             <p>@post.Description.CutDescription()</p>
                             <div class="d-flex justify-content-between mb-3">
                                 <button class="btn btn-outline-primary toggle-comments" data-post-id="@post.Id"><i class="bi bi-chat-left-text"></i></button>
@@ -143,12 +162,25 @@
                 PostWithImage postImage = post as PostWithImage;
                 <div class="post" style="margin-bottom: 80px;">
                     <div class="post-header">
-                        <h5><i class="bi bi-person-circle mx-2"></i>@postImage.User.Name.CutName()</h5>
-                        <div class="post-meta">
+                    @if (post.User.PictureProfile == null)
+                    {
+                        <div class="text-xxl-start">
+                        <form asp-action="UserPageWithParams" asp-controller="User" method="get" asp-route-id="@post.User.Name">
+                            <button type="submit" class="btn text-light"><i class="bi bi-person-circle me-2"></i>@post.User.Name.CutName()</button>
+                        </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <form asp-action="UserPageWithParams" asp-controller="User" method="get" asp-route-id="@post.User.Name">
+                            <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(post.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
+                        </form>    
+                    }
+                        <div class="post-meta" style="margin-right: 20px">
                             <p>@postImage.Date.Duration()</p>
                         </div>
                     </div>
-                    <div class="post-content text-xxl-start">
+                    <div class="post-content text-xxl-center">
                         <p>@postImage.Description.CutDescription()</p>
                         <div class="post-content text-xxl-center">
                             <img src="data:image/png;base64,@(Convert.ToBase64String(postImage.Image))" class="img-fluid" style="max-width: 100%; height: auto;" />
@@ -224,7 +256,6 @@
             }
         }
     }
-
 
     @section Scripts {
         <script>

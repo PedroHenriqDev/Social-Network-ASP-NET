@@ -11,6 +11,7 @@ using System.Data;
 using SocialWeave.Models.AbstractClasses;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Reflection.Metadata.Ecma335;
+using SocialWeave.Data;
 
 namespace SocialWeave.Controllers
 {
@@ -20,10 +21,12 @@ namespace SocialWeave.Controllers
     public class UserController : Controller
     {
         private readonly UserService _userService;
+        private readonly ApplicationDbContext _context;
 
-        public UserController(UserService userService)
+        public UserController(UserService userService, ApplicationDbContext context)
         {
             _userService = userService;
+            _context = context;
         }
 
         public IActionResult Login()
@@ -151,14 +154,32 @@ namespace SocialWeave.Controllers
                 return NotFound();
             }
 
-            UserPageViewModel userPageVM = new UserPageViewModel
-            {
-                User = await _userService.FindUserByNameAsync(User.Identity.Name),
-                CountAdmirer = await _userService.CountAdmirersAsync(await _userService.FindUserByNameAsync(User.Identity.Name)),
-                CountAdmired = await _userService.CountAdmiredAsync(await _userService.FindUserByNameAsync(User.Identity.Name))
-            };
+            UserPageViewModel userPageVM = new UserPageViewModel(_context,
+                await _userService.FindUserByNameAsync(User.Identity.Name),
+                await _userService.CountAdmiredAsync(
+                await _userService.FindUserByNameAsync(User.Identity.Name)),
+                await _userService.CountAdmirersAsync(
+                await _userService.FindUserByNameAsync(User.Identity.Name)));
 
             return View(userPageVM);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UserPageWithParams(string name)
+        {
+            if (Request.Method != "GET")
+            {
+                return NotFound();
+            }
+
+            UserPageViewModel userPageVM = new UserPageViewModel(_context,
+                await _userService.FindUserByNameAsync(name),
+                await _userService.CountAdmiredAsync(
+                await _userService.FindUserByNameAsync(name)),
+                await _userService.CountAdmirersAsync(
+                await _userService.FindUserByNameAsync(name)));
+
+            return View("UserPage", userPageVM);
         }
 
         [HttpGet]
@@ -188,6 +209,48 @@ namespace SocialWeave.Controllers
             catch (UserException)
             {
                 return View(imageBytes);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveAdmiration(Guid id) 
+        {
+            if(Request.Method != "POST") 
+            {
+
+            }
+
+            try 
+            {
+                await _userService.RemoveAdmirationAsync(await _userService.FindUserByNameAsync(User.Identity.Name), 
+                    await _userService.FindUserByIdAsync(id));
+                return RedirectToAction(nameof(UserPage));
+            }
+            catch (UserException ex)
+            {
+                return RedirectToAction(nameof(UserPage), new {message = ex.Message});
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddAdmiration(Guid id) 
+        {
+            if(Request.Method != "POST") 
+            {
+                return NotFound();
+            }
+
+            try 
+            {
+                await _userService.AddAdmirationAsync(await _userService.FindUserByNameAsync(User.Identity.Name),
+                    await _userService.FindUserByIdAsync(id));
+                return RedirectToAction(nameof(UserPage));
+            }
+            catch(UserException ex) 
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message});  
             }
         }
 

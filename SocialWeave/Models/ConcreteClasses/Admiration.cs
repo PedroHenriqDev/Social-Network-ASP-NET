@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR.Protocol;
-using SocialWeave.Helpers;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -29,19 +28,5 @@ namespace SocialWeave.Models.ConcreteClasses
             Id = id;
         }
 
-        public async Task<bool> HaveAdmiredAsync(string nameUser, string nameCurrentUser) 
-        {
-            if (nameUser == null || nameCurrentUser == null)
-            {
-                return false;
-            }
-
-            if(UserAdmirer.Name == nameUser || UserAdmired.Name == nameCurrentUser)
-            {
-                return true;
-            }
-
-            return false;
-        }
     }
 }

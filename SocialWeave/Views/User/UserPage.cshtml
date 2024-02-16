@@ -15,68 +15,90 @@
     }
 </div>
 
-<div class="user-profile">
-    <div class="text-center">
-        <h2>@Model.User.Name</h2>
-        @if (Model.User.PictureProfile != null)
-        {
-            <div style="position: relative; display: inline-block;">
+<div class="user-profile" style="display: flex; flex-direction: column; align-items: center;">
+    <h2>@Model.User.Name</h2>
+    <div style="display: flex; align-items: center;">
+        <div style="margin-right: 220px;">
+            <h4 class="text-wrap">Admirers: @Model.CountAdmirer</h4>
+        </div>
+        <div style="position: relative;">
+            @if (Model.User.PictureProfile != null)
+            {
                 <img src="data:image/png;base64,@(Convert.ToBase64String(Model.User.PictureProfile))" class="img-fluid rounded-circle" style="width: 200px; height: 200px; object-fit: cover;" />
-            </div>
-            <div>
-                <p>
-                    Connected with @Model.User.Name.CutName()
-                </p>
-            </div>
+            }
             @if (User.Identity.Name == Model.User.Name && Model.User.PictureProfile != null)
             {
-                <div class="mt-2">
+                <div class="me-2 mx-3">
                     <a asp-action="AddPictureProfile" asp-controller="User"><i class="bi bi-file-image-fill mx-2"></i>Change picture</a>
                 </div>
             }
-        }
-        @if (User.Identity.Name == Model.User.Name && Model.User.PictureProfile == null)
+            @if (User.Identity.Name == Model.User.Name && Model.User.PictureProfile == null)
+            {
+                <div class="mt-2">
+                    <a asp-action="AddPictureProfile" asp-"><i class="bi bi-file-image-fill mx-2"></i>Add picture</a>
+                </div>
+            }
+        </div>
+        <div style="margin-left: 220px;">
+            <h4 class="text-wrap">Admire: @Model.CountAdmired</h4>
+        </div>
+    </div>
+    <div class="custom-border" style="margin-top: 90px"></div>
+
+    @if (Model.User.Name != User.Identity.Name)
+    {
+        @if (await Model.HaveAdmiredAsync(Model.User.Name, User.Identity.Name))
         {
-            <div class="mt-2">
-                <a asp-action="AddPictureProfile" asp-"><i class="bi bi-file-image-fill mx-2"></i>Add picture</a>
+            <div class="text-left">
+                <form asp-action="RemoveAdmiration" asp-controller="User" asp-route-id="@Model.User.Id">
+                    <button type="submit" class="btn btn-outline-danger"><i class="bi bi-emoji-tear mx-2"></i>Admire</button>
+                </form>
             </div>
         }
-    </div>
+        else
+        {
+            <div class="text-left">
+                <form asp-action="AddAdmiration" asp-controller="User" asp-route-id="@Model.User.Id">
+                    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-emoji-kiss mx-2"></i>Admire</button>
+                </form>
+            </div>
+        }
+    }
+    @if (User.Identity.Name == Model.User.Name)
+    {
+        <form id="changeDescriptionForm" asp-action="ChangeDescription" asp-controller="User" method="post">
+            <div class="description-birthdate-container">
+                <div class="description-container text-center mx-auto" style="width: 50%;">
+                    <div class="description-text">
+                        <label asp-for="User.Description" class="form-label">Description:</label>
+                        <textarea id="descriptionTextArea" class="form-control bg-black text-light" rows="5" name="description">@Model.User.Description</textarea>
+                        <span asp-validation-for="User.Description" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="birthdate-container">
+                    <div class="text-end">
+                        <p>Birth Date: </p>
+                        <h9>@Model.User.BirthDate.ToString("dd/MM/yyyy")</h9>
+                    </div>
+                </div>
+            </div>
+        </form>
+    }
+    else
+    {
+        <div class="description-container text-center">
+            <div class="description-text bg-black text-light p-2">
+                <label asp-for="User.Description" class="form-label">Description:</label>
+                <div class="form-control" readonly>
+                    @Model.User.Description
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
-@if (User.Identity.Name == Model.User.Name)
-{
-    <form id="changeDescriptionForm" asp-action="ChangeDescription" asp-controller="User" method="post">
-        <div class="description-birthdate-container">
-            <div class="description-container text-center ">
-                <div class="description-text">
-                    <label asp-for="User.Description" class="form-label">Description:</label>
-                    <textarea id="descriptionTextArea" class="form-control bg-black text-light" rows="5" asp-for="User.Description"></textarea>
-                    <span asp-validation-for="User.Description" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="birthdate-container">
-                <div class="text-end">
-                    <p>Birth Date: </p>
-                    <h9>@Model.User.BirthDate.ToString("dd/MM/yyyy")</h9>
-                </div>
-            </div>
-        </div>
-    </form>
-}
-else
-{
-    <div class="description-container text-center">
-        <div class="description-text bg-black text-light p-2">
-            <label asp-for="User.Description" class="form-label">Description:</label>
-            <div class="form-control" readonly>
-                @Model.User.Description
-            </div>
-        </div>
-    </div>
-}
 
-@if(User.Identity.Name != Model.User.Name)
+@if (User.Identity.Name != Model.User.Name)
 {
     <div class="text-center">
         <form asp-action="AddConnection" asp-controller="User" method="post">
@@ -114,22 +136,135 @@ else
 
     .description-birthdate-container {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
+        align-items: center;
     }
 
     .description-container {
         background-color: black;
         width: 40%;
+        text-align: center;
     }
 
     .birthdate-container {
         width: 40%;
         margin-top: 20px;
+        margin-left: 20px;
         text-align: end;
     }
-
-   
 </style>
+
+
+@if (Model == null)
+{
+    <div class="text-center">
+        <h4><strong>No posts</strong></h4>
+        <a asp-action="Index" asp-controller="Home"><i class="bi bi-arrow-clockwise"></i></a>
+    </div>
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+
+    <div class="container text-center">
+        @foreach (var post in Model.User.Posts)
+        {
+            if (post is PostWithoutImage)
+            {
+                <div class="post" style="margin-bottom: 80px;">
+                    <div class="post-header">
+                        @if (post.User.PictureProfile == null)
+                        {
+                            <button class="btn text-light" asp-action="UserPage" asp-controller="User"><h5><i class="bi bi-person-circle me-2"></i>@post.User.Name.CutName()</h5></button>
+                        }
+                        else
+                        {
+                            <button class="btn text-light" style="margin-right: 20" asp-action="UserPage" asp-controller="User"><img src="data:image/png;base64,@(Convert.ToBase64String(post.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
+                        }
+                        <div style="margin-right: 20px">
+                            <p>@post.Date.Duration()</p>
+                        </div>
+                    </div>
+                    <div class="post-content text-xxl-center">
+                        <p>@post.Description.CutDescription()</p>
+                        <div class="d-flex justify-content-between mb-3">
+                            <button class="btn btn-outline-primary toggle-comments" data-post-id="@post.Id"><i class="bi bi-chat-left-text"></i></button>
+                            <div class="d-flex flex-column">
+                                @if (post.Likes != null && post.Likes.Any(l => l.User.Name == User.Identity.Name))
+                                {
+                                    <form method="post" asp-action="Dislike" asp-route-id="@post.Id" asp-controller="Post" class="me-3">
+                                        <button class="text-xxl-end btn btn-purple" type="submit"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@post.Likes.CountLikes()</span></button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form method="post" asp-action="Like" asp-route-id="@post.Id" asp-controller="Post" class="me-3">
+                                        <button type="submit" class="btn btn-purple"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@post.Likes.CountLikes()</span></button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                        <div class="text-xxl">
+                            <div class="post-comments" data-post-id="@post.Id" style="display: none;">
+                                <div class="comment">
+                                    <div class="custom-border"></div>
+                                    <p class="text-center text-primary">Comments</p>
+                                    <div class="custom-border"></div>
+                                    @if (post.Comments == null || !post.Comments.Any())
+                                    {
+                                        <h6 class="text-center">No exist comments in this post</h6>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-center">
+                                            @foreach (var comment in post.Comments)
+                                            {
+                                                <div class="comment-container d-flex align-items-center mb-3">
+                                                    <div class="comment-details">
+                                                        <h9 class="text-primary d-inline-block"><i class="bi bi-person-circle mx-2 text-primary"></i>@comment.User.Name.CutName()</h9>
+                                                        <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
+                                                    </div>
+                                                    <div class="comment-like ms-auto">
+                                                        @if (comment.Likes != null && comment.Likes.Count() != 0 && post.Likes.Any(l => l.User.Name == User.Identity.Name))
+                                                        {
+                                                            <form method="post" asp-action="DislikeComment" asp-route-id="@comment.Id" asp-controller="Post">
+                                                                <button type="submit" class="btn btn-like-comment"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
+                                                            </form>
+                                                        }
+                                                        else
+                                                        {
+                                                            <form method="post" asp-action="LikeComment" asp-route-id="@comment.Id" asp-controller="Post">
+                                                                <button type="submit" class="btn btn-like-comment"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
+                                                            </form>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                            }
+                                        </div>
+                                    }
+                                    <a class="btn btn-outline-primary text-xxl-center mb-3" asp-route-id="@post.Id" asp-action="CreateComment" asp-controller="Post"><i class="bi bi-chat-left text-primary"></i> Add Comment</a>
+                                </div>
+                                <form class="add-comment-form" style="display: none;">
+                                    <input type="text" class="form-control mb-3" placeholder="Add a comment..." />
+                                    <button type="submit" class="btn btn-primary">Add</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}
+else
+{
+    <div class="text-center">
+        <h4><strong>Login to access Social Weave</strong></h4>
+        <a class="nav-link" style="font-size: 18px; margin-right: 15px;" asp-area="" asp-controller="User" asp-action="Login"><i class="bi bi-box-arrow-in-right mx-2"></i>Login</a>
+    </div>
+}
+
 
 @if (Model == null)
 {
@@ -140,181 +275,100 @@ else
 }
 
 
-
-<div class="container text-center">
-    @foreach (var post in Model.User.Posts)
-    {
-        if (post is PostWithoutImage)
-        {
-            <div class="post" style="margin-bottom: 80px;">
-                <div class="post-header">
-                    <h5><i class="bi bi-person-circle mx-2"></i>@post.User.Name.CutName()</h5>
-                    <div class="post-meta">
-                        <p>@post.Date.Duration()</p>
-                    </div>
-                    <div class="post-content text-xxl-center">
-                    </div>
-                </div>
-                <div class="post-content text-xxl-start">
-                    <p>@post.Description.CutDescription()</p>
-                    <div class="d-flex justify-content-between mb-3">
-                        <button class="btn btn-outline-primary toggle-comments" data-post-id="@post.Id"><i class="bi bi-chat-left-text"></i></button>
-                        <div class="d-flex flex-column">
-                            @if (post.Likes != null && post.Likes.Any(l => l.User.Name == User.Identity.Name))
-                            {
-                                <form method="post" asp-action="Dislike" asp-route-id="@post.Id" asp-controller="Post" class="me-3">
-                                    <button class="text-xxl-end btn btn-purple" type="submit"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@post.Likes.CountLikes()</span></button>
-                                </form>
-                            }
-                            else
-                            {
-                                <form method="post" asp-action="Like" asp-route-id="@post.Id" asp-controller="Post" class="me-3">
-                                    <button type="submit" class="btn btn-purple"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@post.Likes.CountLikes()</span></button>
-                                </form>
-                            }
-                        </div>
-                    </div>
-                    <div class="text-xxl">
-                        <div class="post-comments" data-post-id="@post.Id" style="display: none;">
-                            <div class="comment">
-                                <div class="custom-border"></div>
-                                <p class="text-center text-primary">Comments</p>
-                                <div class="custom-border"></div>
-                                @if (post.Comments == null || !post.Comments.Any())
-                                {
-                                    <h6 class="text-center">No exist comments in this post</h6>
-                                }
-                                else
-                                {
-                                    <div class="text-center">
-                                        @foreach (var comment in post.Comments)
-                                        {
-                                            <div class="comment-container d-flex align-items-center mb-3">
-                                                <div class="comment-details">
-                                                    <h9 class="text-primary d-inline-block"><i class="bi bi-person-circle mx-2 text-primary"></i>@comment.User.Name.CutName()</h9>
-                                                    <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
-                                                </div>
-                                                <div class="comment-like ms-auto">
-                                                    @if (comment.Likes != null && comment.Likes.Count() != 0 && post.Likes.Any(l => l.User.Name == User.Identity.Name))
-                                                    {
-                                                        <form method="post" asp-action="DislikeComment" asp-route-id="@comment.Id" asp-controller="Post">
-                                                            <button type="submit" class="btn btn-like-comment"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
-                                                        </form>
-                                                    }
-                                                    else
-                                                    {
-                                                        <form method="post" asp-action="LikeComment" asp-route-id="@comment.Id" asp-controller="Post">
-                                                            <button type="submit" class="btn btn-like-comment"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
-                                                        </form>
-                                                    }
-                                                </div>
-                                            </div>
-                                            <hr />
-                                        }
-                                    </div>
-                                }
-                                <a class="btn btn-outline-primary text-xxl-center mb-3" asp-route-id="@post.Id" asp-action="CreateComment" asp-controller="Post"><i class="bi bi-chat-left text-primary"></i> Add Comment</a>
-                            </div>
-                            <form class="add-comment-form" style="display: none;">
-                                <input type="text" class="form-control mb-3" placeholder="Add a comment..." />
-                                <button type="submit" class="btn btn-primary">Add</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-    }
-</div>
-
-@if (Model != null)
+@foreach (var post in Model.User.Posts)
 {
-    @foreach (var post in Model.User.Posts)
+    if (post is PostWithImage)
     {
-        if (post is PostWithImage)
-        {
-            PostWithImage postImage = post as PostWithImage;
-            <div class="post" style="margin-bottom: 80px;">
-                <div class="post-header">
-                    <h5><i class="bi bi-person-circle mx-2"></i>@postImage.User.Name.CutName()</h5>
-                    <div class="post-meta">
-                        <p>@postImage.Date.Duration()</p>
+        PostWithImage postImage = post as PostWithImage;
+        <div class="post" style="margin-bottom: 80px;">
+            <div class="post-header">
+                @if (Model.User.PictureProfile == null)
+                {
+                    <div class="text-xxl-start">
+                        <button class="btn text-light" asp-action="UserPage" asp-controller="User"><h5><i class="bi bi-person-circle me-2"></i>@post.User.Name.CutName()</h5></button>
+                    </div>
+                }
+                else
+                {
+                    <button class="btn text-light" asp-action="UserPage" asp-controller="User"><img src="data:image/png;base64,@(Convert.ToBase64String(post.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
+                }
+                <div class="post-meta" style="margin-right: 20px">
+                    <p>@postImage.Date.Duration()</p>
+                </div>
+            </div>
+            <div class="post-content text-xxl-center">
+                <p>@postImage.Description.CutDescription()</p>
+                <div class="post-content text-xxl-center">
+                    <img src="data:image/png;base64,@(Convert.ToBase64String(postImage.Image))" class="img-fluid" style="max-width: 100%; height: auto;" />
+                </div>
+            </div>
+            <div class="post-content text-xxl-start">
+                <div class="d-flex justify-content-between mb-3" style="margin-top: 20px;">
+                    <button class="btn btn-outline-primary toggle-comments" data-post-id="@postImage.Id"><i class="bi bi-chat-left-text"></i></button>
+                    <div class="d-flex flex-column">
+                        @if (postImage.Likes != null && postImage.Likes.Any(l => l.User.Name == User.Identity.Name))
+                        {
+                            <form method="post" asp-action="Dislike" asp-route-id="@postImage.Id" asp-controller="Post" class="me-3">
+                                <button class="text-xxl-end btn btn-purple" type="submit"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@postImage.Likes.CountLikes()</span></button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form method="post" asp-action="Like" asp-route-id="@postImage.Id" asp-controller="Post" class="me-3">
+                                <button type="submit" class="btn btn-purple"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@postImage.Likes.CountLikes()</span></button>
+                            </form>
+                        }
                     </div>
                 </div>
-                <div class="post-content text-xxl-start">
-                    <p>@postImage.Description.CutDescription()</p>
-                    <div class="post-content text-xxl-center">
-                        <img src="data:image/png;base64,@(Convert.ToBase64String(postImage.Image))" class="img-fluid" style="max-width: 100%; height: auto;" />
-                    </div>
-                </div>
-                <div class="post-content text-xxl-start">
-                    <div class="d-flex justify-content-between mb-3" style="margin-top: 20px;">
-                        <button class="btn btn-outline-primary toggle-comments" data-post-id="@postImage.Id"><i class="bi bi-chat-left-text"></i></button>
-                        <div class="d-flex flex-column">
-                            @if (postImage.Likes != null && postImage.Likes.Any(l => l.User.Name == User.Identity.Name))
+                <div class="text-xxl">
+                    <div class="post-comments" data-post-id="@postImage.Id" style="display: none;">
+                        <div class="comment">
+                            <div class="custom-border"></div>
+                            <p class="text-center text-primary">Comments</p>
+                            <div class="custom-border"></div>
+                            @if (postImage.Comments == null || !postImage.Comments.Any())
                             {
-                                <form method="post" asp-action="Dislike" asp-route-id="@postImage.Id" asp-controller="Post" class="me-3">
-                                    <button class="text-xxl-end btn btn-purple" type="submit"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@postImage.Likes.CountLikes()</span></button>
-                                </form>
+                                <h6 class="text-center">No exist comments in this post</h6>
                             }
                             else
                             {
-                                <form method="post" asp-action="Like" asp-route-id="@postImage.Id" asp-controller="Post" class="me-3">
-                                    <button type="submit" class="btn btn-purple"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@postImage.Likes.CountLikes()</span></button>
-                                </form>
-                            }
-                        </div>
-                    </div>
-                    <div class="text-xxl">
-                        <div class="post-comments" data-post-id="@postImage.Id" style="display: none;">
-                            <div class="comment">
-                                <div class="custom-border"></div>
-                                <p class="text-center text-primary">Comments</p>
-                                <div class="custom-border"></div>
-                                @if (postImage.Comments == null || !postImage.Comments.Any())
-                                {
-                                    <h6 class="text-center">No exist comments in this post</h6>
-                                }
-                                else
-                                {
-                                    <div class="text-center">
-                                        @foreach (var comment in postImage.Comments)
-                                        {
-                                            <div class="comment-container d-flex align-items-center mb-3">
-                                                <div class="comment-details">
-                                                    <h9 class="text-primary d-inline-block"><i class="bi bi-person-circle mx-2 text-primary"></i>@comment.User.Name.CutName()</h9>
-                                                    <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
-                                                </div>
-                                                <div class="comment-like ms-auto">
-                                                    @if (comment.Likes != null && comment.Likes.Count() != 0 && postImage.Likes.Any(l => l.User.Name == User.Identity.Name))
-                                                    {
-                                                        <form method="post" asp-action="DislikeComment" asp-route-id="@comment.Id" asp-controller="Post">
-                                                            <button type="submit" class="btn btn-like-comment"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
-                                                        </form>
-                                                    }
-                                                    else
-                                                    {
-                                                        <form method="post" asp-action="LikeComment" asp-route-id="@comment.Id" asp-controller="Post">
-                                                            <button type="submit" class="btn btn-like-comment"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
-                                                        </form>
-                                                    }
-                                                </div>
+                                <div class="text-center">
+                                    @foreach (var comment in postImage.Comments)
+                                    {
+                                        <div class="comment-container d-flex align-items-center mb-3">
+                                            <div class="comment-details">
+                                                <h9 class="text-primary d-inline-block"><i class="bi bi-person-circle mx-2 text-primary"></i>@comment.User.Name.CutName()</h9>
+                                                <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
                                             </div>
-                                            <hr />
-                                        }
-                                    </div>
-                                }
-                                <a class="btn btn-outline-primary text-xxl-center mb-3" asp-route-id="@postImage.Id" asp-action="CreateComment" asp-controller="Post"><i class="bi bi-chat-left text-primary"></i> Add Comment</a>
-                            </div>
-                            <form class="add-comment-form" style="display: none;">
-                                <input type="text" class="form-control mb-3" placeholder="Add a comment..." />
-                                <button type="submit" class="btn btn-primary">Add</button>
-                            </form>
+                                            <div class="comment-like ms-auto">
+                                                @if (comment.Likes != null && comment.Likes.Count() != 0 && postImage.Likes.Any(l => l.User.Name == User.Identity.Name))
+                                                {
+                                                    <form method="post" asp-action="DislikeComment" asp-route-id="@comment.Id" asp-controller="Post">
+                                                        <button type="submit" class="btn btn-like-comment"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <form method="post" asp-action="LikeComment" asp-route-id="@comment.Id" asp-controller="Post">
+                                                        <button type="submit" class="btn btn-like-comment"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
+                                                    </form>
+                                                }
+                                            </div>
+                                        </div>
+                                        <hr />
+                                    }
+                                </div>
+                            }
+                            <a class="btn btn-outline-primary text-xxl-center mb-3" asp-route-id="@postImage.Id" asp-action="CreateComment" asp-controller="Post"><i class="bi bi-chat-left text-primary"></i> Add Comment</a>
                         </div>
+                        <form class="add-comment-form" style="display: none;">
+                            <input type="text" class="form-control mb-3" placeholder="Add a comment..." />
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </form>
                     </div>
                 </div>
             </div>
-        }
+        </div>
     }
 }
 
@@ -335,8 +389,8 @@ else
         });
         document.getElementById('descriptionTextArea').addEventListener('keydown', function (event) {
             if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault(); // Prevent line break
-                document.getElementById('changeDescriptionForm').submit(); // Submit the form
+                event.preventDefault();
+                document.getElementById('changeDescriptionForm').submit();
             }
         });
     </script>

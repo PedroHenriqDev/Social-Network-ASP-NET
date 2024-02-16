@@ -83,6 +83,23 @@ namespace SocialWeave.Models.Services
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        public async Task CompletePostAsync(User user) 
+        {
+            foreach (var post in user.Posts)
+            {
+                post.Likes = await _context.Likes.Include(x => x.User)
+                      .Include(x => x.Post)
+                      .Where(x => x.Post.Id == post.Id)
+                      .ToListAsync();
+
+                post.Comments = await _context.Comments.Include(x => x.User)
+                    .Include(x => x.Likes)
+                    .Where(x => x.Post.Id == post.Id)
+                    .Take(20)
+                    .ToListAsync();
+            }
+        }
+
         /// <summary>
         /// Removes a post and its related entities from the database asynchronously.
         /// </summary>
