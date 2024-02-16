@@ -1,4 +1,4 @@
-﻿@model SocialWeave.Models.ViewModels.PostViewModel
+﻿@model SocialWeave.Models.ViewModels.PostImageViewModel
 @{
     ViewData["Title"] = "New Post";
 }
@@ -43,7 +43,7 @@
     }
 
     .custom-file-input {
-        display: none; /* Oculta o input do campo de seleção de arquivo */
+        display: none; 
     }
 
     .btn-primary {
@@ -78,7 +78,7 @@
         <div class="col-md-6">
             <div class="card">
                 <h2 class="text-center mb-4">@ViewData["Title"]</h2>
-                <form id="postForm" asp-action="CreatePostImage" asp-controller="Post" method="post">
+                <form id="postForm" asp-action="CreatePostImage" asp-controller="Post" method="post" enctype="multipart/form-data">
                     <div class="mb-3 text-center">
                         <label for="formFile" class="form-label">Choose Image:</label>
                         <div class="custom-file">
@@ -87,7 +87,6 @@
                         </div>
                         <div id="imagePreview"></div>
                     </div>
-                    <input type="hidden" id="imageBytes" name="ImageBytes" />
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="mb-3">
                         <label asp-for="Description" class="form-label">Description:</label>
@@ -95,7 +94,7 @@
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <div class="text-center">
-                        <button type="button" class="btn btn-outline-primary" onclick="submitForm()"><i class="bi bi-exposure"></i> Submit</button>
+                        <button type="submit" class="btn btn-outline-primary" onclick="submitForm()"><i class="bi bi-exposure"></i> Add</button>
                     </div>
                 </form>
             </div>

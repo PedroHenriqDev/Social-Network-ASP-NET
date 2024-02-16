@@ -46,28 +46,30 @@ namespace SocialWeave.Models.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task CreatePostAsync(PostImageViewModel postImageVM, User user, string imageBytes) 
+        public async Task CreatePostAsync(PostImageViewModel postImageVM, User user, IFormFile imageFile)
         {
-            if(postImageVM == null || user == null) 
+            if (postImageVM == null || user == null || imageFile == null)
             {
                 throw new NullReferenceException("It is not possible to create a null post");
             }
 
-            var byteStrings = imageBytes.Split(',');
-            var bytes = byteStrings.Select(s => byte.Parse(s)).ToArray();
-            postImageVM.Image = bytes;
-
-            PostWithImage post = new PostWithImage()
+            using (var memoryStream = new MemoryStream())
             {
-                Date = DateTime.Now,
-                User = user,
-                Description = postImageVM.Description,
-                Id = Guid.NewGuid(),
-                Image = postImageVM.Image,
-            };
+                await imageFile.CopyToAsync(memoryStream);
+                byte[] imageBytes = memoryStream.ToArray();
 
-            await _context.Posts.AddAsync(post);
-            await _context.SaveChangesAsync();
+                PostWithImage post = new PostWithImage()
+                {
+                    Date = DateTime.Now,
+                    User = user,
+                    Description = postImageVM.Description,
+                    Id = Guid.NewGuid(),
+                    Image = imageBytes,
+                };
+
+                await _context.Posts.AddAsync(post);
+                await _context.SaveChangesAsync();
+            }
         }
 
         /// <summary>

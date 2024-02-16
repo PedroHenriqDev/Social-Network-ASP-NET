@@ -71,14 +71,15 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreatePostImage(PostImageViewModel postImageVM, string imageBytes)
+        public async Task<IActionResult> CreatePostImage(PostImageViewModel postImageVM, IFormFile imageFile)
         {
             try
             {
                 ModelState.Remove(nameof(postImageVM.Image));
                 if (ModelState.IsValid)
                 {
-                    await _postService.CreatePostAsync(postImageVM, await _userService.FindUserByNameAsync(User.Identity.Name), imageBytes);
+
+                    await _postService.CreatePostAsync(postImageVM, await _userService.FindUserByNameAsync(User.Identity.Name), imageFile );
                     return RedirectToAction("Index", "Home");
                 }
                 return View();
@@ -88,7 +89,6 @@ namespace SocialWeave.Controllers
                 return RedirectToAction(nameof(Error), new { message = ex.Message });
             }
         }
-
 
         /// <summary>
         /// Likes a post with the specified ID.
