@@ -16,10 +16,12 @@ namespace SocialWeave.Models.Services
     public class PostService
     {
         private readonly ApplicationDbContext _context;
+        private readonly GenerateTrendingPostsService _generateTrendingPostsService;
 
-        public PostService(ApplicationDbContext context)
+        public PostService(ApplicationDbContext context, GenerateTrendingPostsService generateTrendingPostsService)
         {
             _context = context;
+            _generateTrendingPostsService = generateTrendingPostsService;
         }
 
         /// <summary>
@@ -89,6 +91,11 @@ namespace SocialWeave.Models.Services
 
         public async Task CompletePostAsync(User user) 
         {
+            if(user == null) 
+            {
+                throw new UserException("User null!");
+            }
+
             foreach (var post in user.Posts)
             {
                 post.Likes = await _context.Likes.Include(x => x.User)
@@ -247,7 +254,7 @@ namespace SocialWeave.Models.Services
         /// </summary>
         /// <param name="user">The user whose posts should be excluded.</param>
         /// <returns>A collection of posts.</returns>
-        public async Task<IEnumerable<Post>> FindPostsAsync(User user)
+        public async Task<IEnumerable<Post>> FindPostsByGenerateTrendingAsync(User user)
         {
             if (user == null)
             {
@@ -275,6 +282,7 @@ namespace SocialWeave.Models.Services
                     .ToListAsync();
             }
 
+            _generateTrendingPostsService.GenerateByScore(posts);
             return posts;
         }
 

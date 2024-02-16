@@ -69,6 +69,16 @@ namespace SocialWeave.Models.Services
             return user;
         }
 
+        public async Task<bool> CheckNameExistsAsync(string name) 
+        {
+            return await _context.Users.AnyAsync(x => x.Name == name);
+        }
+
+        public async Task<bool> CheckEmailExistsAsync(string email)
+        {
+            return await _context.Users.AnyAsync(x => x.Email == email);
+        }
+
         /// <summary>
         /// Finds a user by id asynchronously.
         /// </summary>
@@ -116,14 +126,15 @@ namespace SocialWeave.Models.Services
         {
             try
             {
-                if (await FindUserByEmailAsync(userCreateVM.Email) != null)
+                if (await CheckEmailExistsAsync(userCreateVM.Email)) 
                 {
                     throw new UserException("Existing email");
                 }
 
-                if (await FindUserByNameAsync(userCreateVM.Name) != null)
+                if (await CheckNameExistsAsync(userCreateVM.Name)) 
                 {
                     throw new UserException("Existing name");
+
                 }
 
                 User user = new User()

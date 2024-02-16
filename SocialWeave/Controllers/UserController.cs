@@ -110,8 +110,15 @@ namespace SocialWeave.Controllers
 
         public async Task<IActionResult> LogoutGet()
         {
-            User user = await _userService.FindUserByNameAsync(User.Identity.Name);
-            return View(user);
+            try
+            {
+                User user = await _userService.FindUserByNameAsync(User.Identity.Name);
+                return View(user);
+            }
+            catch(UserException ex) 
+            {
+                return RedirectToAction(nameof(Error), new {message = ex.Message});
+            }
         }
 
         [HttpPost]
@@ -149,37 +156,53 @@ namespace SocialWeave.Controllers
         [HttpGet]
         public async Task<IActionResult> UserPage()
         {
-            if (Request.Method != "GET")
+
+            try
             {
-                return NotFound();
+                if (Request.Method != "GET")
+                {
+                    return NotFound();
+                }
+
+                UserPageViewModel userPageVM = new UserPageViewModel(_context,
+                    await _userService.FindUserByNameAsync(User.Identity.Name),
+                    await _userService.CountAdmiredAsync(
+                    await _userService.FindUserByNameAsync(User.Identity.Name)),
+                    await _userService.CountAdmirersAsync(
+                    await _userService.FindUserByNameAsync(User.Identity.Name)));
+
+                return View(userPageVM);
             }
-
-            UserPageViewModel userPageVM = new UserPageViewModel(_context,
-                await _userService.FindUserByNameAsync(User.Identity.Name),
-                await _userService.CountAdmiredAsync(
-                await _userService.FindUserByNameAsync(User.Identity.Name)),
-                await _userService.CountAdmirersAsync(
-                await _userService.FindUserByNameAsync(User.Identity.Name)));
-
-            return View(userPageVM);
+            catch(UserException ex) 
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> UserPageWithParams(string name)
         {
-            if (Request.Method != "GET")
+            try
             {
-                return NotFound();
+                if (Request.Method != "GET")
+                {
+                    return NotFound();
+                }
+
+                UserPageViewModel userPageVM = new UserPageViewModel(_context,
+                    await _userService.FindUserByNameAsync(name),
+                    await _userService.CountAdmiredAsync(
+                    await _userService.FindUserByNameAsync(name)),
+                    await _userService.CountAdmirersAsync(
+                    await _userService.FindUserByNameAsync(name)));
+
+                return View("UserPage", userPageVM);
             }
+            catch (UserException ex) 
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
 
-            UserPageViewModel userPageVM = new UserPageViewModel(_context,
-                await _userService.FindUserByNameAsync(name),
-                await _userService.CountAdmiredAsync(
-                await _userService.FindUserByNameAsync(name)),
-                await _userService.CountAdmirersAsync(
-                await _userService.FindUserByNameAsync(name)));
-
-            return View("UserPage", userPageVM);
+            }
         }
 
         [HttpGet]

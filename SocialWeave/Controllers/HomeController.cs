@@ -29,7 +29,7 @@ namespace SocialWeave.Controllers
         {
             try
             {
-                IEnumerable<Post> posts = await _postService.FindPostsAsync(await _userService.FindUserByNameAsync(User.Identity.Name));
+                IEnumerable<Post> posts = await _postService.FindPostsByGenerateTrendingAsync(await _userService.FindUserByNameAsync(User.Identity.Name));
                 return View(posts);
             }
             catch (PostException)

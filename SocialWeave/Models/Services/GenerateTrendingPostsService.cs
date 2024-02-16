@@ -24,14 +24,13 @@ namespace SocialWeave.Models.Services
         }
 
 
-        public async Task RateByAdmirersAsync(IEnumerable<Post> posts) 
+        public void RateByAdmirersAsync(IEnumerable<Post> posts) 
         {
             foreach (var post in posts) 
             {
                 foreach (var admiration in _context.Admirations)
                 {
-                    bool hasAdmirer = await _context.Admirations.AnyAsync(x => x.UserAdmiredId == post.User.Id && x.UserAdmirerId != post.User.Id);
-                    if(hasAdmirer) 
+                    if(admiration.UserAdmiredId == post.User.Id)
                     {
                         post.Score += 1;
                     }
@@ -58,10 +57,10 @@ namespace SocialWeave.Models.Services
             }
         }
 
-        public async Task GenerateByScore(IEnumerable<Post> posts)
+        public void GenerateByScore(IEnumerable<Post> posts)
         {
             RateByLike(posts);
-            await RateByAdmirersAsync(posts);
+            RateByAdmirersAsync(posts);
             RateByDate(posts);
             posts.OrderByDescending(x => x.Score).ThenByDescending(x => x.Likes);
         }

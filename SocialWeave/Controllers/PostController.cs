@@ -55,18 +55,25 @@ namespace SocialWeave.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreatePost(PostViewModel postVM)
         {
-            if (Request.Method != "POST")
+            try
             {
-                return NotFound();
-            }
+                if (Request.Method != "POST")
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
+                if (ModelState.IsValid)
+                {
+                    await _postService.CreatePostAsync(postVM, await _userService.FindUserByNameAsync(User.Identity.Name));
+                    return RedirectToAction("Index", "Home");
+                }
+
+                return RedirectToAction(nameof(CreatePost));
+            }
+            catch(UserException) 
             {
-                await _postService.CreatePostAsync(postVM, await _userService.FindUserByNameAsync(User.Identity.Name));
-                return RedirectToAction("Index", "Home");
+               return View();
             }
-
-            return RedirectToAction(nameof(CreatePost));
         }
 
         [HttpPost]
@@ -106,6 +113,10 @@ namespace SocialWeave.Controllers
                 return RedirectToAction("Index", "Home");
             }
             catch (NullReferenceException ex)
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
+            catch(UserException ex) 
             {
                 return RedirectToAction(nameof(Error), new { message = ex.Message });
             }
