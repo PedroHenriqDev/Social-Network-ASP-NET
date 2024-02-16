@@ -246,7 +246,7 @@ namespace SocialWeave.Models.Services
             }
 
             _context.Likes.Remove(likeToRemove);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         /// <summary>
@@ -282,8 +282,7 @@ namespace SocialWeave.Models.Services
                     .ToListAsync();
             }
 
-            _generateTrendingPostsService.GenerateByScore(posts);
-            return posts;
+            return _generateTrendingPostsService.GenerateByScore(posts);
         }
 
         public async Task<Comment> FindCommentByIdAsync(Guid id)

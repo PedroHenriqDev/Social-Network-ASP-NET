@@ -3,25 +3,25 @@
 
     @model IEnumerable<SocialWeave.Models.AbstractClasses.Post>
 
-    <style>
-        .custom-border {
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(to right, #000080, #4B0082);
-            margin: 40px 0;
-        }
+<style>
+    .custom-border {
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(to right, #000080, #4B0082);
+        margin: 40px 0;
+    }
 
-        .post {
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 0px;
-        }
+    .post {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 0px;
+    }
 
-        .post-header {
-            display: flex;
-            justify-content: space-between;
-        }
+    .post-header {
+        display: flex;
+        justify-content: space-between;
+    }
 
 
     .btn-deep-dark {
@@ -33,44 +33,45 @@
         cursor: pointer;
         transition: background-color 0.3s ease;
     }
-    </style>
+</style>
 
+@if (User.Identity.IsAuthenticated)
+{
 
-    @if (User.Identity.IsAuthenticated)
+    @if (Model == null)
     {
-
-        @if (Model == null)
-        {
-            <div class="text-center">
-                <h4><strong>No new posts</strong></h4>
-                <a asp-action="Index" asp-controller="Home"><i class="bi bi-arrow-clockwise"></i></a>
-            </div>
-        }
+        <div class="text-center">
+            <h4><strong>No new posts</strong></h4>
+            <a asp-action="Index" asp-controller="Home"><i class="bi bi-arrow-clockwise"></i></a>
+        </div>
+    }
+    else
+    {
         <div class="container text-center">
             @foreach (var post in Model)
             {
                 if (post is PostWithoutImage)
                 {
-                <div class="post" style="margin-bottom: 80px;">
-                    <div class="post-header">
-                        @if (post.User.PictureProfile == null)
-                        {
-                            <div class="text-xxl-start">
+                    <div class="post" style="margin-bottom: 80px;">
+                        <div class="post-header">
+                            @if (post.User.PictureProfile == null)
+                            {
+                                <div class="text-xxl-start">
+                                    <form asp-action="UserPageWithParams" asp-controller="User" method="get">
+                                        <input type="hidden" name="name" value="@post.User.Name" />
+                                        <button type="submit" class="btn text-light"><i class="bi bi-person-circle me-2"></i>@post.User.Name.CutName()</button>
+                                    </form>
+                                </div>
+                            }
+                            else
+                            {
                                 <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                                     <input type="hidden" name="name" value="@post.User.Name" />
-                                    <button type="submit" class="btn text-light"><i class="bi bi-person-circle me-2"></i>@post.User.Name.CutName()</button>
+                                    <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(post.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
                                 </form>
-                            </div>
-                        }
-                        else
-                        {
-                            <form asp-action="UserPageWithParams" asp-controller="User" method="get">
-                                <input type="hidden" name="name" value="@post.User.Name" />
-                                <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(post.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
-                            </form>
-                        }
-                        <div style="margin-right: 20px">
-                                <p >@post.Date.Duration()</p>
+                            }
+                            <div style="margin-right: 20px">
+                                <p>@post.Date.Duration()</p>
                             </div>
                         </div>
                         <div class="post-content text-xxl-center">
@@ -140,44 +141,29 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                }
+                </div>
             }
-        </div>
-    }
-    else
-    {
-        <div class="text-center">
-            <h4><strong>Login to access Social Weave</strong></h4>
-            <a class="nav-link" style="font-size: 18px; margin-right: 15px;" asp-area="" asp-controller="User" asp-action="Login"><i class="bi bi-box-arrow-in-right mx-2"></i>Login</a>
-        </div>
-    }
-
-    @if (Model != null)
-    {
-        @foreach (var post in Model)
-        {
-            if (post is PostWithImage)
+            else
             {
                 PostWithImage postImage = post as PostWithImage;
                 <div class="post" style="margin-bottom: 80px;">
                     <div class="post-header">
-                    @if (postImage.User.PictureProfile == null)
-                    {
-                        <div class="text-xxl-start">
+                        @if (postImage.User.PictureProfile == null)
+                        {
+                            <div class="text-xxl-start">
+                                <form asp-action="UserPageWithParams" asp-controller="User" method="get">
+                                    <input type="hidden" name="name" value="@postImage.User.Name" />
+                                    <button type="submit" class="btn text-light"><i class="bi bi-person-circle me-2"></i>@postImage.User.Name.CutName()</button>
+                                </form>
+                            </div>
+                        }
+                        else
+                        {
                             <form asp-action="UserPageWithParams" asp-controller="User" method="get">
-                                <input type="hidden" name="name" value="@postImage.User.Name" />
-                                <button type="submit" class="btn text-light"><i class="bi bi-person-circle me-2"></i>@postImage.User.Name.CutName()</button>
+                                <input type="hidden" name="name" value="@post.User.Name" />
+                                <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(postImage.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
                             </form>
-                        </div>
-                    }
-                    else
-                    {
-                        <form asp-action="UserPageWithParams" asp-controller="User" method="get">
-                            <input type="hidden" name="name" value="@post.User.Name" />
-                            <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(postImage.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
-                        </form>
-                    }
+                        }
                         <div class="post-meta" style="margin-right: 20px">
                             <p>@postImage.Date.Duration()</p>
                         </div>
@@ -257,22 +243,31 @@
                 </div>
             }
         }
+        </div>
     }
+}
+else
+{
+    <div class="text-center">
+        <h4><strong>Login to access Social Weave</strong></h4>
+        <a class="nav-link" style="font-size: 18px; margin-right: 15px;" asp-area="" asp-controller="User" asp-action="Login"><i class="bi bi-box-arrow-in-right mx-2"></i>Login</a>
+    </div>
+}
 
-    @section Scripts {
-        <script>
-            document.querySelectorAll('.toggle-comments').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const postId = btn.getAttribute('data-post-id');
-                    const comments = document.querySelector(`.post-comments[data-post-id="${postId}"]`);
-                    comments.style.display = comments.style.display === 'none' ? 'block' : 'none';
-                });
+@section Scripts {
+    <script>
+        document.querySelectorAll('.toggle-comments').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const postId = btn.getAttribute('data-post-id');
+                const comments = document.querySelector(`.post-comments[data-post-id="${postId}"]`);
+                comments.style.display = comments.style.display === 'none' ? 'block' : 'none';
             });
+        });
 
-            document.querySelectorAll('.btn-like-comment').forEach(btn => {
-                btn.addEventListener('click', (event) => {
-                    event.stopPropagation();
-                });
+        document.querySelectorAll('.btn-like-comment').forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                event.stopPropagation();
             });
-        </script>
-    }
+        });
+    </script>
+}

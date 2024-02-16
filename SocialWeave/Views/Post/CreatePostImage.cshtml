@@ -8,12 +8,11 @@
         margin-top: 100px;
     }
 
-    .card {
-        border: none;
-        border-radius: 15px;
-        background: linear-gradient(135deg, #6a0dad, #000000);
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    .post {
+        border: 1px solid #ccc;
+        border-radius: 8px;
         padding: 20px;
+        margin-bottom: 0px;
     }
 
     .form-label {
@@ -56,6 +55,13 @@
         cursor: pointer;
     }
 
+    .custom-border {
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(to right, #000080, #4B0082);
+        margin: 40px 0;
+    }
+
         .btn-primary:hover {
             background-color: #7B1FA2;
         }
@@ -74,11 +80,17 @@
 </style>
 
 <div class="container">
+    <div class="custom-border" style="margin-top: 20px"></div>
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card">
+            <div class="post">
                 <h2 class="text-center mb-4">@ViewData["Title"]</h2>
                 <form id="postForm" asp-action="CreatePostImage" asp-controller="Post" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">Description:</label>
+                        <textarea class="form-control" rows="5" asp-for="Description"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
                     <div class="mb-3 text-center">
                         <label for="formFile" class="form-label">Choose Image:</label>
                         <div class="custom-file">
@@ -88,11 +100,7 @@
                         <div id="imagePreview"></div>
                     </div>
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="mb-3">
-                        <label asp-for="Description" class="form-label">Description:</label>
-                        <textarea class="form-control" rows="5" asp-for="Description"></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
+                 
                     <div class="text-center">
                         <button type="submit" class="btn btn-outline-primary" onclick="submitForm()"><i class="bi bi-exposure"></i> Add</button>
                     </div>
@@ -100,6 +108,7 @@
             </div>
         </div>
     </div>
+    <div class="custom-border"></div>
 </div>
 
 <script>

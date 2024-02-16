@@ -23,8 +23,23 @@ namespace SocialWeave.Models.Services
             }
         }
 
+        public void RateByComment(IEnumerable<Post> posts) 
+        {
+            foreach (var post in posts) 
+            {
+                int userComment = 0;
+                foreach (Comment comment in post.Comments)
+                {
+                    if (comment.Id == post.User.Id) 
+                    {
+                        userComment++;
+                    }
+                }
+                post.Score += post.Comments.Count() - userComment;
+            }
+        }
 
-        public void RateByAdmirersAsync(IEnumerable<Post> posts) 
+        public void RateByAdmirer(IEnumerable<Post> posts) 
         {
             foreach (var post in posts) 
             {
@@ -42,28 +57,35 @@ namespace SocialWeave.Models.Services
         {
             foreach (var post in posts)
             {
-                if (post.Date.Day > 1 && post.Date.Day < 31)
+                TimeSpan duration = DateTime.Now.Subtract(post.Date);
+
+                if(duration.TotalDays < 1) 
                 {
-                    post.Score -= post.Date.Day / 5;
+                    post.Score += 2;
                 }
-                else if (post.Date.Month < 1 && post.Date.Month < 13) 
+                else if (duration.TotalDays >= 1)
                 {
-                    post.Score -= post.Date.Month + 5;
+                    post.Score -= duration.TotalDays / 4;
+                }
+                else if (duration.TotalDays >= 30 && duration.TotalDays <= 365) 
+                {
+                    post.Score -= duration.TotalDays / 100 ;
                 }
                 else 
                 {
-                    post.Score -= post.Date.Year + 20;
+                    post.Score -= duration.TotalDays + 350 ;
                 }
             }
         }
 
-        public void GenerateByScore(IEnumerable<Post> posts)
+        public IEnumerable<Post> GenerateByScore(IEnumerable<Post> posts)
         {
             RateByLike(posts);
-            RateByAdmirersAsync(posts);
+            RateByComment(posts);
+            RateByAdmirer(posts);
             RateByDate(posts);
-            posts.OrderByDescending(x => x.Score).ThenByDescending(x => x.Likes);
+            var sortedPosts = posts.OrderByDescending(x => x.Score).ThenByDescending(x => x.Likes.Count()).ToList();
+            return sortedPosts;
         }
-
     }
 }
