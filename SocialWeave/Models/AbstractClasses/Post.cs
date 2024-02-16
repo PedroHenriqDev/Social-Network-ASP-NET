@@ -15,6 +15,7 @@ namespace SocialWeave.Models.AbstractClasses
         public List<Like>? Likes { get; set; }
         public IEnumerable<Comment>? Comments { get; set; }
         public User User { get; set; }
+        public double? Score { set; get; }
 
         public Post() 
         {

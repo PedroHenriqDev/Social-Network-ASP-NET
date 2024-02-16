@@ -8,10 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<PostService>();
+builder.Services.AddScoped<GenerateTrendingPostsService>();
 builder.Services.AddScoped<SearchService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<UserService>();
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

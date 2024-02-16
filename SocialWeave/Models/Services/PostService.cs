@@ -40,6 +40,7 @@ namespace SocialWeave.Models.Services
                 User = user,
                 Description = postVM.Description,
                 Id = Guid.NewGuid(),
+                Score = 1
             };
 
             await _context.AddAsync(post);
@@ -65,6 +66,7 @@ namespace SocialWeave.Models.Services
                     Description = postImageVM.Description,
                     Id = Guid.NewGuid(),
                     Image = imageBytes,
+                    Score = 1
                 };
 
                 await _context.Posts.AddAsync(post);
