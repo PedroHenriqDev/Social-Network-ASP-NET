@@ -6,14 +6,23 @@
 <div class="text-center">
     @if (User.Identity.Name == Model.User.Name)
     {
-
-        <h4 class="text-light">Your profile</h4>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h2 class="info-text">Your profile</h2>
+            </div>
+        </div>
     }
     else
     {
-        <h4>Profile of @Model.User.Name</h4>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h2 class="info-text">Profile of @Model.User.Name</h2>
+            </div>
+        </div>
     }
 </div>
+
+
 
 <div class="user-profile" style="display: flex; flex-direction: column; align-items: center;">
     <h2>@Model.User.Name</h2>
@@ -28,15 +37,34 @@
             }
             @if (User.Identity.Name == Model.User.Name && Model.User.PictureProfile != null)
             {
-                <div class="me-2 mx-3">
+                <div class="me-2 mx-3" style="margin-top: 10px">
                     <a asp-action="AddPictureProfile" asp-controller="User"><i class="bi bi-file-image-fill mx-2"></i>Change picture</a>
                 </div>
             }
             @if (User.Identity.Name == Model.User.Name && Model.User.PictureProfile == null)
             {
-                <div class="mt-2">
+                <div class="me-2 mx-3" style="margin-top: 10px">
                     <a asp-action="AddPictureProfile" asp-"><i class="bi bi-file-image-fill mx-2"></i>Add picture</a>
                 </div>
+            }
+            @if (Model.User.Name != User.Identity.Name)
+            {
+                @if (await Model.HaveAdmiredAsync(Model.User.Name, User.Identity.Name))
+                {
+                    <div class="me-2 mx-2" style="margin-top: 10px">
+                        <form asp-action="RemoveAdmiration" asp-controller="User" asp-route-id="@Model.User.Id">
+                            <button type="submit" class="btn btn-outline-warning"><i class="bi bi-emoji-tear mx-1"></i>Withdraw admiration</button>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    <div class="me-2 mx-5" style="margin-top: 10px">
+                        <form asp-action="AddAdmiration" asp-controller="User" asp-route-id="@Model.User.Id">
+                            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-emoji-kiss mx-2"></i>Admire</button>
+                        </form>
+                    </div>
+                }
             }
         </div>
         <div style="margin-left: 220px;">
@@ -45,25 +73,11 @@
     </div>
     <div class="custom-border" style="margin-top: 90px"></div>
 
-    @if (Model.User.Name != User.Identity.Name)
-    {
-        @if (await Model.HaveAdmiredAsync(Model.User.Name, User.Identity.Name))
-        {
-            <div class="text-left">
-                <form asp-action="RemoveAdmiration" asp-controller="User" asp-route-id="@Model.User.Id">
-                    <button type="submit" class="btn btn-outline-danger"><i class="bi bi-emoji-tear mx-2"></i>Admire</button>
-                </form>
-            </div>
-        }
-        else
-        {
-            <div class="text-left">
-                <form asp-action="AddAdmiration" asp-controller="User" asp-route-id="@Model.User.Id">
-                    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-emoji-kiss mx-2"></i>Admire</button>
-                </form>
-            </div>
-        }
-    }
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h2 class="info-text">Infos</h2>
+        </div>
+    </div>
     @if (User.Identity.Name == Model.User.Name)
     {
         <form id="changeDescriptionForm" asp-action="ChangeDescription" asp-controller="User" method="post">
@@ -71,88 +85,49 @@
                 <div class="description-container text-center mx-auto" style="width: 50%;">
                     <div class="description-text">
                         <label asp-for="User.Description" class="form-label">Description:</label>
-                        <textarea id="descriptionTextArea" class="form-control bg-black text-light" rows="5" name="description">@Model.User.Description</textarea>
+                        <textarea id="descriptionTextArea" class="form-control bg-black text-light" rows="5" name="description">@Model.User.Description.CutDescription()</textarea>
                         <span asp-validation-for="User.Description" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="birthdate-container">
-                    <div class="text-end">
-                        <p>Birth Date: </p>
-                        <h9>@Model.User.BirthDate.ToString("dd/MM/yyyy")</h9>
-                    </div>
-                </div>
-            </div>
         </form>
+        <div class="birthdate-container text-center">
+            <p>Birth Date: </p>
+            <h9>@Model.User.BirthDate.ToString("dd/MM/yyyy")</h9>
+        </div>
     }
     else
     {
-        <div class="description-container text-center">
-            <div class="description-text bg-black text-light p-2">
-                <label asp-for="User.Description" class="form-label">Description:</label>
-                <div class="form-control" readonly>
-                    @Model.User.Description
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="description-birthdate-container">
+                    <div class="description-container text-center">
+                        <label asp-for="User.Description" class="form-label">Description:</label>
+                        <div class="description-text bg-black text-light p-10" style="margin-left: auto; margin-right: auto;">
+                            <div class="form-control bg-black text-light" style="word-wrap: break-word;" readonly>
+                                @Html.Raw(Model.User.Description.CutDescription())
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="birthdate-container text-center" style="10px">
+                    <p>Birth Date: </p>
+                    <h9>@Model.User.BirthDate.ToString("dd/MM/yyyy")</h9>
                 </div>
             </div>
         </div>
     }
 </div>
-
-
-@if (User.Identity.Name != Model.User.Name)
-{
-    <div class="text-center">
-        <form asp-action="AddConnection" asp-controller="User" method="post">
-            <input type="hidden" asp-for="User.Id" />
-            <button type="submit" class="btn btn-outline-primary">Connect</button>
-        </form>
-    </div>
-}
-
 <div class="custom-border"></div>
-<style>
-    .custom-border {
-        width: 100%;
-        height: 2px;
-        background: linear-gradient(to right, #000080, #4B0082);
-        margin: 90px 0;
-    }
 
-    .post {
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 80px;
-    }
+<div class="row">
+    <div class="col-md-12 text-center">
+        <h2 class="info-text">Posts</h2>
+    </div>
+</div>
 
-    .post-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .post-meta {
-        text-align: center;
-    }
-
-    .description-birthdate-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .description-container {
-        background-color: black;
-        width: 40%;
-        text-align: center;
-    }
-
-    .birthdate-container {
-        width: 40%;
-        margin-top: 20px;
-        margin-left: 20px;
-        text-align: end;
-    }
-</style>
 
 
 @if (Model == null)
@@ -371,6 +346,65 @@ else
         </div>
     }
 }
+
+<style>
+    .custom-border {
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(to right, #000080, #4B0082);
+        margin: 90px 0;
+    }
+
+    .post {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 80px;
+    }
+
+    .post-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .post-meta {
+        text-align: center;
+    }
+
+    .description-birthdate-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .description-container {
+        background-color: black;
+        width: 80%;
+        text-align: center;
+    }
+
+    .birthdate-container {
+        width: 60%;
+        margin-top: 20px;
+        margin-left: 20px;
+        text-align: center;
+    }
+
+    .info-text {
+        background: linear-gradient(to right, #000080, #4B0082);
+        -webkit-background-clip: text;
+        color: transparent;
+        padding: 10px 20px;
+        margin-bottom: 20px;
+    }
+
+    .description-birthdate-container {
+        margin-top: 20px;
+    }
+
+</style>
+
 
 @section Scripts {
     <script>
