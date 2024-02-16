@@ -176,6 +176,7 @@ namespace SocialWeave.Controllers
                     userPageVM.User.Posts = posts;
 
                 return View(userPageVM);
+
             }
             catch(UserException ex) 
             {

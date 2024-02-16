@@ -28,6 +28,13 @@ namespace SocialWeave.Models.Services
             foreach (var post in posts) 
             {
                 int userComment = 0;
+
+                var commentGroups = post.Comments
+                    .GroupBy(comment => comment.User.Id)
+                    .Where(group => group.Key != post.User.Id);
+
+                int commentAmount = commentGroups.Count() - commentGroups.Count() + 1;
+
                 foreach (Comment comment in post.Comments)
                 {
                     if (comment.Id == post.User.Id) 
@@ -35,7 +42,7 @@ namespace SocialWeave.Models.Services
                         userComment++;
                     }
                 }
-                post.Score += post.Comments.Count() - userComment;
+                post.Score += post.Comments.Count() + commentAmount - userComment;
             }
         }
 

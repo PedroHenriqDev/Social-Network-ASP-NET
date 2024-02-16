@@ -232,15 +232,21 @@
                 PostWithImage postImage = post as PostWithImage;
                 <div class="post" style="margin-bottom: 80px;">
                     <div class="post-header">
-                        @if (Model.User.PictureProfile == null)
+                        @if (postImage.User.PictureProfile == null)
                         {
                             <div class="text-xxl-start">
-                                <button class="btn text-light" asp-action="UserPage" asp-controller="User"><h5><i class="bi bi-person-circle me-2"></i>@post.User.Name.CutName()</h5></button>
+                                <form asp-action="UserPageWithParams" asp-controller="User" method="get">
+                                    <input type="hidden" name="name" value="@postImage.User.Name" />
+                                    <button type="submit" class="btn text-light"><i class="bi bi-person-circle me-2"></i>@postImage.User.Name.CutName()</button>
+                                </form>
                             </div>
                         }
                         else
                         {
-                            <button class="btn text-light" asp-action="UserPage" asp-controller="User"><img src="data:image/png;base64,@(Convert.ToBase64String(post.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
+                            <form asp-action="UserPageWithParams" asp-controller="User" method="get">
+                                <input type="hidden" name="name" value="@post.User.Name" />
+                                <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(postImage.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
+                            </form>
                         }
                         <div class="post-meta" style="margin-right: 20px">
                             <p>@postImage.Date.Duration()</p>
@@ -366,7 +372,7 @@
 
     .description-container {
         background-color: black;
-        width: 80%;
+        width: 100%;
         text-align: center;
     }
 
