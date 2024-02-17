@@ -7,6 +7,7 @@ using SocialWeave.Models.ConcreteClasses;
 using SocialWeave.Models.AbstractClasses;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using SocialWeave.Helpers;
 
 namespace SocialWeave.Controllers
 {
@@ -14,11 +15,13 @@ namespace SocialWeave.Controllers
     {
         private readonly UserService _userService;
         private readonly PostService _postService;
+        private readonly AmountOfPostsHelper _amountOfPostsHelper;
 
-        public HomeController(UserService userService, PostService postService)
+        public HomeController(UserService userService, PostService postService, AmountOfPostsHelper amountOfPostsHelper)
         {
             _userService = userService;
             _postService = postService;
+            _amountOfPostsHelper = amountOfPostsHelper;
         }
 
         /// <summary>
@@ -29,7 +32,9 @@ namespace SocialWeave.Controllers
         {
             try
             {
-                IEnumerable<Post> posts = await _postService.FindPostsByGenerateTrendingAsync(await _userService.FindUserByNameAsync(User.Identity.Name));
+                int amountOfPosts = _amountOfPostsHelper.ReturnAmountOfPosts();
+
+                IEnumerable<Post> posts = await _postService.FindPostsByGenerateTrendingAsync(await _userService.FindUserByNameAsync(User.Identity.Name), amountOfPosts);
                 return View(posts);
             }
             catch (PostException)
@@ -40,6 +45,18 @@ namespace SocialWeave.Controllers
             {
                 return View();
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SetAmountOfPosts(int amount) 
+        {
+            if(Request.Method != "POST") 
+            {
+                return NotFound();
+            }
+            _amountOfPostsHelper.SetAmountOfPosts(amount);
+            return RedirectToAction("Index");
         }
 
         /// <summary>

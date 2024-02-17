@@ -3,11 +3,13 @@ using SocialWeave.Data;
 using SocialWeave.Models.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using SocialWeave.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<PostService>();
+builder.Services.AddScoped<AmountOfPostsHelper>();
 builder.Services.AddScoped<GenerateTrendingPostsService>();
 builder.Services.AddScoped<SearchService>();
 builder.Services.AddScoped<UserService>();
@@ -18,6 +20,14 @@ builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = "Social.Session";
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -37,9 +47,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseSession();
 app.UseRouting();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(

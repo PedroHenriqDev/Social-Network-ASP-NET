@@ -72,7 +72,7 @@ namespace SocialWeave.Models.Services
                 }
                 else if (duration.TotalDays >= 1)
                 {
-                    post.Score -= duration.TotalDays / 4;
+                    post.Score -= duration.TotalDays / 3;
                 }
                 else if (duration.TotalDays >= 30 && duration.TotalDays <= 365) 
                 {
@@ -85,13 +85,13 @@ namespace SocialWeave.Models.Services
             }
         }
 
-        public IEnumerable<Post> GenerateByScore(IEnumerable<Post> posts)
+        public IEnumerable<Post> GenerateByScore(IEnumerable<Post> posts, int amountOfPost)
         {
             RateByLike(posts);
             RateByComment(posts);
             RateByAdmirer(posts);
             RateByDate(posts);
-            var sortedPosts = posts.OrderByDescending(x => x.Score).ThenByDescending(x => x.Likes.Count()).ToList();
+            var sortedPosts = posts.OrderByDescending(x => x.Score).ThenByDescending(x => x.Likes.Count()).Take(amountOfPost).ToList();
             return sortedPosts;
         }
     }

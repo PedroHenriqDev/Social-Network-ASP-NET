@@ -19,6 +19,7 @@
     <None Remove="Models\ConcreteClasses\xwrtydjj.ucc~" />
     <None Remove="Models\Services\GenerateTrendingPostsService.cs~RF15b8b02.TMP" />
     <None Remove="Program.cs~RF3a1bab.TMP" />
+    <None Remove="Views\Home\Index.cshtml~RF1f4cddf.TMP" />
     <None Remove="Views\Post\CreatePostImage.cshtml~RF238960b.TMP" />
   </ItemGroup>
 

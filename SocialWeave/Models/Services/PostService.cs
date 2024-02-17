@@ -254,7 +254,7 @@ namespace SocialWeave.Models.Services
         /// </summary>
         /// <param name="user">The user whose posts should be excluded.</param>
         /// <returns>A collection of posts.</returns>
-        public async Task<IEnumerable<Post>> FindPostsByGenerateTrendingAsync(User user)
+        public async Task<IEnumerable<Post>> FindPostsByGenerateTrendingAsync(User user, int quantityOfPost)
         {
             if (user == null)
             {
@@ -282,7 +282,7 @@ namespace SocialWeave.Models.Services
                     .ToListAsync();
             }
 
-            return _generateTrendingPostsService.GenerateByScore(posts);
+            return _generateTrendingPostsService.GenerateByScore(posts, quantityOfPost);
         }
 
         public async Task<Comment> FindCommentByIdAsync(Guid id)

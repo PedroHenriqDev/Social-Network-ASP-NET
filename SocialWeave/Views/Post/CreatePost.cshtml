@@ -50,6 +50,14 @@
     .text-danger {
         color: #FF5252;
     }
+
+    .info-text {
+        background: linear-gradient(to right, #000080, #4B0082);
+        -webkit-background-clip: text;
+        color: transparent;
+        padding: 10px 20px;
+        margin-bottom: 20px;
+    }
 </style>
 
 
@@ -58,7 +66,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="post p-4">
-                <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+                <div class="info-text"><h2 class="text-center mb-4">@ViewData["Title"]</h2></div>
                 <form asp-action="CreatePost" asp-controller="Post" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="mb-3">
