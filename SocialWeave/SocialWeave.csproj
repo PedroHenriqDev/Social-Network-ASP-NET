@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Controllers\HomeController.cs~RF2479900.TMP" />
     <None Remove="Extensions\DateTimeExtension.cs~RF15a3768.TMP" />
     <None Remove="Models\AbstractClasses\Post.cs~RFedd6b.TMP" />
     <None Remove="Models\ConcreteClasses\xwrtydjj.ucc~" />

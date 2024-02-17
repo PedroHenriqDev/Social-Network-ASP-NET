@@ -1,7 +1,12 @@
 ﻿    @using SocialWeave.Extensions
     @using SocialWeave.Models.ConcreteClasses
+    @using SocialWeave.Helpers;
 
     @model IEnumerable<SocialWeave.Models.AbstractClasses.Post>
+
+@{
+    var amountOfPostsHelper = ViewData["AmountOfPostsHelper"] as AmountOfPostsHelper;
+}
 
 <style>
     .custom-border {
@@ -246,7 +251,7 @@
         </div>
         <div class="text-center text-light">
             <form asp-controller="Home" asp-action="SetAmountOfPosts" method="post">
-                <input type="hidden" name="Amount" value="10" />
+                <input type="hidden" name="Amount" value="@amountOfPostsHelper.Amount" />
                 <button type="submit" class="btn text-light"><i class="bi bi-arrow-clockwise"></i>More posts</button>
             </form>
         </div>

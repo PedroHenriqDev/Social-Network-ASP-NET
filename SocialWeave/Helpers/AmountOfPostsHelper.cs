@@ -20,22 +20,13 @@
             {
                 Amount =  Convert.ToInt32(session.GetString("AmountOfPosts"));
 
-                for (int i = Amount; i < 1000; i++) 
-                {
-                    if (i % 10 == 0)
-                    {
-                        Amount += i;
-                    }
-                    else 
-                    {
-                        Amount += 1;
-                    }
-                }
+                Amount += 10;
                 return Amount;
             }
             else
             {
-                return 10;
+                Amount = 10;
+                return Amount;
             }
         }
 

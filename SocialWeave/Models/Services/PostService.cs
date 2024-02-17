@@ -265,7 +265,6 @@ namespace SocialWeave.Models.Services
                 .Include(x => x.Likes)
                 .Include(x => x.User.Admirations)
                 .Where(x => x.User.Name != user.Name)
-                .Take(20)
                 .ToListAsync();
 
             if (posts.Count() == 0)
@@ -278,7 +277,6 @@ namespace SocialWeave.Models.Services
                 post.Comments = await _context.Comments.Include(x => x.User)
                     .Include(x => x.Likes)
                     .Where(x => x.Post.Id == post.Id)
-                    .Take(20)
                     .ToListAsync();
             }
 
