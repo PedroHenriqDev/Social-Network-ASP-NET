@@ -2,7 +2,10 @@
 using SocialWeave.Data;
 using SocialWeave.Models.AbstractClasses;
 using SocialWeave.Models.ConcreteClasses;
-using System.Runtime.CompilerServices;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SocialWeave.Models.Services
 {
@@ -15,84 +18,47 @@ namespace SocialWeave.Models.Services
             _context = context;
         }
 
-        public void RateByLike(IEnumerable<Post> posts) 
-        {
-            foreach (var post in posts) 
-            {
-                post.Score = post.Likes.Count();
-            }
-        }
-
-        public void RateByComment(IEnumerable<Post> posts) 
-        {
-            foreach (var post in posts) 
-            {
-                int userComment = 0;
-
-                var commentGroups = post.Comments
-                    .GroupBy(comment => comment.User.Id)
-                    .Where(group => group.Key != post.User.Id);
-
-                int commentAmount = commentGroups.Count() - commentGroups.Count() + 1;
-
-                foreach (Comment comment in post.Comments)
-                {
-                    if (comment.Id == post.User.Id) 
-                    {
-                        userComment++;
-                    }
-                }
-                post.Score += post.Comments.Count() + commentAmount - userComment;
-            }
-        }
-
-        public void RateByAdmirer(IEnumerable<Post> posts) 
-        {
-            foreach (var post in posts) 
-            {
-                foreach (var admiration in _context.Admirations)
-                {
-                    if(admiration.UserAdmiredId == post.User.Id)
-                    {
-                        post.Score += 1;
-                    }
-                }
-            }
-        }
-
-        public void RateByDate(IEnumerable<Post> posts) 
+        public async Task<IEnumerable<Post>> GenerateTrendingPostsAsync(IEnumerable<Post> posts, int amountOfPosts,User currentUser)
         {
             foreach (var post in posts)
             {
-                TimeSpan duration = DateTime.Now.Subtract(post.Date);
-
-                if(duration.TotalDays < 1) 
-                {
-                    post.Score += 2;
-                }
-                else if (duration.TotalDays >= 1)
-                {
-                    post.Score -= duration.TotalDays / 3;
-                }
-                else if (duration.TotalDays >= 30 && duration.TotalDays <= 365) 
-                {
-                    post.Score -= duration.TotalDays / 100 ;
-                }
-                else 
-                {
-                    post.Score -= duration.TotalDays + 350 ;
-                }
+                post.Likes = await _context.Likes.Where(l => l.Post.Id == post.Id).ToListAsync();
+                post.Comments = await _context.Comments.Include(c => c.User).Where(c => c.Post.Id == post.Id).ToListAsync();
             }
+
+            CalculateScores(posts, currentUser);
+
+            var trendingPosts = posts.OrderByDescending(p => p.Score)
+                                     .ThenByDescending(p => p.Likes.Count())
+                                     .Take(amountOfPosts)
+                                     .ToList();
+
+            return trendingPosts;
         }
 
-        public IEnumerable<Post> GenerateByScore(IEnumerable<Post> posts, int amountOfPost)
+        private void CalculateScores(IEnumerable<Post> posts, User currentUser)
         {
-            RateByLike(posts);
-            RateByComment(posts);
-            RateByAdmirer(posts);
-            RateByDate(posts);
-            var sortedPosts = posts.OrderByDescending(x => x.Score).ThenByDescending(x => x.Likes.Count()).Take(amountOfPost).ToList();
-            return sortedPosts;
+            foreach (var post in posts)
+            {
+                post.Score = 0;
+
+                post.Score += post.Likes.Count;
+
+                post.Score += post.Comments.GroupBy(c => c.User.Id)
+                                           .Count(group => group.Key != post.User.Id) + 1;
+
+                post.Score += _context.Admirations.Count(a => a.UserAdmiredId == post.User.Id) * 0.1;
+
+                post.Score += _context.Admirations.Count(a => a.UserAdmirerId == currentUser.Id && a.UserAdmiredId == post.User.Id) * 40;
+
+                var ageInDays = (DateTime.Now - post.Date).TotalDays;
+                if (ageInDays < 1)
+                    post.Score += 2;
+                else if (ageInDays <= 365)
+                    post.Score -= ageInDays / 3;
+                else
+                    post.Score -= ageInDays + 350;
+            }
         }
     }
 }

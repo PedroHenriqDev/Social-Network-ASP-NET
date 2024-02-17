@@ -141,18 +141,6 @@ namespace SocialWeave.Controllers
             }
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddConnection()
-        {
-            if (Request.Method != "POST")
-            {
-                return NotFound();
-            }
-
-            return View();
-        }
-
         [HttpGet]
         public async Task<IActionResult> UserPage()
         {

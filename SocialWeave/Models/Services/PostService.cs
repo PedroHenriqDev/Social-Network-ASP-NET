@@ -264,7 +264,7 @@ namespace SocialWeave.Models.Services
             IEnumerable<Post> posts = await _context.Posts.Include(x => x.User)
                 .Include(x => x.Likes)
                 .Include(x => x.User.Admirations)
-                .Where(x => x.User.Name != user.Name)
+                .Where(x => x.User.Id != user.Id)
                 .ToListAsync();
 
             if (posts.Count() == 0)
@@ -280,7 +280,7 @@ namespace SocialWeave.Models.Services
                     .ToListAsync();
             }
 
-            return _generateTrendingPostsService.GenerateByScore(posts, quantityOfPost);
+            return await _generateTrendingPostsService.GenerateTrendingPostsAsync(posts, quantityOfPost, user);
         }
 
         public async Task<Comment> FindCommentByIdAsync(Guid id)
