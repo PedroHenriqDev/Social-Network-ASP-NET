@@ -18,7 +18,7 @@ namespace SocialWeave.Models.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<Post>> GenerateTrendingPostsAsync(IEnumerable<Post> posts, int amountOfPosts,User currentUser)
+        public async Task<IEnumerable<Post>> GenerateTrendingPostsAsync(IEnumerable<Post> posts, int amountOfPosts, User currentUser)
         {
             foreach (var post in posts)
             {
@@ -30,7 +30,26 @@ namespace SocialWeave.Models.Services
 
             var trendingPosts = posts.OrderByDescending(p => p.Score)
                                      .ThenByDescending(p => p.Likes.Count())
+                                     .Where(p => p.Score >= -50)
                                      .Take(amountOfPosts)
+                                     .ToList();
+
+            return trendingPosts;
+        }
+
+        public async Task<IEnumerable<Post>> GenerateTrendingPostsAsync(IEnumerable<Post> posts, User currentUser)
+        {
+            foreach (var post in posts)
+            {
+                post.Likes = await _context.Likes.Where(l => l.Post.Id == post.Id).ToListAsync();
+                post.Comments = await _context.Comments.Include(c => c.User).Where(c => c.Post.Id == post.Id).ToListAsync();
+            }
+
+            CalculateScores(posts, currentUser);
+
+            var trendingPosts = posts.OrderByDescending(p => p.Score)
+                                     .ThenByDescending(p => p.Likes.Count())
+                                     .Where(p => p.Score >= -50)
                                      .ToList();
 
             return trendingPosts;

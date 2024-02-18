@@ -16,12 +16,12 @@ namespace SocialWeave.Models.Services
     public class PostService
     {
         private readonly ApplicationDbContext _context;
-        private readonly GenerateTrendingPostsService _generateTrendingPostsService;
+        private readonly GenerateTrendingPostsService _generateTrending;
 
-        public PostService(ApplicationDbContext context, GenerateTrendingPostsService generateTrendingPostsService)
+        public PostService(ApplicationDbContext context, GenerateTrendingPostsService generateTrending)
         {
             _context = context;
-            _generateTrendingPostsService = generateTrendingPostsService;
+            _generateTrending = generateTrending;
         }
 
         /// <summary>
@@ -280,7 +280,7 @@ namespace SocialWeave.Models.Services
                     .ToListAsync();
             }
 
-            return await _generateTrendingPostsService.GenerateTrendingPostsAsync(posts, quantityOfPost, user);
+            return await _generateTrending.GenerateTrendingPostsAsync(posts, quantityOfPost, user);
         }
 
         public async Task<Comment> FindCommentByIdAsync(Guid id)

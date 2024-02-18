@@ -6,6 +6,7 @@
 
 @{
     var amountOfPostsHelper = ViewData["AmountOfPostsHelper"] as AmountOfPostsHelper;
+    var title = ViewData["PostAdmired"];
 }
 
 <style>
@@ -14,6 +15,14 @@
         height: 2px;
         background: linear-gradient(to right, #000080, #4B0082);
         margin: 40px 0;
+    }
+
+    .info-text {
+        background: linear-gradient(to right, #000080, #4B0082);
+        -webkit-background-clip: text;
+        color: transparent;
+        padding: 10px 20px;
+        margin-bottom: 20px;
     }
 
     .post {
@@ -39,9 +48,15 @@
     }
 </style>
 
+@if (title != null)
+{
+    <div class="info-text text-center"><h2>@title.ToString()</h2></div>
+    <div class="custom-border"></div>
+}
+
 @if (User.Identity.IsAuthenticated)
 {
-    @if (Model == null)
+    @if (Model == null || Model.Count() == 0)
     {
         <div class="text-center">
             <h4><strong>No new posts</strong></h4>
@@ -247,12 +262,15 @@
                 }
             }
         </div>
+        @if (title == null)
+        {
         <div class="text-center text-light">
             <form asp-controller="Home" asp-action="SetAmountOfPosts" method="post">
                 <input type="hidden" name="Amount" value="@amountOfPostsHelper.Amount" />
                 <button type="submit" class="btn text-primary" id="more-posts-button"><i class="bi bi-arrow-clockwise"></i>More posts</button>
             </form>
         </div>
+        }
     }
 }
 else

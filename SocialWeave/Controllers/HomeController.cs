@@ -16,12 +16,14 @@ namespace SocialWeave.Controllers
         private readonly UserService _userService;
         private readonly PostService _postService;
         private readonly AmountOfPostsHelper _amountOfPostsHelper;
+        private readonly SearchService _searchService;
 
-        public HomeController(UserService userService, PostService postService, AmountOfPostsHelper amountOfPostsHelper)
+        public HomeController(UserService userService, PostService postService, AmountOfPostsHelper amountOfPostsHelper, SearchService searchService)
         {
             _userService = userService;
             _postService = postService;
             _amountOfPostsHelper = amountOfPostsHelper;
+            _searchService = searchService;
         }
 
         /// <summary>
@@ -46,6 +48,16 @@ namespace SocialWeave.Controllers
             {
                 return View();
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> IndexWithPostsAdmired() 
+        {
+            int amountPosts = _amountOfPostsHelper.ReturnAmountOfPosts();
+            ViewData["PostAdmired"] = "Post from someone you admire";
+            var user = await _userService.FindUserByNameAsync(User.Identity.Name);
+            var posts = await _searchService.SearchPostByAdmiredAsync(user);
+            return View("Index", posts);
         }
 
         [HttpPost]

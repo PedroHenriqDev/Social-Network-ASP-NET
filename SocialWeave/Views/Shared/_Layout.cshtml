@@ -26,6 +26,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="About"><i class="bi bi-person-workspace mx-2"></i>About</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="IndexWithPostsAdmired"><i class="bi bi-people-fill me-2"></i>Posts</a>
+                        </li>
                     </ul>
                     @if (User.Identity.IsAuthenticated)
                     {
@@ -33,8 +36,15 @@
                             <li class="nav-item">
                                 <a class="nav-link text-light" asp-area="" asp-controller="Post" asp-action="ChoosePostType"><i class="bi bi-plus-circle-dotted mx-1"></i></a>
                             </li>
+
                             <li class="nav-item">
                                 <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="LogoutGet"><i class="bi bi-box-arrow-in-left mx-1"></i></a>
+                            </li>
+
+                            <li class="nav-item my-auto">
+                                <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="UserPage">
+                                    <strong><i class="bi bi-search"></i></strong>
+                                </a>
                             </li>
                             <li class="nav-item my-auto">
                                 <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="UserPage">
@@ -42,6 +52,7 @@
                                 </a>
                             </li>
                         </ul>
+
                     }
                     else
                     {
