@@ -269,6 +269,42 @@ namespace SocialWeave.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ShowAdmirers(Guid id) 
+        {
+            if (Request.Method != "GET")
+            {
+                return NotFound();
+            }
+            try
+            {
+                ViewData["User"] = await _userService.FindUserByIdAsync(id);
+                return View(await _userService.FindAdmirersOfUserAsync(await _userService.FindUserByIdAsync(id)));
+            }
+            catch(UserException ex) 
+            {
+                return RedirectToAction(nameof(Error), new {message = ex.Message});
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ShowAdmired(Guid id) 
+        {
+            if(Request.Method != "GET") 
+            {
+                return NotFound();
+            }
+            try
+            {
+                ViewData["User"] = await _userService.FindUserByIdAsync(id);
+                return View(await _userService.FindAdmiredByUserAsnyc(await _userService.FindUserByIdAsync(id)));
+            }
+            catch(UserException ex) 
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeDescription(string description)

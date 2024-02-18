@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using SocialWeave.Models.AbstractClasses;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace SocialWeave.Models.Services
 {
@@ -214,6 +215,26 @@ namespace SocialWeave.Models.Services
 
             await _context.Admirations.AddAsync(admiration);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<User>> FindAdmirersOfUserAsync(User user) 
+        {
+            if (user == null) throw new UserException("User null!");
+
+            var userAdmirers = await _context.Admirations.Where(x => x.UserAdmirerId != user.Id && x.UserAdmiredId == user.Id)
+                                              .Select(x => x.UserAdmirer)
+                                              .ToListAsync();
+            return userAdmirers;
+        }
+
+        public async Task<IEnumerable<User>> FindAdmiredByUserAsnyc(User user) 
+        {
+            if (user == null) throw new UserException("User null!");
+
+            var userAdmired = await _context.Admirations.Where(x => x.UserAdmirerId == user.Id && x.UserAdmiredId != user.Id)
+                                            .Select(x => x.UserAdmired)
+                                            .ToListAsync();
+            return userAdmired;
         }
 
         public async Task<string> CountAdmiredAsync(User user) 

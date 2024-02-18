@@ -22,11 +22,14 @@
     }
 </div>
 
-
 <div class="user-profile" style="display: flex; flex-direction: column; align-items: center;">
     <div style="display: flex; align-items: center;">
         <div style="margin-right: 220px;">
-            <h4 class="text-wrap">Admirers: @Model.CountAdmirer</h4>
+            <form asp-action="ShowAdmirers" asp-controller="User" method="get" asp-route-id="@Model.User.Id">
+                <button type="submit" class="btn text-primary">
+                    <h4 class="text-wrap">Admirers: @Model.CountAdmirer</h4>
+                </button>
+            </form>
         </div>
         <div style="margin-right: 30px">
             @if (Model.User.PictureProfile != null)
@@ -66,7 +69,11 @@
             }
         </div>
         <div style="margin-left: 220px;">
-            <h4 class="text-wrap">Admire: @Model.CountAdmired</h4>
+            <form asp-action="ShowAdmired" asp-controller="User" method="get" asp-route-id="@Model.User.Id">
+                <button type="submit" class="btn text-primary">
+                    <h4 class="text-wrap">Admire: @Model.CountAdmired</h4>
+                </button>
+            </form>
         </div>
     </div>
     <div class="custom-border" style="margin-top: 90px"></div>

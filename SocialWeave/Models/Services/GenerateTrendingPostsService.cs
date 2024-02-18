@@ -53,11 +53,17 @@ namespace SocialWeave.Models.Services
 
                 var ageInDays = (DateTime.Now - post.Date).TotalDays;
                 if (ageInDays < 1)
+                {
                     post.Score += 2;
+                }
                 else if (ageInDays <= 365)
+                {
                     post.Score -= ageInDays / 3;
+                }
                 else
+                {
                     post.Score -= ageInDays + 350;
+                }
             }
         }
     }

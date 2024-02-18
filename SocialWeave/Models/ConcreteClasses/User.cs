@@ -49,7 +49,7 @@ namespace SocialWeave.Models.ConcreteClasses
 
         public User() 
         {
-        }
+        }   
 
         public User(Guid id, string name, string email, string password, string phoneNumber, DateTime birthDate) 
         {
