@@ -191,8 +191,6 @@
                             <div class="post-content text-xxl-center">
                                 <img src="data:image/png;base64,@(Convert.ToBase64String(postImage.Image))" class="img-fluid" style="max-width: 70%; height: auto;" />
                             </div>
-                        </div>
-                        <div class="post-content text-xxl-start">
                             <div class="d-flex justify-content-between mb-3" style="margin-top: 20px;">
                                 <button class="btn btn-outline-primary toggle-comments" data-post-id="@postImage.Id"><i class="bi bi-chat-left-text"></i></button>
                                 <div class="d-flex flex-column">
@@ -264,12 +262,12 @@
         </div>
         @if (title == null)
         {
-        <div class="text-center text-light">
-            <form asp-controller="Home" asp-action="SetAmountOfPosts" method="post">
-                <input type="hidden" name="Amount" value="@amountOfPostsHelper.Amount" />
-                <button type="submit" class="btn text-primary" id="more-posts-button"><i class="bi bi-arrow-clockwise"></i>More posts</button>
-            </form>
-        </div>
+            <div class="text-center text-light">
+                <form asp-controller="Home" asp-action="SetAmountOfPosts" method="post">
+                    <input type="hidden" name="Amount" value="@amountOfPostsHelper.Amount" />
+                    <button type="submit" class="btn text-primary" id="more-posts-button"><i class="bi bi-arrow-clockwise"></i>More posts</button>
+                </form>
+            </div>
         }
     }
 }
@@ -283,21 +281,6 @@ else
 
 @section Scripts {
     <script>
-        document.getElementById('more-posts-button').addEventListener('click', () => {
-            const scrollPosition = window.scrollY || window.pageYOffset;
-            sessionStorage.setItem('scrollPosition', scrollPosition);
-        });
-
-        document.querySelectorAll('.btn-like').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const postContent = btn.closest('.post-content');
-                if (postContent) {
-                    const scrollPosition = postContent.getBoundingClientRect().top + window.scrollY - (window.innerHeight / 2);
-                    sessionStorage.setItem('scrollPosition', scrollPosition);
-                }
-            });
-        });
-
         document.querySelectorAll('.toggle-comments').forEach(btn => {
             btn.addEventListener('click', () => {
                 const postId = btn.getAttribute('data-post-id');
@@ -310,14 +293,6 @@ else
             btn.addEventListener('click', (event) => {
                 event.stopPropagation();
             });
-        });
-
-        window.addEventListener('load', () => {
-            const scrollPosition = sessionStorage.getItem('scrollPosition');
-            if (scrollPosition) {
-                window.scrollTo(0, parseInt(scrollPosition, 10));
-                sessionStorage.removeItem('scrollPosition');
-            }
         });
     </script>
 }

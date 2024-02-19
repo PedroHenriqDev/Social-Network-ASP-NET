@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialWeave.Data;
+using SocialWeave.Exceptions;
 using SocialWeave.Models.AbstractClasses;
 using SocialWeave.Models.ConcreteClasses;
 
@@ -33,5 +34,14 @@ namespace SocialWeave.Models.Services
             return await _generateTrending.GenerateTrendingPostsAsync(posts, user);
         }
 
+        public async Task<IEnumerable<User>> SearchUserByQueryAsync(string query) 
+        {
+            if(query == null) 
+            {
+                throw new SearchException();
+            }
+
+            return await _context.Users.Where(x => x.Name.Contains(query)).ToListAsync();
+        }
     }
 }

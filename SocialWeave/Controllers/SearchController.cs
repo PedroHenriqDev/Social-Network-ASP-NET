@@ -10,13 +10,22 @@ namespace SocialWeave.Controllers
 
         private readonly SearchService _searchService;
         private readonly UserService _userService;
-        private readonly AmountOfPostsHelper _amountOfPostsHelper;
 
-        public SearchController(SearchService searchService, UserService userService, AmountOfPostsHelper amountOfPostsHelper)
+        public SearchController(SearchService searchService, UserService userService)
         {
             _searchService = searchService;
             _userService = userService;
-            _amountOfPostsHelper = amountOfPostsHelper;
+        }
+
+        public IActionResult PageOfSearch()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> Search(string query)
+        {
+            ViewBag.Query = query;
+            return View("PageOfSearch", await _searchService.SearchUserByQueryAsync(query));
         }
     }
 }

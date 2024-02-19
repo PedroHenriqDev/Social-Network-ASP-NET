@@ -1,0 +1,134 @@
+﻿@using SocialWeave.Extensions;
+
+@model IEnumerable<SocialWeave.Models.ConcreteClasses.User>
+
+<title>Search Page</title>
+<style>
+
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .search-box {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .search-input {
+        width: 60%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .search-button {
+        padding: 10px 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f0f0f0;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+        .search-button:hover {
+            background-color: #e0e0e0;
+        }
+
+    .custom-border {
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(to right, #000080, #4B0082);
+        margin: 40px 0;
+    }
+
+    .info-text {
+        background: linear-gradient(to right, #000080, #4B0082);
+        -webkit-background-clip: text;
+        color: transparent;
+        padding: 10px 20px;
+        margin-bottom: 20px;
+    }
+
+    .custom-border {
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(to right, #000080, #4B0082);
+        margin: 90px 0;
+    }
+
+    .user {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-bottom: 80px;
+    }
+
+    .info-text {
+        background: linear-gradient(to right, #000080, #4B0082);
+        -webkit-background-clip: text;
+        color: transparent;
+        padding: 10px 20px;
+        margin-bottom: 20px;
+    }
+
+</style>
+
+<div class="container">
+    <h2 class="info-text text-center">Search Page</h2>
+    <div class="custom-border"></div>
+
+    <div class="search-box">
+        <form asp-action="Search" asp-controller="Search" method="GET">
+            <input type="text" name="query" class="search-input bg-black text-light" placeholder="Enter your search query...">
+            <button type="submit" class="search-button bg-black text-light"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
+</div>
+@if (Model != null)
+{
+    if(Model.Count() != 0){
+    <div class="custom-border"></div>
+    <div class="text-center info-text">
+            <h4>Search Results for "<span>@ViewBag.Query</span>"</h4>
+    </div>
+    @foreach (var user in Model)
+    {
+        <div class="text-center">
+            <div class="user">
+                @if (user.PictureProfile == null)
+                {
+                    <div class="text-xxl-start">
+                        <form asp-action="UserPageWithParams" asp-controller="User" method="get">
+                            <input type="hidden" name="name" value="@user.Name" />
+                            <button type="submit" class="btn text-light"><i class="bi bi-person-circle me-2"></i>@user.Name.CutName()</button>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    <form asp-action="UserPageWithParams" asp-controller="User" method="get">
+                        <input type="hidden" name="name" value="@user.Name" />
+                        <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(user.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @user.Name.CutName()</button>
+                    </form>
+                }
+            </div>
+        </div>
+        }
+
+    }
+    else
+    {
+        <div class="text-center">Not found!</div>
+    }
+}
+ 
