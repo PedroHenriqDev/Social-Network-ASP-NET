@@ -49,7 +49,15 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseWebSockets();
+
+app.MapControllerRoute(
+    name: "chat",
+    pattern: "chat",
+    defaults: new { controller = "Chat", action = "WebSocket" });
 
 app.MapControllerRoute(
     name: "default",
