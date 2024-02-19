@@ -32,6 +32,23 @@ namespace SocialWeave.Models.Services
                  .Where(x => x != null)
                  .ToList();
 
+            foreach (var post in posts)
+            {
+                post.Comments = await _context.Comments
+                    .Include(x => x.User)
+                    .Include(x => x.Likes)
+                    .Where(x => x.Post.Id == post.Id)
+                    .ToListAsync();
+
+                post.Likes = await _context.Likes
+                    .Include(x => x.User)
+                    .Include(x => x.Comment)
+                    .Include(x => x.Post)
+                    .Where(x => x.Post.Id == post.Id)
+                    .ToListAsync();
+            }
+
+
             return await _generateTrending.GenerateTrendingPostsAsync(posts, user);
         }
 

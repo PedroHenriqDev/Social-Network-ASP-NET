@@ -68,7 +68,7 @@ namespace SocialWeave.Models.Services
 
                 post.Score += _context.Admirations.Count(a => a.UserAdmiredId == post.User.Id) * 0.1;
 
-                post.Score += _context.Admirations.Count(a => a.UserAdmirerId == currentUser.Id && a.UserAdmiredId == post.User.Id) + 10;
+                post.Score += _context.Admirations.Count(a => a.UserAdmirerId == currentUser.Id && a.UserAdmiredId == post.User.Id) + 3;
 
                 var ageInDays = (DateTime.Now - post.Date).TotalDays;
                 if (ageInDays < 1)
