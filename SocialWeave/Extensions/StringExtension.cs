@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace SocialWeave.Extensions
 {
@@ -56,5 +57,6 @@ namespace SocialWeave.Extensions
                 return thisString.Substring(0, 100) + "...";
             }
         }
+
     }
 }

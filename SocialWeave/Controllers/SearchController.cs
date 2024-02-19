@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
+using SocialWeave.Exceptions;
 using SocialWeave.Helpers;
 using SocialWeave.Models.Services;
 
@@ -24,8 +25,15 @@ namespace SocialWeave.Controllers
 
         public async Task<IActionResult> Search(string query)
         {
-            ViewBag.Query = query;
-            return View("PageOfSearch", await _searchService.SearchUserByQueryAsync(query));
+            try
+            {
+                ViewBag.Query = query;
+                return View("PageOfSearch", await _searchService.SearchUserByQueryAsync(query, await _userService.FindUserByNameAsync(User.Identity.Name)));
+            }
+            catch (SearchException ex) 
+            {
+                return View(nameof(PageOfSearch));
+            }
         }
     }
 }
