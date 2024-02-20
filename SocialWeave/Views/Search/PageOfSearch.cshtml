@@ -103,6 +103,7 @@
             <h4>Search Results for "<span>@ViewBag.Query</span>"</h4>
         </div>
 
+
         <div class="text-center">
             @if (Model != null && Model.Users != null && Model.Users.Any())
             {
@@ -335,13 +336,11 @@
     }
 </div>
 
-@if(Model != null){
 @if(Model.Users.Count() == 0 && Model.Posts.Count() == 0)
 {
     <div class="text-center">
         <strong>Nothing was found, try another name</strong>
     </div>
-}
 }
 
 @section Scripts {
