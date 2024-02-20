@@ -78,6 +78,30 @@ namespace SocialWeave.Migrations
                     b.ToTable("Admirations");
                 });
 
+            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Chat", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("User1Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("User2Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("User1Id");
+
+                    b.HasIndex("User2Id");
+
+                    b.ToTable("Chats");
+                });
+
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Comment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -131,6 +155,40 @@ namespace SocialWeave.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Likes");
+                });
+
+            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Message", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChatId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RecipientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatId");
+
+                    b.HasIndex("RecipientId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.User", b =>
@@ -233,6 +291,25 @@ namespace SocialWeave.Migrations
                     b.Navigation("UserAdmirer");
                 });
 
+            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Chat", b =>
+                {
+                    b.HasOne("SocialWeave.Models.ConcreteClasses.User", "User1")
+                        .WithMany()
+                        .HasForeignKey("User1Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SocialWeave.Models.ConcreteClasses.User", "User2")
+                        .WithMany()
+                        .HasForeignKey("User2Id")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User1");
+
+                    b.Navigation("User2");
+                });
+
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Comment", b =>
                 {
                     b.HasOne("SocialWeave.Models.AbstractClasses.Post", "Post")
@@ -273,6 +350,33 @@ namespace SocialWeave.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Message", b =>
+                {
+                    b.HasOne("SocialWeave.Models.ConcreteClasses.Chat", "Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SocialWeave.Models.ConcreteClasses.User", "Recipient")
+                        .WithMany()
+                        .HasForeignKey("RecipientId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("SocialWeave.Models.ConcreteClasses.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Chat");
+
+                    b.Navigation("Recipient");
+
+                    b.Navigation("Sender");
+                });
+
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.User", b =>
                 {
                     b.HasOne("SocialWeave.Models.ConcreteClasses.User", null)
@@ -285,6 +389,11 @@ namespace SocialWeave.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Likes");
+                });
+
+            modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Chat", b =>
+                {
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Comment", b =>

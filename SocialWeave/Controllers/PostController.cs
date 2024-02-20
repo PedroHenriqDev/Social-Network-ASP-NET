@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using SocialWeave.Exceptions;
+using SocialWeave.Models.AbstractClasses;
 using SocialWeave.Models.Services;
 using SocialWeave.Models.ViewModels;
 using System.Diagnostics;
@@ -24,6 +26,16 @@ namespace SocialWeave.Controllers
         public IActionResult ChoosePostType()
         {
             return View();
+        }
+
+        public async Task<IActionResult> Edit(Guid postId) 
+        {
+            Post post = await _postService.FindPostByIdAsync(postId);
+            if (post != null)
+            {
+                return View(post);
+            }
+            return RedirectToAction(nameof(Error), new { message = "Post null!" });
         }
 
         /// <summary>

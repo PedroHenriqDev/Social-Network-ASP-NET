@@ -70,6 +70,17 @@ namespace SocialWeave.Models.Services
             return user;
         }
 
+        public async Task<IEnumerable<User>> ReturnAdmiredFromUserAsync(User user)
+        {
+            var users = await _context.Admirations
+                            .Include(x => x.UserAdmired)
+                            .Include(x => x.UserAdmired.Posts)
+                            .Where(x => x.UserAdmiredId != user.Id && x.UserAdmirerId == user.Id)
+                            .Select(x => x.UserAdmired)
+                            .ToListAsync();
+            return users;
+        }
+
         public async Task<bool> CheckNameExistsAsync(string name) 
         {
             return await _context.Users.AnyAsync(x => x.Name == name);

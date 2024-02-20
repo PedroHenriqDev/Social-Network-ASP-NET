@@ -11,9 +11,9 @@ namespace SocialWeave.Data
         {
         }
 
-        public ApplicationDbContext() 
+        public ApplicationDbContext()
         {
-        }               
+        }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Post> Posts { get; set; }
@@ -39,7 +39,7 @@ namespace SocialWeave.Data
                 .HasForeignKey(c => c.UserAdmiredId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Admiration>() 
+            modelBuilder.Entity<Admiration>()
                 .HasOne(c => c.UserAdmirer)
                 .WithMany()
                 .HasForeignKey(c => c.UserAdmirerId)

@@ -128,7 +128,19 @@
                                                 {
                                                     <div class="comment-container d-flex align-items-center mb-3">
                                                         <div class="comment-details">
-                                                            <h9 class="text-primary d-inline-block"><i class="bi bi-person-circle mx-2 text-primary"></i>@comment.User.Name.CutName()</h9>
+                                                            @if (comment.User.PictureProfile == null)
+                                                            {
+                                                                <h9 class="text-primary d-inline-block"><i class="bi bi-person-circle mx-2 text-primary"></i>@comment.User.Name.CutName()</h9>
+                                                                <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
+                                                            }
+                                                            else
+                                                            {
+                                                                <form asp-action="UserPageWithParams" asp-controller="User" method="get">
+                                                                    <input type="hidden" name="name" value="@post.User.Name" />
+                                                                    <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName():</button>
+                                                                    <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
+                                                                </form>
+                                                            }
                                                             <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
                                                         </div>
                                                         <div class="comment-like ms-auto">
@@ -225,7 +237,19 @@
                                                 {
                                                     <div class="comment-container d-flex align-items-center mb-3">
                                                         <div class="comment-details">
-                                                            <h9 class="text-primary d-inline-block"><i class="bi bi-person-circle mx-2 text-primary"></i>@comment.User.Name.CutName()</h9>
+                                                            @if (comment.User.PictureProfile == null)
+                                                            {
+                                                                <h9 class="text-primary d-inline-block"><i class="bi bi-person-circle mx-2 text-primary"></i>@comment.User.Name.CutName()</h9>
+                                                                <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
+                                                            }
+                                                            else
+                                                            {
+                                                                <form asp-action="UserPageWithParams" asp-controller="User" method="get">
+                                                                    <input type="hidden" name="name" value="@post.User.Name" />
+                                                                    <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName():</button>
+                                                                    <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
+                                                                </form>
+                                                            }
                                                             <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
                                                         </div>
                                                         <div class="comment-like ms-auto">

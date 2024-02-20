@@ -336,13 +336,15 @@
     }
 </div>
 
-@if(Model.Users.Count() == 0 && Model.Posts.Count() == 0)
+@if (Model != null)
 {
-    <div class="text-center">
-        <strong>Nothing was found, try another name</strong>
-    </div>
+    @if (Model.Users.Count() == 0 && Model.Posts.Count() == 0)
+    {
+        <div class="text-center">
+            <strong>Nothing was found, try another name</strong>
+        </div>
+    }
 }
-
 @section Scripts {
     <script>
         document.querySelectorAll('.toggle-comments').forEach(btn => {
