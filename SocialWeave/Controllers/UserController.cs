@@ -21,12 +21,14 @@ namespace SocialWeave.Controllers
     public class UserController : Controller
     {
         private readonly UserService _userService;
+        private readonly PostService _postService;
         private readonly ApplicationDbContext _context;
 
-        public UserController(UserService userService, ApplicationDbContext context)
+        public UserController(UserService userService, ApplicationDbContext context, PostService postService)
         {
             _userService = userService;
             _context = context;
+            _postService = postService;
         }
 
         public IActionResult Login()
@@ -157,10 +159,10 @@ namespace SocialWeave.Controllers
 
                 UserPageViewModel userPageVM = new UserPageViewModel(_context,
                     user,
-                    await _userService.CountAdmiredAsync(
-                    await _userService.FindUserByNameAsync(user.Name)),
-                    await _userService.CountAdmirersAsync(
-                    await _userService.FindUserByNameAsync(user.Name)));
+                    await _userService.CountAdmiredAsync(user),
+                    await _userService.CountAdmirersAsync(user),
+                    await _postService.FindCommentsByUserAsync(user));
+                    
                     userPageVM.User.Posts = posts;
 
                 return View(userPageVM);
@@ -181,12 +183,13 @@ namespace SocialWeave.Controllers
                     return NotFound();
                 }
 
+                User user = await _userService.FindUserByNameAsync(name);
+
                 UserPageViewModel userPageVM = new UserPageViewModel(_context,
-                    await _userService.FindUserByNameAsync(name),
-                    await _userService.CountAdmiredAsync(
-                    await _userService.FindUserByNameAsync(name)),
-                    await _userService.CountAdmirersAsync(
-                    await _userService.FindUserByNameAsync(name)));
+                    user,
+                    await _userService.CountAdmiredAsync(user),
+                    await _userService.CountAdmirersAsync(user),
+                    await _postService.FindCommentsByUserAsync(user));
 
                 return View("UserPage", userPageVM);
             }

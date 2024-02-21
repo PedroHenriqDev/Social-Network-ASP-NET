@@ -98,9 +98,26 @@ namespace SocialWeave.Models.Services
         public async Task<Post> FindPostByIdAsync(Guid id)
         {
             return await _context.Posts.Include(x => x.User)
-                .Include(x => x.Likes)
-                .Include(x => x.Comments)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                                       .Include(x => x.Likes)
+                                       .Include(x => x.Comments)
+                                       .FirstOrDefaultAsync(x => x.Id == id);
+        }
+        public async Task<IEnumerable<Comment>> FindCommentsByUserAsync(User user)
+        {
+            if (user == null)
+            {
+                throw new UserException("Reference of user null!");
+            }
+
+            IEnumerable<Comment> comments = await _context.Comments
+                                                          .Include(x => x.User)
+                                                          .Include(x => x.Likes)
+                                                          .Include(x => x.Post)
+                                                          .Include(x => x.Post.User)
+                                                          .Where(x => x.User.Id == user.Id)
+                                                          .OrderByDescending(x => x.Likes.Count())
+                                                          .ToListAsync();
+            return comments;
         }
 
         public async Task CompletePostAsync(User user) 
@@ -227,6 +244,17 @@ namespace SocialWeave.Models.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task DeleteCommentAsync(Comment comment) 
+        {
+            if(comment == null) 
+            {
+                throw new PostException("Reference null!");
+            }
+
+            _context.Comments.Remove(comment);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task AddLikeInCommentAsync(Comment comment, User user)
         {
             if(comment == null || user == null) 
@@ -275,11 +303,12 @@ namespace SocialWeave.Models.Services
                 throw new UserException("User cannot be null");
             }
 
-            IEnumerable<Post> posts = await _context.Posts.Include(x => x.User)
-                .Include(x => x.Likes)
-                .Include(x => x.User.Admirations)
-                .Where(x => x.User.Id != user.Id)
-                .ToListAsync();
+            IEnumerable<Post> posts = await _context.Posts
+                                                    .Include(x => x.User)
+                                                    .Include(x => x.Likes)
+                                                    .Include(x => x.User.Admirations)
+                                                    .Where(x => x.User.Id != user.Id)
+                                                    .ToListAsync();
 
             if (posts.Count() == 0)
             {
@@ -288,10 +317,11 @@ namespace SocialWeave.Models.Services
 
             foreach (var post in posts)
             {
-                post.Comments = await _context.Comments.Include(x => x.User)
-                    .Include(x => x.Likes)
-                    .Where(x => x.Post.Id == post.Id)
-                    .ToListAsync();
+                post.Comments = await _context.Comments
+                                              .Include(x => x.User)
+                                              .Include(x => x.Likes)
+                                              .Where(x => x.Post.Id == post.Id)
+                                              .ToListAsync();
             }
 
             return await _generateTrending.GenerateTrendingPostsAsync(posts, quantityOfPost, user);
@@ -304,7 +334,12 @@ namespace SocialWeave.Models.Services
                 throw new NullReferenceException("Object null!");
             }
 
-            return _context.Comments.FirstOrDefault(x => x.Id == id);
+            return await _context.Comments
+                            .Include(x => x.User)
+                            .Include(x => x.Post)
+                            .Include(x => x.Post.User)
+                            .Include(x => x.Likes)
+                            .FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }

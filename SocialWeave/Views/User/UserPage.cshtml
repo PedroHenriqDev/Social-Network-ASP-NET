@@ -371,15 +371,71 @@
                     </div>
                 </div>
             }
+            <div class="custom-border"></div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h2 class="info-text">@Model.Comments.Count() Comments</h2>
+                </div>
+            </div>
+            <div class="text-center">
+                @foreach (var comment in Model.Comments)
+                {
+                    <form asp-action="UserPageWithParams" asp-controller="User" method="get">
+                        <input type="hidden" name="name" value="@post.User.Name" />
+                        <button class="text-primary btn">@comment.Post.User.Name.CutName() post</button>
+                    </form>
+                    <div class="comment-container d-flex align-items-center mb-3">
+                        <div class="comment-details">
+                            @if (comment.User.PictureProfile == null)
+                            {
+                                <h9 class="text-primary d-inline-block"><i class="bi bi-person-circle mx-2 text-primary"></i>@comment.User.Name.CutName()</h9>
+                                <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
+
+                            }
+                            else
+                            {
+                                <form asp-action="UserPageWithParams" asp-controller="User" method="get">
+                                    <input type="hidden" name="name" value="@post.User.Name" />
+                                    <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @comment.User.Name.CutName():</button>
+                                    <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
+                                </form>
+                            }
+                        </div>
+                        @if (Model.User.Name == User.Identity.Name)
+                        {
+                            <div class="comment-like ms-auto">
+                                <form method="post" asp-action="DeleteComment" asp-route-id="@comment.Id" asp-controller="Post">
+                                    <button type="submit" class="btn btn-like-comment"><i class="bi bi-trash-fill text-danger"></i></button>
+                                </form>
+                            </div>
+                        }
+                        else
+                        {
+                            @if (comment.Likes != null && comment.Likes.Count() != 0 && comment.Likes.Any(l => l.User.Name == User.Identity.Name))
+                            {
+                                <form method="post" asp-action="DislikeComment" asp-route-id="@comment.Id" asp-controller="Post">
+                                    <button type="submit" class="btn btn-like-comment"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form method="post" asp-action="LikeComment" asp-route-id="@comment.Id" asp-controller="Post">
+                                    <button type="submit" class="btn btn-like-comment"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
+                                </form>
+                            }
+                        }
+                    </div>
+                    <hr />
+                }
+            </div>
         }
     </div>
 }
 
-
 @if (Model == null)
 {
     <div class="text-center">
-        <h4><strong>No have posts!</strong></h4>
+        <h4><strong>This account no have posts!</strong></h4>
         <a asp-action="Index" asp-controller="Home"><i class="bi bi-arrow-clockwise"></i></a>
     </div>
 }

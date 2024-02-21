@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using SocialWeave.Exceptions;
 using SocialWeave.Models.AbstractClasses;
+using SocialWeave.Models.ConcreteClasses;
 using SocialWeave.Models.Services;
 using SocialWeave.Models.ViewModels;
 using System.Diagnostics;
@@ -57,13 +59,20 @@ namespace SocialWeave.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePost(Guid id)
         {
-            if (Request.Method != "POST")
+            try
             {
-                await _postService.DeletePostAsync(await _postService.FindPostByIdAsync(id));
+                if (Request.Method != "POST")
+                {
+                    await _postService.DeletePostAsync(await _postService.FindPostByIdAsync(id));
+                    return RedirectToAction("UserPage", "User");
+                }
                 return RedirectToAction("UserPage", "User");
+
             }
-            
-            return RedirectToAction("UserPage", "User");
+            catch(PostException ex) 
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
         }
 
         /// <summary>
@@ -213,6 +222,21 @@ namespace SocialWeave.Controllers
             catch (NullReferenceException)
             {
                 return View(commentVM);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteComment(Guid id) 
+        {
+            try 
+            {
+                await _postService.DeleteCommentAsync(await _postService.FindCommentByIdAsync(id));
+                return RedirectToAction("UserPage", "User");
+            }
+            catch(PostException ex) 
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
             }
         }
 

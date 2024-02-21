@@ -11,13 +11,15 @@ namespace SocialWeave.Models.ViewModels
         public User User { get; set; }
         public string CountAdmired { get; set; }
         public string CountAdmirer {get; set;}
+        public IEnumerable<Comment> Comments { get; set;}
 
-        public UserPageViewModel(ApplicationDbContext context, User user, string countAdmired, string countAdmirer)
+        public UserPageViewModel(ApplicationDbContext context, User user, string countAdmired, string countAdmirer, IEnumerable<Comment> comments)
         {
             _context = context;
             User = user;
             CountAdmired = countAdmired;
             CountAdmirer = countAdmirer;
+            Comments = comments;
         }
 
         public async Task<bool> HaveAdmiredAsync(string nameUser, string nameCurrentUser)
