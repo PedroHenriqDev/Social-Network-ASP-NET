@@ -53,6 +53,19 @@ namespace SocialWeave.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeletePost(Guid id)
+        {
+            if (Request.Method != "POST")
+            {
+                await _postService.DeletePostAsync(await _postService.FindPostByIdAsync(id));
+                return RedirectToAction("UserPage", "User");
+            }
+            
+            return RedirectToAction("UserPage", "User");
+        }
+
         /// <summary>
         /// Displays the view to create a post with an image.
         /// </summary>
@@ -95,7 +108,7 @@ namespace SocialWeave.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                return RedirectToAction(nameof(CreatePost));
+                return View();
             }
             catch(UserException) 
             {

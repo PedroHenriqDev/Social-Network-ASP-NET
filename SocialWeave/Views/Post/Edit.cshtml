@@ -39,6 +39,7 @@
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </form>
             </div>
+       
             <div class="d-flex justify-content-between mb-3">
                 <button class="btn btn-outline-primary toggle-comments" data-post-id="@Model.Id"><i class="bi bi-chat-left-text"></i></button>
                 <div class="d-flex flex-column">
@@ -55,6 +56,7 @@
                         </form>
                     }
                 </div>
+              
             </div>
             <div class="text-xxl">
                 <div class="post-comments" data-post-id="@Model.Id" style="display: none;">
@@ -62,6 +64,7 @@
                         <div class="custom-border"></div>
                         <p class="text-center text-primary">Comments</p>
                         <div class="custom-border"></div>
+                     
                         @if (Model.Comments == null || !Model.Comments.Any())
                         {
                             <h6 class="text-center">No exist comments in this post</h6>
@@ -101,6 +104,7 @@
                                                 </form>
                                             }
                                         </div>
+                                       
                                     </div>
                                     <hr />
                                 }
@@ -115,6 +119,11 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="text-center">
+        <form method="post" asp-action="DeletePost" asp-controller="Post" asp-route-id="@Model.Id">
+            <button class="btn text-danger">Delete Post <i class="bi bi-trash-fill"></i> </button>
+        </form>
     </div>
 }
 else
@@ -230,6 +239,11 @@ else
                 </div>
             </div>
         </div>
+    </div>
+    <div class="text-center">
+        <form method="post" asp-action="DeletePost" asp-controller="Post" asp-route-id="@Model.Id">
+            <button class="btn text-danger">Delete Post <i class="bi bi-trash-fill"></i> </button>
+        </form>
     </div>
 }
 

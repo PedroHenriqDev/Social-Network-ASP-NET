@@ -129,11 +129,11 @@ namespace SocialWeave.Models.Services
         /// Removes a post and its related entities from the database asynchronously.
         /// </summary>
         /// <param name="post">The post to remove.</param>
-        public async Task RemovePost(Post post)
+        public async Task DeletePostAsync(Post post)
         {
             if (post == null)
             {
-                throw new NullReferenceException("It is not possible to delete a null post");
+                throw new PostException("It is not possible to delete a null post");
             }
 
             foreach (var comment in post.Comments)
