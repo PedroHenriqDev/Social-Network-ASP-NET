@@ -28,14 +28,29 @@ namespace SocialWeave.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Edit(Guid postId) 
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid Id) 
         {
-            Post post = await _postService.FindPostByIdAsync(postId);
+            Post post = await _postService.FindPostByIdAsync(Id);
             if (post != null)
             {
                 return View(post);
             }
             return RedirectToAction(nameof(Error), new { message = "Post null!" });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(string description, Guid postId) 
+        {
+            try 
+            {
+                await _postService.EditPostByDescriptionAsync(description, await _postService.FindPostByIdAsync(postId));
+                return RedirectToAction("UserPage", "User");
+            }
+            catch(PostException ex)
+            {
+                return RedirectToAction(nameof(Error), new {message = ex.Message});
+            }
         }
 
         /// <summary>
@@ -242,9 +257,9 @@ namespace SocialWeave.Controllers
         /// </summary>
         /// <returns>The error page view.</returns>
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(string message)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel { Message = message, RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

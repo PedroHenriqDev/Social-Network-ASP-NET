@@ -8,6 +8,7 @@ using SocialWeave.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -46,6 +47,19 @@ namespace SocialWeave.Models.Services
             };
 
             await _context.AddAsync(post);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task EditPostByDescriptionAsync(string newDescription, Post post)
+        {
+            if(newDescription == null || post == null || post.Description == newDescription) 
+            {
+                throw new PostException("An brutal error ocurred in edition!");
+            }
+
+            post.Score = 1;
+            post.Description = newDescription;
+            _context.Posts.Update(post);
             await _context.SaveChangesAsync();
         }
 

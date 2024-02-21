@@ -152,8 +152,13 @@
             {
                 <div class="post" style="margin-bottom: 80px;">
                     <div class="text-xxl-center">
-                            <button asp-action="Edit" asp-controller="Post" asp-route-id="@post.Id" class="btn">Edit</button>
                     </div>
+                    @if (User.Identity.Name == post.User.Name)
+                    {
+                        <form method="get" asp-action="Edit" asp-route-id="@post.Id" asp-controller="Post">
+                            <button class="btn text-primary" type="submit"><i class="bi bi-pen"></i></button>
+                        </form>
+                    }
                     <div class="post-header">
                         @if (post.User.PictureProfile == null)
                         {
@@ -172,7 +177,18 @@
                         <div class="d-flex justify-content-between mb-3">
                             <button class="btn btn-outline-primary toggle-comments" data-post-id="@post.Id"><i class="bi bi-chat-left-text"></i></button>
                             <div class="d-flex flex-column">
-                             
+                                @if (post.Likes != null && post.Likes.Any(l => l.User.Name == User.Identity.Name))
+                                {
+                                    <form method="post" asp-action="Dislike" asp-route-id="@post.Id" asp-controller="Post" class="me-3">
+                                        <button class="text-xxl-end btn btn-purple" type="submit"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@post.Likes.CountLikes()</span></button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form method="post" asp-action="Like" asp-route-id="@post.Id" asp-controller="Post" class="me-3">
+                                        <button type="submit" class="btn btn-purple"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@post.Likes.CountLikes()</span></button>
+                                    </form>
+                                }
                             </div>
                         </div>
                         <div class="text-xxl">
@@ -239,7 +255,14 @@
             else
             {
                 PostWithImage postImage = post as PostWithImage;
+
                 <div class="post" style="margin-bottom: 80px;">
+                    @if (User.Identity.Name == post.User.Name)
+                    {
+                        <form method="get" asp-action="Edit" asp-route-id="@post.Id" asp-controller="Post">
+                            <button class="btn text-primary" type="submit"><i class="bi bi-pen"></i></button>
+                        </form>
+                    }
                     <div class="post-header">
                         @if (postImage.User.PictureProfile == null)
                         {
@@ -265,7 +288,7 @@
                     <div class="post-content text-xxl-center">
                         <p>@postImage.Description.CutDescription()</p>
                         <div class="post-content text-xxl-center">
-                            <img src="data:image/png;base64,@(Convert.ToBase64String(postImage.Image))" class="img-fluid" style="max-width: 100%; height: auto;" />
+                            <img src="data:image/png;base64,@(Convert.ToBase64String(postImage.Image))" class="img-fluid" style="max-width: 60%; height: auto;" />
                         </div>
                     </div>
                     <div class="post-content text-xxl-start">
@@ -313,7 +336,7 @@
                                                         {
                                                             <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                                                                 <input type="hidden" name="name" value="@post.User.Name" />
-                                                                <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName():</button>
+                                                                <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @comment.User.Name.CutName():</button>
                                                                 <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
                                                             </form>
                                                         }
