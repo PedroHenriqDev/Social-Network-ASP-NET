@@ -52,7 +52,7 @@ namespace SocialWeave.Models.Services
 
         public async Task EditPostByDescriptionAsync(string newDescription, Post post)
         {
-            if(newDescription == null || post == null || post.Description == newDescription) 
+            if (newDescription == null || post == null || post.Description == newDescription)
             {
                 throw new PostException("An brutal error ocurred in edition!");
             }
@@ -97,10 +97,18 @@ namespace SocialWeave.Models.Services
         /// <returns>The post with the specified ID.</returns>
         public async Task<Post> FindPostByIdAsync(Guid id)
         {
-            return await _context.Posts.Include(x => x.User)
-                                       .Include(x => x.Likes)
-                                       .Include(x => x.Comments)
-                                       .FirstOrDefaultAsync(x => x.Id == id);
+            var resultPost = await _context.Posts.Include(x => x.User)
+                                                 .Include(x => x.Likes)
+                                                 .Include(x => x.Comments)
+                                                 .FirstOrDefaultAsync(x => x.Id == id);
+
+            resultPost.Likes = await _context.Likes
+                                             .Include(x => x.User)
+                                             .Include(x => x.Post)
+                                             .Where(x => x.Post.Id == resultPost.Id)
+                                             .ToListAsync();
+
+            return resultPost;
         }
         public async Task<IEnumerable<Comment>> FindCommentsByUserAsync(User user)
         {
@@ -120,9 +128,9 @@ namespace SocialWeave.Models.Services
             return comments;
         }
 
-        public async Task CompletePostAsync(User user) 
+        public async Task CompletePostAsync(User user)
         {
-            if(user == null) 
+            if (user == null)
             {
                 throw new UserException("User null!");
             }
@@ -207,9 +215,9 @@ namespace SocialWeave.Models.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddAdmirationAsync(User user, User currentUser) 
+        public async Task AddAdmirationAsync(User user, User currentUser)
         {
-            if(user == null || currentUser == null) 
+            if (user == null || currentUser == null)
             {
                 throw new UserException("Impossible find this user!");
             }
@@ -218,9 +226,9 @@ namespace SocialWeave.Models.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task CreateCommentAsync(CommentViewModel commentVM, User user) 
+        public async Task CreateCommentAsync(CommentViewModel commentVM, User user)
         {
-            if(commentVM == null || user == null) 
+            if (commentVM == null || user == null)
             {
                 throw new NullReferenceException();
             }
@@ -244,9 +252,9 @@ namespace SocialWeave.Models.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteCommentAsync(Comment comment) 
+        public async Task DeleteCommentAsync(Comment comment)
         {
-            if(comment == null) 
+            if (comment == null)
             {
                 throw new PostException("Reference null!");
             }
@@ -257,7 +265,7 @@ namespace SocialWeave.Models.Services
 
         public async Task AddLikeInCommentAsync(Comment comment, User user)
         {
-            if(comment == null || user == null) 
+            if (comment == null || user == null)
             {
                 throw new NullReferenceException("Object null!");
             }
@@ -273,16 +281,16 @@ namespace SocialWeave.Models.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveLikeInCommentAsync(Comment comment, User user) 
+        public async Task RemoveLikeInCommentAsync(Comment comment, User user)
         {
-            if(comment == null || user == null) 
+            if (comment == null || user == null)
             {
                 throw new NullReferenceException("Object null!");
             }
 
             Like likeToRemove = await _context.Likes.FirstOrDefaultAsync(x => x.Comment.Id == comment.Id && x.User.Id == user.Id);
-            
-            if(likeToRemove == null) 
+
+            if (likeToRemove == null)
             {
                 throw new NullReferenceException("Object null");
             }
@@ -329,7 +337,7 @@ namespace SocialWeave.Models.Services
 
         public async Task<Comment> FindCommentByIdAsync(Guid id)
         {
-            if(id == null) 
+            if (id == null)
             {
                 throw new NullReferenceException("Object null!");
             }
