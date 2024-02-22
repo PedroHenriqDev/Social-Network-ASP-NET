@@ -2,6 +2,13 @@
 
 <form method="post" asp-controller="User" asp-action="Register" onsubmit="return validateForm()">
     <div class="container">
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @TempData["ErrorMessage"]
+            </div>
+
+        }
         <main role="main" class="pb-3">
             <div class="login-container">
                 <h2>Register</h2>

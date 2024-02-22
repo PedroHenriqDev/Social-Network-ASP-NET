@@ -72,6 +72,7 @@ namespace SocialWeave.Controllers
 
                 return RedirectToAction("Index", "Home");
             }
+            TempData["InvalidUser"] = "Incorrect Email or Password, try another!";
             return View(userVM);
         }
 
@@ -95,13 +96,15 @@ namespace SocialWeave.Controllers
                 {
                     // Redirects to the Login action if registration is successful
                     await _userService.CreateUserAsync(userCreateVM);
+                    TempData["SuccessMessage"] = "User created successfully";
                     return RedirectToAction(nameof(Login));
                 }
                 // Returns the registration view if there are model errors or if user creation fails
-                return View();
+                return View(userCreateVM);
             }
             catch (UserException ex)
             {
+                TempData["ErrorMessage"] = "Existing user or email try another";
                 return View(userCreateVM);
             }
             catch (IntegrityException ex)

@@ -146,7 +146,6 @@ namespace SocialWeave.Models.Services
                 if (await CheckNameExistsAsync(userCreateVM.Name)) 
                 {
                     throw new UserException("Existing name");
-
                 }
 
                 User user = new User()

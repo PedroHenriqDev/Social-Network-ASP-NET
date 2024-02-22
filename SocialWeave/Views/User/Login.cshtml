@@ -1,6 +1,19 @@
 ﻿@model SocialWeave.Models.ViewModels.UserViewModel
 
 <form method="post" asp-controller="User" asp-action="Login">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success strong-green" role="alert">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["InvalidUser"] != null)
+    {
+        <div class="alert alert-danger strong-red" role="alert">
+            @TempData["InvalidUser"]
+        </div>
+    }
+
     <div class="container">
         <main role="main" class="pb-3">
             <div class="login-container">
@@ -35,6 +48,19 @@
         </main>
     </div>
 </form>
+
+<style> 
+    .strong-green {
+        background-color: #28a745;
+        color: #fff;
+    }
+
+    .strong-red {
+        background-color: #dc3545;
+        color: #fff;
+    }
+</style>
+
 
 @section Scripts {
     <script>
