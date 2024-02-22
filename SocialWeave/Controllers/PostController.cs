@@ -171,6 +171,42 @@ namespace SocialWeave.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LikeInPageSearch(Guid id)
+        {
+            try
+            {
+                await _postService.AddLikeInPostAsync(await _postService.FindPostByIdAsync(id),
+                await _userService.FindUserByNameAsync(User.Identity.Name));
+                return RedirectToAction("PageOfSearch", "Search");
+            }
+            catch (NullReferenceException ex)
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
+            catch (UserException ex)
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DislikeInPageSearch(Guid id)
+        {
+            try
+            {
+                await _postService.RemoveLikeInPostAsync(await _postService.FindPostByIdAsync(id),
+                await _userService.FindUserByNameAsync(User.Identity.Name));
+                return RedirectToAction("PageOfSearch", "Search");
+            }
+            catch (NullReferenceException ex)
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
+        }
+
         /// <summary>
         /// Dislikes a post with the specified ID.
         /// </summary>

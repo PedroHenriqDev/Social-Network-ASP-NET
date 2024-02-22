@@ -22,8 +22,15 @@ namespace SocialWeave.Models.Services
         {
             foreach (var post in posts)
             {
-                post.Likes = await _context.Likes.Where(l => l.Post.Id == post.Id).ToListAsync();
-                post.Comments = await _context.Comments.Include(c => c.User).Where(c => c.Post.Id == post.Id).OrderByDescending(c => c.Likes.Count()).ToListAsync();
+                post.Likes = await _context.Likes
+                                           .Where(l => l.Post.Id == post.Id)
+                                           .ToListAsync();
+
+                post.Comments = await _context.Comments
+                                              .Include(c => c.User)
+                                              .Where(c => c.Post.Id == post.Id)
+                                              .OrderByDescending(c => c.Likes.Count())
+                                              .ToListAsync();
             }
 
             CalculateScores(posts, currentUser);

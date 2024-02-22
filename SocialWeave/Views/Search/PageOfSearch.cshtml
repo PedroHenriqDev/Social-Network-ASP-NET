@@ -168,13 +168,13 @@
                                             <div class="d-flex flex-column">
                                                 @if (post.Likes != null && post.Likes.Any(l => l.User.Name == User.Identity.Name))
                                                 {
-                                                    <form method="post" asp-action="Dislike" asp-route-id="@post.Id" asp-controller="Post" class="me-3">
+                                                    <form method="post" asp-action="DislikeInPageSearch" asp-route-id="@post.Id" asp-controller="Post" class="me-3">
                                                         <button class="text-xxl-end btn btn-like" type="submit"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@post.Likes.CountLikes()</span></button>
                                                     </form>
                                                 }
                                                 else
                                                 {
-                                                    <form method="post" asp-action="Like" asp-route-id="@post.Id" asp-controller="Post" class="me-3">
+                                                    <form method="post" asp-action="LikeInPageSearch" asp-route-id="@post.Id" asp-controller="Post" class="me-3">
                                                         <button type="submit" class="btn btn-like"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@post.Likes.CountLikes()</span></button>
                                                     </form>
                                                 }
@@ -276,13 +276,13 @@
                                             <div class="d-flex flex-column">
                                                 @if (postImage.Likes != null && postImage.Likes.Any(l => l.User.Name == User.Identity.Name))
                                                 {
-                                                    <form method="post" asp-action="Dislike" asp-route-id="@postImage.Id" asp-controller="Post" class="me-3">
+                                                    <form method="post" asp-action="DislikeInPageSearch" asp-route-id="@postImage.Id" asp-controller="Post" class="me-3">
                                                         <button class="text-xxl-end btn btn-like" type="submit"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@postImage.Likes.CountLikes()</span></button>
                                                     </form>
                                                 }
                                                 else
                                                 {
-                                                    <form method="post" asp-action="Like" asp-route-id="@postImage.Id" asp-controller="Post" class="me-3">
+                                                    <form method="post" asp-action="LikeInPageSearch" asp-route-id="@postImage.Id" asp-controller="Post" class="me-3">
                                                         <button type="submit" class="btn btn-like"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@postImage.Likes.CountLikes()</span></button>
                                                     </form>
                                                 }
