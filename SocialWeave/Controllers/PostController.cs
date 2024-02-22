@@ -63,9 +63,9 @@ namespace SocialWeave.Controllers
             {
                 if (Request.Method != "POST")
                 {
-                    await _postService.DeletePostAsync(await _postService.FindPostByIdAsync(id));
                     return RedirectToAction("UserPage", "User");
                 }
+                await _postService.DeletePostAsync(await _postService.FindPostByIdAsync(id));
                 return RedirectToAction("UserPage", "User");
 
             }

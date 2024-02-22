@@ -97,7 +97,7 @@
                             <div class="d-flex justify-content-between mb-3">
                                 <button class="btn btn-outline-primary toggle-comments" data-post-id="@post.Id"><i class="bi bi-chat-left-text"></i></button>
                                 <div class="d-flex flex-column">
-                                    @if (post.Likes != null && post.Likes.Any(l => l.User.Name == User.Identity.Name))
+                                    @if (post.Likes != null && post.Likes.Count() != 0 && post.Likes.Any(l => l.User.Name == User.Identity.Name))
                                     {
                                         <form method="post" asp-action="Dislike" asp-route-id="@post.Id" asp-controller="Post" class="me-3">
                                             <button class="text-xxl-end btn btn-like" type="submit"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@post.Likes.CountLikes()</span></button>
@@ -143,7 +143,7 @@
                                                             }
                                                         </div>
                                                         <div class="comment-like ms-auto">
-                                                            @if (comment.Likes != null && comment.Likes.Count() != 0 && post.Likes.Any(l => l.User.Name == User.Identity.Name))
+                                                            @if (comment.Likes != null && comment.Likes.Count() != 0 && comment.Likes.Any(l => l.User.Name == User.Identity.Name))
                                                             {
                                                                 <form method="post" asp-action="DislikeComment" asp-route-id="@comment.Id" asp-controller="Post">
                                                                     <button type="submit" class="btn btn-like-comment"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
@@ -205,7 +205,7 @@
                             <div class="d-flex justify-content-between mb-3" style="margin-top: 20px;">
                                 <button class="btn btn-outline-primary toggle-comments" data-post-id="@postImage.Id"><i class="bi bi-chat-left-text"></i></button>
                                 <div class="d-flex flex-column">
-                                    @if (postImage.Likes != null && postImage.Likes.Any(l => l.User.Name == User.Identity.Name))
+                                    @if (postImage.Likes != null && postImage.Likes.Count() != 0 && postImage.Likes.Any(l => l.User.Name == User.Identity.Name))
                                     {
                                         <form method="post" asp-action="Dislike" asp-route-id="@postImage.Id" asp-controller="Post" class="me-3">
                                             <button class="text-xxl-end btn btn-like" type="submit"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@postImage.Likes.CountLikes()</span></button>
@@ -251,7 +251,7 @@
                                                             }
                                                         </div>
                                                         <div class="comment-like ms-auto">
-                                                            @if (comment.Likes != null && comment.Likes.Count() != 0 && postImage.Likes.Any(l => l.User.Name == User.Identity.Name))
+                                                            @if (comment.Likes != null && comment.Likes.Count() != 0 && comment.Likes.Any(l => l.User.Name == User.Identity.Name))
                                                             {
                                                                 <form method="post" asp-action="DislikeComment" asp-route-id="@comment.Id" asp-controller="Post">
                                                                     <button type="submit" class="btn btn-like"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
