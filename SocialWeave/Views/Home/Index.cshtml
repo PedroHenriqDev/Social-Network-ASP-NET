@@ -315,18 +315,5 @@ else
                 event.stopPropagation();
             });
         });
-            document.querySelectorAll('.toggle-comments').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const postId = btn.getAttribute('data-post-id');
-                    const comments = document.querySelector(`.post-comments[data-post-id="${postId}"]`);
-                    comments.style.display = comments.style.display === 'none' ? 'block' : 'none';
-                });
-            });
-
-        document.querySelectorAll('.btn-like-comment').forEach(btn => {
-            btn.addEventListener('click', (event) => {
-                event.stopPropagation();
-            });
-        });
     </script>
 }

@@ -78,6 +78,10 @@ namespace SocialWeave.Controllers
 
         public IActionResult Register()
         {
+            if (User.Identity.IsAuthenticated) 
+            {
+                return NotFound();
+            }
             return View();
         }
 
