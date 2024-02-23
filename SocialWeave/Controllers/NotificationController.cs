@@ -2,7 +2,7 @@
 
 namespace SocialWeave.Controllers
 {
-    public class ShowNotification : Controller
+    public class NotificationController : Controller
     {
         public IActionResult ShowNotifications()
         {

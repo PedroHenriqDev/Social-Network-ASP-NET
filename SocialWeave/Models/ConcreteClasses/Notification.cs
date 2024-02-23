@@ -9,10 +9,13 @@ namespace SocialWeave.Models.ConcreteClasses
         public Guid Id { get; set; }
 
         [Required]
+        public User User { get; set; }
+
+        [Required]
         public string Content { get; set; }
 
         [Required]
-        public string Date {  get; set; }
+        public DateTime Date {  get; set; }
 
         [Required]
         public bool WasSeen { get; set; }

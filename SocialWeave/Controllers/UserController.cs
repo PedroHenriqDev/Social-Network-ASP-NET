@@ -20,15 +20,17 @@ namespace SocialWeave.Controllers
     /// </summary>
     public class UserController : Controller
     {
+        private readonly NotificationService _notificationService;
         private readonly UserService _userService;
         private readonly PostService _postService;
         private readonly ApplicationDbContext _context;
 
-        public UserController(UserService userService, ApplicationDbContext context, PostService postService)
+        public UserController(UserService userService, ApplicationDbContext context, PostService postService, NotificationService notificationService)
         {
             _userService = userService;
             _context = context;
             _postService = postService;
+            _notificationService = notificationService;
         }
 
         public IActionResult Login()
@@ -245,7 +247,6 @@ namespace SocialWeave.Controllers
             {
 
             }
-
             try 
             {
                 await _userService.RemoveAdmirationAsync(await _userService.FindUserByNameAsync(User.Identity.Name), 
@@ -269,8 +270,12 @@ namespace SocialWeave.Controllers
 
             try 
             {
-                await _userService.AddAdmirationAsync(await _userService.FindUserByNameAsync(User.Identity.Name),
-                    await _userService.FindUserByIdAsync(id));
+                User userAdmirer = await _userService.FindUserByNameAsync(User.Identity.Name);
+                User userAdmired = await _userService.FindUserByIdAsync(id);
+
+                await _userService.AddAdmirationAsync(userAdmirer, userAdmired);
+                await _notificationService.AddAdmirationRelatedNotificationAsync(userAdmirer, userAdmired);
+
                 return RedirectToAction(nameof(UserPage));
             }
             catch(UserException ex) 
