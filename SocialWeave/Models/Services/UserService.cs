@@ -62,9 +62,9 @@ namespace SocialWeave.Models.Services
         public async Task<User> FindUserByNameAsync(string name)
         {
             User user = await _context.Users
-                .Include(x => x.Posts)
-                .Include(x => x.Admirations)
-                .FirstOrDefaultAsync(x => x.Name == name);
+                                      .Include(x => x.Posts)
+                                      .Include(x => x.Admirations)
+                                      .FirstOrDefaultAsync(x => x.Name == name);
 
             await _postService.CompletePostAsync(user);
             return user;
@@ -73,11 +73,11 @@ namespace SocialWeave.Models.Services
         public async Task<IEnumerable<User>> ReturnAdmiredFromUserAsync(User user)
         {
             var users = await _context.Admirations
-                            .Include(x => x.UserAdmired)
-                            .Include(x => x.UserAdmired.Posts)
-                            .Where(x => x.UserAdmiredId != user.Id && x.UserAdmirerId == user.Id)
-                            .Select(x => x.UserAdmired)
-                            .ToListAsync();
+                                      .Include(x => x.UserAdmired)
+                                      .Include(x => x.UserAdmired.Posts)
+                                      .Where(x => x.UserAdmiredId != user.Id && x.UserAdmirerId == user.Id)
+                                      .Select(x => x.UserAdmired)
+                                      .ToListAsync();
 
             return users;
         }
@@ -97,12 +97,16 @@ namespace SocialWeave.Models.Services
         /// </summary>
         public async Task<User> FindUserByIdAsync(Guid id)
         {
-            return await _context.Users.Include(x => x.Posts).Include(x => x.Admirations).FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Users
+                                 .Include(x => x.Posts)
+                                 .Include(x => x.Admirations)
+                                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<Admiration> FindAdmirationByUserIdAsync(User userAdmired, User userAdmirer)
         {
-            return await _context.Admirations.FirstOrDefaultAsync(x => x.UserAdmiredId == userAdmired.Id && x.UserAdmirerId == userAdmirer.Id);
+            return await _context.Admirations
+                                 .FirstOrDefaultAsync(x => x.UserAdmiredId == userAdmired.Id && x.UserAdmirerId == userAdmirer.Id);
         }
 
         /// <summary>
@@ -251,35 +255,42 @@ namespace SocialWeave.Models.Services
             return userAdmired;
         }
 
-        public async Task<string> CountAdmiredAsync(User user) 
+        public async Task<string> FormatNumberAsync(int count)
+        {
+            if (count < 999)
+            {
+                return count.ToString();
+            }
+            else if (count < 9999)
+            {
+                return (count / 1000.0).ToString("0.#") + " K";
+            }
+            else if (count < 99999)
+            {
+                return (count / 1000.0).ToString("0.##") + " K";
+            }
+            else if (count < 999999)
+            {
+                return (count / 1000.0).ToString("0.#") + " K";
+            }
+            else
+            {
+                return (count / 1000000.0).ToString("0.#") + " M";
+            }
+        }
+
+        public async Task<string> CountAdmiredAsync(User user)
         {
             if (user == null)
             {
                 throw new UserException("User is null!");
             }
 
-            var amountOfAdmired = await _context.Admirations.Where(x => x.UserAdmirerId == user.Id).ToListAsync();
+            var amountOfAdmired = await _context.Admirations
+                .Where(x => x.UserAdmirerId == user.Id)
+                .CountAsync();
 
-            if (amountOfAdmired.Count() < 1000)
-            {
-                return amountOfAdmired.Count().ToString();
-            }
-            else if (amountOfAdmired.Count() < 10000)
-            {
-                return amountOfAdmired.Count().ToString().Substring(0, 1) + " K";
-            }
-            else if (amountOfAdmired.Count() < 100000)
-            {
-                return amountOfAdmired.Count().ToString().Substring(0, 2) + " K";
-            }
-            else if (amountOfAdmired.Count() < 1000000)
-            {
-                return amountOfAdmired.Count().ToString().Substring(0, 3) + " K";
-            }
-            else
-            {
-                return amountOfAdmired.Count().ToString().Substring(0, 1) + " M";
-            }
+            return await FormatNumberAsync(amountOfAdmired);
         }
 
         public async Task<string> CountAdmirersAsync(User user)
@@ -289,29 +300,13 @@ namespace SocialWeave.Models.Services
                 throw new UserException("User is null!");
             }
 
-            var amountOfAdmirers = await _context.Admirations.Where(x => x.UserAdmirerId != user.Id && x.UserAdmiredId == user.Id).ToListAsync();
+            var amountOfAdmirers = await _context.Admirations
+                .Where(x => x.UserAdmirerId != user.Id && x.UserAdmiredId == user.Id)
+                .CountAsync();
 
-            if (amountOfAdmirers.Count() < 999)
-            {
-                return amountOfAdmirers.Count().ToString();
-            }
-            else if (amountOfAdmirers.Count() < 9999)
-            {
-                return amountOfAdmirers.Count().ToString().Substring(0, 1) + " K";
-            }
-            else if (amountOfAdmirers.Count() < 99999) 
-            {
-                return amountOfAdmirers.Count().ToString().Substring(0, 2) + " K";
-            }
-            else if (amountOfAdmirers.Count() < 999999)
-            {
-                return amountOfAdmirers.Count().ToString().Substring(0, 3) + " K";
-            }
-            else 
-            {
-                return amountOfAdmirers.Count().ToString().Substring(0, 1) + " M";
-            }
+            return await FormatNumberAsync(amountOfAdmirers);
         }
+
 
         #region Send Email
         /// <summary>
