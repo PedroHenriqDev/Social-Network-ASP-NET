@@ -8,22 +8,33 @@ using SocialWeave.Models.AbstractClasses;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using SocialWeave.Helpers;
+using System.Globalization;
 
 namespace SocialWeave.Controllers
 {
+
+    [ServiceFilter(typeof(NotificationHelperActionFilter))]
     public class HomeController : Controller
     {
         private readonly UserService _userService;
         private readonly PostService _postService;
         private readonly AmountOfPostsHelper _amountOfPostsHelper;
         private readonly SearchService _searchService;
+        private readonly NotificationService _notificationService;
+        private readonly NotificationHelper _notificationHelper;
 
-        public HomeController(UserService userService, PostService postService, AmountOfPostsHelper amountOfPostsHelper, SearchService searchService)
+        public HomeController(UserService userService, 
+               PostService postService, 
+               AmountOfPostsHelper amountOfPostsHelper, 
+               SearchService searchService, NotificationService notificationService, 
+               NotificationHelper notificationHelper)
         {
             _userService = userService;
             _postService = postService;
             _amountOfPostsHelper = amountOfPostsHelper;
             _searchService = searchService;
+            _notificationService = notificationService;
+            _notificationHelper = notificationHelper;
         }
 
         /// <summary>
@@ -35,8 +46,8 @@ namespace SocialWeave.Controllers
             try
             {
                 int amountOfPosts = _amountOfPostsHelper.ReturnAmountOfPosts();
-
-                IEnumerable<Post> posts = await _postService.FindPostsByGenerateTrendingAsync(await _userService.FindUserByNameAsync(User.Identity.Name), amountOfPosts);
+                User user = await _userService.FindUserByNameAsync(User.Identity.Name);
+                IEnumerable<Post> posts = await _postService.FindPostsByGenerateTrendingAsync(user, amountOfPosts);
                 ViewData["AmountOfPostsHelper"] = _amountOfPostsHelper;
                 return View(posts);
             }
@@ -86,9 +97,9 @@ namespace SocialWeave.Controllers
         /// </summary>
         /// <returns>The error page view.</returns>
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(string message)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel { Message = message, RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

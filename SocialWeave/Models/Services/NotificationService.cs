@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using SocialWeave.Data;
@@ -125,15 +126,25 @@ namespace SocialWeave.Models.Services
             {
                 throw new NotificationException("An brutal error ocurred in find user!");
             }
-            var notifications = await _context.Notifications.Include(x => x.InvolvedUser)
+            var notifications = await _context.Notifications.Include(n => n.InvolvedUser)
                 .Where(n => n.UserId == user.Id)
-                .OrderByDescending(x => x.Date)
+                .OrderByDescending(n => n.Date)
                 .ToListAsync();
 
             await ChangeStatusOfNoticationAsync(notifications);
 
             var filteredNotifications = await FilterNotificationByDateAsync(notifications);
             return filteredNotifications;
+        }
+
+        public async Task<bool> HasNotificationAsync(User user) 
+        {
+            if(user == null) 
+            {
+                return false;
+            }
+
+            return await _context.Notifications.AnyAsync(n => n.UserId == user.Id && !n.WasSeen);
         }
 
         private async Task ChangeStatusOfNoticationAsync(IEnumerable<Notification> notifications)

@@ -6,6 +6,7 @@ using SocialWeave.Models.Services;
 
 namespace SocialWeave.Controllers
 {
+    [ServiceFilter(typeof(NotificationHelperActionFilter))]
     public class SearchController : Controller
     {
 

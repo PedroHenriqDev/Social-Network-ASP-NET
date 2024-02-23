@@ -11,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<AmountOfPostsHelper>();
+builder.Services.AddScoped<NotificationHelper>();
+builder.Services.AddScoped<NotificationHelperActionFilter>();
 builder.Services.AddScoped<GenerateTrendingPostsService>();
 builder.Services.AddScoped<SearchService>();
 builder.Services.AddScoped<UserService>();

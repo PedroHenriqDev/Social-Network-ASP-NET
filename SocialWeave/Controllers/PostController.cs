@@ -12,6 +12,8 @@ using System.Diagnostics;
 
 namespace SocialWeave.Controllers
 {
+
+    [ServiceFilter(typeof(NotificationHelperActionFilter))]
     public class PostController : Controller
     {
         private readonly PostService _postService;

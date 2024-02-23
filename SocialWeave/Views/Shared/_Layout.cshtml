@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using SocialWeave.Helpers;
+@{
+    var notificationHelper = Context.Items["HasNotifications"] as NotificationHelper;
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -26,20 +30,36 @@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="About"><i class="bi bi-person-workspace mx-2"></i>About</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="IndexWithPostsAdmired"><i class="bi bi-people-fill me-2"></i>Posts</a>
-                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="IndexWithPostsAdmired"><i class="bi bi-people-fill me-2"></i>Posts</a>
+                            </li>
+                       
+                        }
                     </ul>
+
                     @if (User.Identity.IsAuthenticated)
                     {
                         <ul class="navbar-nav">
+                            @if (notificationHelper != null && notificationHelper.HasNotifications)
+                            {
+                                <li class="nav-item my-auto">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Notification" asp-action="ShowNotifications">
+                                        <strong><i class="bi bi-bell-fill"></i> </strong>new
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item my-auto">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Notification" asp-action="ShowNotifications">
+                                        <strong><i class="bi bi-bell"></i></strong>
+                                    </a>
+                                </li>
+                            }
                             <li class="nav-item">
                                 <a class="nav-link text-light" asp-area="" asp-controller="Post" asp-action="ChoosePostType"><i class="bi bi-plus-circle-dotted mx-1"></i></a>
-                            </li>
-                            <li class="nav-item my-auto">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Notification" asp-action="ShowNotifications">
-                                    <strong><i class="bi bi-bell"></i></strong>
-                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="LogoutGet"><i class="bi bi-box-arrow-in-left mx-1"></i></a>
@@ -78,6 +98,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

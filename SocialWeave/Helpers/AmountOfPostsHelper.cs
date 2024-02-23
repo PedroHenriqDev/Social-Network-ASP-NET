@@ -3,18 +3,18 @@
     public class AmountOfPostsHelper
     {
 
-        private readonly IHttpContextAccessor _httpContextAcessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public int Amount { get; set; }
 
         public AmountOfPostsHelper(IHttpContextAccessor httpContextAcessor) 
         {
-            _httpContextAcessor = httpContextAcessor;
+            _httpContextAccessor = httpContextAcessor;
         }
         
         public int ReturnAmountOfPosts() 
         {
-            ISession session = _httpContextAcessor.HttpContext.Session;
+            ISession session = _httpContextAccessor.HttpContext.Session;
 
             if (session.Keys.Contains("AmountOfPosts"))
             {
@@ -32,9 +32,8 @@
 
         public void SetAmountOfPosts(int amount) 
         {
-            ISession session = _httpContextAcessor.HttpContext.Session;
+            ISession session = _httpContextAccessor.HttpContext.Session;
             session.SetString("AmountOfPosts", amount.ToString());
         }
-
     }
 }
