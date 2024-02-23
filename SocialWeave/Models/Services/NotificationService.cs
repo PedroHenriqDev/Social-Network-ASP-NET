@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using SocialWeave.Data;
 using SocialWeave.Exceptions;
 using SocialWeave.Models.ConcreteClasses;
@@ -9,10 +10,12 @@ namespace SocialWeave.Models.Services
     public class NotificationService
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserService _userService;
 
-        public NotificationService(ApplicationDbContext context) 
+        public NotificationService(ApplicationDbContext context, UserService userService) 
         {
             _context = context;
+            _userService = userService;
         }
 
         public async Task AddAdmirationRelatedNotificationAsync(User userAdmired, User userAdmirer) 
@@ -40,6 +43,22 @@ namespace SocialWeave.Models.Services
             if(userWhoPosted == null) 
             {
                 throw new NotificationException("An brutal error ocurred in creation of notification!");
+            }
+
+            var users = await _userService.FindAdmirersOfUserAsync(userWhoPosted);
+
+            foreach(var user in users) 
+            {
+                Notification notification = new Notification()
+                {
+                    Id = Guid.NewGuid(),
+                    User = user,
+                    Date = DateTime.Now,
+                    Content = user.Name + " posted something new!",
+                    WasSeen = false
+                };
+                await _context.AddAsync(notification);
+                await _context.SaveChangesAsync();
             }
         }
     } 

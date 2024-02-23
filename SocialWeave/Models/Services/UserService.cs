@@ -232,9 +232,12 @@ namespace SocialWeave.Models.Services
         {
             if (user == null) throw new UserException("User null!");
 
-            var userAdmirers = await _context.Admirations.Where(x => x.UserAdmirerId != user.Id && x.UserAdmiredId == user.Id)
-                                              .Select(x => x.UserAdmirer)
-                                              .ToListAsync();
+            var userAdmirers = await _context.Admirations
+                                             .Where(x => x.UserAdmirerId != user.Id && x.UserAdmiredId == user.Id)
+                                             .Include(x => x.UserAdmirer.Posts)
+                                             .Include(x => x.UserAdmirer.Admirations)
+                                             .Select(x => x.UserAdmirer)
+                                             .ToListAsync();
             return userAdmirers;
         }
 

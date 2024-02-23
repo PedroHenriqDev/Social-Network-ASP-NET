@@ -16,10 +16,11 @@ namespace SocialWeave.Controllers
         private readonly NotificationService _notificationService;
         private readonly UserService _userService;
 
-        public PostController(PostService postService, UserService userService)
+        public PostController(PostService postService, UserService userService, NotificationService notificationService)
         {
             _postService = postService;
             _userService = userService;
+            _notificationService = notificationService;
         }
 
         /// <summary>
@@ -142,7 +143,7 @@ namespace SocialWeave.Controllers
                 {
                     User userWhoPosted = await _userService.FindUserByNameAsync(User.Identity.Name);
                     await _postService.CreatePostAsync(postImageVM, userWhoPosted, imageFile );
-                    await _notificationService.AddAdmirationRelatedNotificationAsync(userWhoPosted);
+                    await _notificationService.AddNotificationRelatedToPostAsync(userWhoPosted);
                     return RedirectToAction("Index", "Home");
                 }
                 return View();
