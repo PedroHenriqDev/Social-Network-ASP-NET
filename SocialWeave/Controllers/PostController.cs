@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
@@ -274,7 +275,13 @@ namespace SocialWeave.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await _postService.CreateCommentAsync(commentVM, await _userService.FindUserByNameAsync(User.Identity.Name));
+                    User userComment = await _userService.FindUserByNameAsync(User.Identity.Name);
+                    Post post = await _postService.FindPostByIdAsync(commentVM.PostId);
+                    User userPost = await _userService.FindUserByNameAsync(post.User.Name);
+
+                    await _postService.CreateCommentAsync(commentVM, userComment);
+                    await _notificationService.AddNotificationRelatedCommentAsync(userComment, userPost);
+
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -283,6 +290,10 @@ namespace SocialWeave.Controllers
             catch (NullReferenceException)
             {
                 return View(commentVM);
+            }
+            catch (NotificationException)
+            {
+                return RedirectToAction("Index", "Home");
             }
         }
 

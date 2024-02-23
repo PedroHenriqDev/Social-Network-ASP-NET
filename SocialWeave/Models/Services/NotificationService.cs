@@ -80,5 +80,24 @@ namespace SocialWeave.Models.Services
             await _context.AddAsync(notification);
             await _context.SaveChangesAsync();
         }
+
+        public async Task AddNotificationRelatedCommentAsync(User userComment, User userPost) 
+        {
+            if(userComment == null || userPost == null) 
+            {
+                throw new NotificationException("An brutal error ocurred in creation of notification!");
+            }
+
+            Notification notification = new Notification()
+            {
+                Id = Guid.NewGuid(),
+                User = userPost,
+                Date = DateTime.Now,
+                Content = userComment.Name + " commented on your post",
+                WasSeen = false
+            };
+            await _context.AddAsync(notification);
+            await _context.SaveChangesAsync();
+        }
     } 
 }
