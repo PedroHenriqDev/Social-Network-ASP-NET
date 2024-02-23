@@ -61,5 +61,24 @@ namespace SocialWeave.Models.Services
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task AddNotificationRelatedLikeAsync(User userLike, User userPost)
+        {
+            if (userLike == null || userPost == null) 
+            {
+                throw new NotificationException("An brutal error ocurred in creation of notification!");
+            }
+
+            Notification notification = new Notification()
+            {
+                Id = Guid.NewGuid(),
+                User = userPost,
+                Date = DateTime.Now,
+                Content = userLike.Name + " liked your post",
+                WasSeen = false
+            };
+            await _context.AddAsync(notification);
+            await _context.SaveChangesAsync();
+        }
     } 
 }

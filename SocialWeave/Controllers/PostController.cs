@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using SocialWeave.Exceptions;
 using SocialWeave.Models.AbstractClasses;
 using SocialWeave.Models.ConcreteClasses;
@@ -165,8 +166,12 @@ namespace SocialWeave.Controllers
         {
             try
             {
-                await _postService.AddLikeInPostAsync(await _postService.FindPostByIdAsync(id),
-                await _userService.FindUserByNameAsync(User.Identity.Name));
+                Post post = await _postService.FindPostByIdAsync(id);
+                User userLike = await _userService.FindUserByNameAsync(User.Identity.Name);
+                User userPost = await _userService.FindUserByNameAsync(post.User.Name);
+
+                await _postService.AddLikeInPostAsync(post, userLike);
+                await _notificationService.AddNotificationRelatedLikeAsync(userLike, userPost);
                 return RedirectToAction("Index", "Home");
             }
             catch (NullReferenceException ex)
@@ -177,6 +182,10 @@ namespace SocialWeave.Controllers
             {
                 return RedirectToAction(nameof(Error), new { message = ex.Message });
             }
+            catch (NotificationException) 
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
@@ -185,9 +194,13 @@ namespace SocialWeave.Controllers
         {
             try
             {
-                await _postService.AddLikeInPostAsync(await _postService.FindPostByIdAsync(id),
-                await _userService.FindUserByNameAsync(User.Identity.Name));
-                return RedirectToAction("PageOfSearch", "Search");
+                Post post = await _postService.FindPostByIdAsync(id);
+                User userLike = await _userService.FindUserByNameAsync(User.Identity.Name);
+                User userPost = await _userService.FindUserByNameAsync(post.User.Name);
+
+                await _postService.AddLikeInPostAsync(post, userLike);
+                await _notificationService.AddNotificationRelatedLikeAsync(userLike, userPost);
+                return RedirectToAction("UserPage", "User");
             }
             catch (NullReferenceException ex)
             {
@@ -196,6 +209,10 @@ namespace SocialWeave.Controllers
             catch (UserException ex)
             {
                 return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
+            catch (NotificationException)
+            {
+                return RedirectToAction("Index", "Home");
             }
         }
 
