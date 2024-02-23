@@ -137,16 +137,18 @@ namespace SocialWeave.Models.Services
 
             foreach (var post in user.Posts)
             {
-                post.Likes = await _context.Likes.Include(x => x.User)
-                      .Include(x => x.Post)
-                      .Where(x => x.Post.Id == post.Id)
-                      .ToListAsync();
+                post.Likes = await _context.Likes
+                                           .Include(x => x.User)
+                                           .Include(x => x.Post)
+                                           .Where(x => x.Post.Id == post.Id)
+                                           .ToListAsync();
 
-                post.Comments = await _context.Comments.Include(x => x.User)
-                    .Include(x => x.Likes)
-                    .Where(x => x.Post.Id == post.Id)
-                    .Take(20)
-                    .ToListAsync();
+                post.Comments = await _context.Comments
+                                              .Include(x => x.User)
+                                              .Include(x => x.Likes)
+                                              .Where(x => x.Post.Id == post.Id)
+                                              .Take(20)
+                                              .ToListAsync();
             }
         }
 
@@ -222,7 +224,7 @@ namespace SocialWeave.Models.Services
                 throw new UserException("Impossible find this user!");
             }
 
-            await _context.Admirations.AddAsync(new Admiration(user, currentUser, new Guid()));
+            await _context.AddAsync(new Admiration(user, currentUser, new Guid()));
             await _context.SaveChangesAsync();
         }
 

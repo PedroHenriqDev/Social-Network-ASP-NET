@@ -78,6 +78,7 @@ namespace SocialWeave.Models.Services
                             .Where(x => x.UserAdmiredId != user.Id && x.UserAdmirerId == user.Id)
                             .Select(x => x.UserAdmired)
                             .ToListAsync();
+
             return users;
         }
 

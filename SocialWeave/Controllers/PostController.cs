@@ -13,6 +13,7 @@ namespace SocialWeave.Controllers
     public class PostController : Controller
     {
         private readonly PostService _postService;
+        private readonly NotificationService _notificationService;
         private readonly UserService _userService;
 
         public PostController(PostService postService, UserService userService)
@@ -67,7 +68,6 @@ namespace SocialWeave.Controllers
                 }
                 await _postService.DeletePostAsync(await _postService.FindPostByIdAsync(id));
                 return RedirectToAction("UserPage", "User");
-
             }
             catch(PostException ex) 
             {
@@ -113,7 +113,9 @@ namespace SocialWeave.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    await _postService.CreatePostAsync(postVM, await _userService.FindUserByNameAsync(User.Identity.Name));
+                    User userWhoPosted = await _userService.FindUserByNameAsync(User.Identity.Name);
+                    await _postService.CreatePostAsync(postVM, userWhoPosted);
+                    await _notificationService.AddNotificationRelatedToPostAsync(userWhoPosted);
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -122,6 +124,10 @@ namespace SocialWeave.Controllers
             catch(UserException) 
             {
                return View();
+            }
+            catch (NotificationException) 
+            {
+                return RedirectToAction("Index", "Home");
             }
         }
 
@@ -134,8 +140,9 @@ namespace SocialWeave.Controllers
                 ModelState.Remove(nameof(postImageVM.Image));
                 if (ModelState.IsValid)
                 {
-
-                    await _postService.CreatePostAsync(postImageVM, await _userService.FindUserByNameAsync(User.Identity.Name), imageFile );
+                    User userWhoPosted = await _userService.FindUserByNameAsync(User.Identity.Name);
+                    await _postService.CreatePostAsync(postImageVM, userWhoPosted, imageFile );
+                    await _notificationService.AddAdmirationRelatedNotificationAsync(userWhoPosted);
                     return RedirectToAction("Index", "Home");
                 }
                 return View();

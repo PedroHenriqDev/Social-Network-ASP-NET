@@ -282,6 +282,10 @@ namespace SocialWeave.Controllers
             {
                 return RedirectToAction(nameof(Error), new { message = ex.Message});  
             }
+            catch(NotificationException ex) 
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpGet]

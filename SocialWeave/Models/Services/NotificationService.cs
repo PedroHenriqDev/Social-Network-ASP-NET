@@ -1,4 +1,5 @@
-﻿using SocialWeave.Data;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using SocialWeave.Data;
 using SocialWeave.Exceptions;
 using SocialWeave.Models.ConcreteClasses;
 using System.Runtime.InteropServices;
@@ -18,7 +19,7 @@ namespace SocialWeave.Models.Services
         {
             if(userAdmired == null || userAdmirer == null) 
             {
-                throw new NotificationException("An brutal error ocurred in creation of notifcation!");
+                throw new NotificationException("An brutal error ocurred in creation of notification!");
             }
 
             Notification notification = new Notification()
@@ -32,6 +33,14 @@ namespace SocialWeave.Models.Services
 
             await _context.AddAsync(notification);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task AddNotificationRelatedToPostAsync(User userWhoPosted) 
+        {
+            if(userWhoPosted == null) 
+            {
+                throw new NotificationException("An brutal error ocurred in creation of notification!");
+            }
         }
     } 
 }
