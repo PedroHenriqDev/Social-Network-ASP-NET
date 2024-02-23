@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SocialWeave.Models.AbstractClasses;
 using SocialWeave.Models.ConcreteClasses;
 
@@ -25,6 +26,23 @@ namespace SocialWeave.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Notification>()
+                .HasKey(c => c.Id);
+
+            modelBuilder.Entity<Notification>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Notification>()
+                .HasOne(c => c.InvolvedUser)
+                .WithMany()
+                .HasForeignKey(c => c.InvolvedUserId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Post>()
                 .HasDiscriminator<string>("PostType")

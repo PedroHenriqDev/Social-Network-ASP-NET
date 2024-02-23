@@ -17,7 +17,7 @@ namespace SocialWeave.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -146,6 +146,9 @@ namespace SocialWeave.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("InvolvedUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
@@ -153,6 +156,8 @@ namespace SocialWeave.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("InvolvedUserId");
 
                     b.HasIndex("UserId");
 
@@ -301,11 +306,17 @@ namespace SocialWeave.Migrations
 
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.Notification", b =>
                 {
+                    b.HasOne("SocialWeave.Models.ConcreteClasses.User", "InvolvedUser")
+                        .WithMany()
+                        .HasForeignKey("InvolvedUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("SocialWeave.Models.ConcreteClasses.User", "User")
-                        .WithMany("Notifications")
+                        .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("InvolvedUser");
 
                     b.Navigation("User");
                 });
@@ -332,8 +343,6 @@ namespace SocialWeave.Migrations
             modelBuilder.Entity("SocialWeave.Models.ConcreteClasses.User", b =>
                 {
                     b.Navigation("Admirations");
-
-                    b.Navigation("Notifications");
 
                     b.Navigation("Posts");
                 });

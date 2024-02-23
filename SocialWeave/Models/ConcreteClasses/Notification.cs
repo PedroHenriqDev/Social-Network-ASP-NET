@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Globalization;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace SocialWeave.Models.ConcreteClasses
 {
@@ -8,14 +8,17 @@ namespace SocialWeave.Models.ConcreteClasses
         [Key]
         public Guid Id { get; set; }
 
-        [Required]
+        public Guid UserId { get; set; }
         public User User { get; set; }
+
+        public Guid InvolvedUserId { get; set; }
+        public User InvolvedUser { get; set; }
 
         [Required]
         public string Content { get; set; }
 
         [Required]
-        public DateTime Date {  get; set; }
+        public DateTime Date { get; set; }
 
         [Required]
         public bool WasSeen { get; set; }

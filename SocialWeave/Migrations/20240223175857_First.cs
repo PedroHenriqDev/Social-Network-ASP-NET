@@ -64,28 +64,31 @@ namespace SocialWeave.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Chats",
+                name: "Notifications",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    User1Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    User2Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    InvolvedUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    WasSeen = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Chats", x => x.Id);
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Chats_Users_User1Id",
-                        column: x => x.User1Id,
+                        name: "FK_Notifications_Users_InvolvedUserId",
+                        column: x => x.InvolvedUserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Chats_Users_User2Id",
-                        column: x => x.User2Id,
+                        name: "FK_Notifications_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -109,38 +112,6 @@ namespace SocialWeave.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Messages",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ChatId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RecipientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Messages", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Messages_Chats_ChatId",
-                        column: x => x.ChatId,
-                        principalTable: "Chats",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Messages_Users_RecipientId",
-                        column: x => x.RecipientId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Messages_Users_SenderId",
-                        column: x => x.SenderId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -210,16 +181,6 @@ namespace SocialWeave.Migrations
                 column: "UserAdmirerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Chats_User1Id",
-                table: "Chats",
-                column: "User1Id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Chats_User2Id",
-                table: "Chats",
-                column: "User2Id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Comments_PostId",
                 table: "Comments",
                 column: "PostId");
@@ -245,19 +206,14 @@ namespace SocialWeave.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_ChatId",
-                table: "Messages",
-                column: "ChatId");
+                name: "IX_Notifications_InvolvedUserId",
+                table: "Notifications",
+                column: "InvolvedUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_RecipientId",
-                table: "Messages",
-                column: "RecipientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Messages_SenderId",
-                table: "Messages",
-                column: "SenderId");
+                name: "IX_Notifications_UserId",
+                table: "Notifications",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_UserId",
@@ -280,13 +236,10 @@ namespace SocialWeave.Migrations
                 name: "Likes");
 
             migrationBuilder.DropTable(
-                name: "Messages");
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "Comments");
-
-            migrationBuilder.DropTable(
-                name: "Chats");
 
             migrationBuilder.DropTable(
                 name: "Posts");

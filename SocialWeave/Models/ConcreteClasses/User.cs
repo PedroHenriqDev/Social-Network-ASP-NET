@@ -46,7 +46,6 @@ namespace SocialWeave.Models.ConcreteClasses
         public string? PhoneNumber { get; set; }
 
         public List<Post>? Posts { get; set; }
-        public List<Notification>? Notifications {  get; set; }
         public List<User>? Admirations { get; set; }
 
         public User() 
