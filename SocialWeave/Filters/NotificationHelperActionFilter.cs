@@ -16,15 +16,23 @@ public class NotificationHelperActionFilter : IAsyncActionFilter
     {
         try
         {
-
             context.HttpContext.Items["HasNotifications"] = _notificationHelper;
             await _notificationHelper.SetHasNotificationAsync();
             await next();
         }
-        catch(Exception ex) 
+        catch (Exception ex)
         {
-            var url = "/User/Login";
-            context.Result = new RedirectResult(url);
+            if (!context.HttpContext.User.Identity.IsAuthenticated)
+            {
+                var url = "/User/Login";
+                context.Result = new RedirectResult(url);
+            }
+            else
+            {   
+                context.Result = new RedirectToActionResult("Error", "Home", null);
+                throw;
+            }
         }
     }
+
 }

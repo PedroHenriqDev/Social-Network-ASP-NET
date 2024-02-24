@@ -52,6 +52,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseSession();
 app.UseRouting();
 app.UseAuthorization();
@@ -59,13 +60,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Add("Cross-Origin-Opener-Policy", "same-origin");
-    context.Response.Headers.Add("Cross-Origin-Embedder-Policy", "require-corp");
-    await next();
-});
 
 app.UseStaticFiles(new StaticFileOptions
 {

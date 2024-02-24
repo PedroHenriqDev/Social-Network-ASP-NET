@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -31,12 +32,15 @@ namespace SocialWeave.Controllers
         /// Displays the view to choose the type of post to create.
         /// </summary>
         /// <returns>The view to choose the post type.</returns>
+        [HttpGet]
+        [AllowAnonymous]
         public IActionResult ChoosePostType()
         {
             return View();
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Edit(Guid Id) 
         {
             Post post = await _postService.FindPostByIdAsync(Id);
@@ -48,6 +52,7 @@ namespace SocialWeave.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Edit(string description, Guid postId) 
         {
             try 
@@ -63,6 +68,7 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> DeletePost(Guid id)
         {
             try
@@ -85,6 +91,7 @@ namespace SocialWeave.Controllers
         /// </summary>
         /// <returns>The view to create a post with an image.</returns>
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult CreatePostImage()
         {
             return View();
@@ -95,6 +102,7 @@ namespace SocialWeave.Controllers
         /// </summary>
         /// <returns>The view to create a text post.</returns>
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult CreatePost()
         {
             return View();
@@ -107,6 +115,7 @@ namespace SocialWeave.Controllers
         /// <returns>Redirects to the home page.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> CreatePost(PostViewModel postVM)
         {
             try
@@ -138,6 +147,7 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> CreatePostImage(PostImageViewModel postImageVM, IFormFile imageFile)
         {
             try
@@ -165,6 +175,7 @@ namespace SocialWeave.Controllers
         /// <returns>Redirects to the home page.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Like(Guid id)
         {
             try
@@ -193,6 +204,7 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> LikeInPageSearch(Guid id)
         {
             try
@@ -221,6 +233,7 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> DislikeInPageSearch(Guid id)
         {
             try
@@ -242,6 +255,7 @@ namespace SocialWeave.Controllers
         /// <returns>Redirects to the home page.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Dislike(Guid id)
         {
             try
@@ -257,6 +271,7 @@ namespace SocialWeave.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateComment(Guid id)
         {
             try
@@ -271,6 +286,7 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateComment(CommentViewModel commentVM)
         {
             try
@@ -301,6 +317,7 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteComment(Guid id) 
         {
             try 
@@ -316,6 +333,7 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> LikeComment(Guid id)
         {
             try
@@ -333,6 +351,7 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> DislikeComment(Guid id)
         {
             try
@@ -350,6 +369,7 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> AddAdmiration(Guid id)
         {
             try

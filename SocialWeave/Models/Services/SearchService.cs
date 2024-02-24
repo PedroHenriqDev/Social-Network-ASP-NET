@@ -45,7 +45,6 @@ namespace SocialWeave.Models.Services
                     .ToListAsync();
             }
 
-
             return await _generateTrending.GenerateTrendingPostsAsync(posts, user);
         }
 

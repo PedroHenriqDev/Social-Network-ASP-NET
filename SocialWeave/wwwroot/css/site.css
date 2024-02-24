@@ -9,10 +9,10 @@ body {
 
 @media (min-width: 768px) {
     body {
-        font-size: 16px;
+        font-size: 18px;
+        font-family: "Karla", sans-serif;
     }
 }
-
 
 .purple-gradient {
     background: linear-gradient(180deg, #b200ff, #0000);

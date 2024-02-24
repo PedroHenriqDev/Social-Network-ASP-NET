@@ -163,16 +163,8 @@ namespace SocialWeave.Models.Services
                 throw new PostException("It is not possible to delete a null post");
             }
 
-            foreach (var comment in post.Comments)
-            {
-                _context.Comments.Remove(comment);
-            }
-
-            foreach (var like in post.Likes)
-            {
-                _context.Likes.Remove(like);
-            }
-
+            _context.Comments.RemoveRange(post.Comments);
+            _context.Likes.RemoveRange(post.Likes);
             _context.Remove(post);
             await _context.SaveChangesAsync();
         }

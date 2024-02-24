@@ -12,12 +12,17 @@ using SocialWeave.Models.AbstractClasses;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Reflection.Metadata.Ecma335;
 using SocialWeave.Data;
+using SocialWeave.Attributes;
+using Microsoft.AspNetCore.Authorization;
+using SocialWeave.Helpers;
 
 namespace SocialWeave.Controllers
 {
     /// <summary>
     /// Controller responsible for user-related actions, including authentication.
     /// </summary>
+    /// 
+
     public class UserController : Controller
     {
         private readonly NotificationService _notificationService;
@@ -26,13 +31,15 @@ namespace SocialWeave.Controllers
         private readonly ProfilePictureService _profilePictureService;
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly NotificationHelper _notificationHelper;
 
         public UserController(UserService userService,
             ApplicationDbContext context, 
-            PostService postService, 
-            NotificationService notificationService, 
+            PostService postService,
+            NotificationService notificationService,
             ProfilePictureService profilePictureService,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            NotificationHelper notificationHelper)
         {
             _userService = userService;
             _context = context;
@@ -40,8 +47,10 @@ namespace SocialWeave.Controllers
             _notificationService = notificationService;
             _profilePictureService = profilePictureService;
             _httpContextAccessor = httpContextAccessor;
-        }
+            _notificationHelper = notificationHelper;
+         }
 
+        [AllowAnonymous]
         public IActionResult Login()
         {
             if (User.Identity.IsAuthenticated)
@@ -175,7 +184,9 @@ namespace SocialWeave.Controllers
             }
         }
 
+        [ServiceFilter(typeof(NotificationHelperActionFilter))]
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> UserPage()
         {
 
@@ -188,6 +199,7 @@ namespace SocialWeave.Controllers
 
                 var user = await _userService.FindUserByNameAsync(User.Identity.Name);
                 var posts = user.Posts.OrderBy(x => x.Date).ToList();
+                await _notificationHelper.SetHasNotificationAsync();
 
                 UserPageViewModel userPageVM = new UserPageViewModel(_context,
                     user,
@@ -206,6 +218,8 @@ namespace SocialWeave.Controllers
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(NotificationHelperActionFilter))]
+        [AllowAnonymous]
         public async Task<IActionResult> UserPageWithParams(string name)
         {
             try
@@ -233,6 +247,7 @@ namespace SocialWeave.Controllers
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(NotificationHelperActionFilter))]
         public async Task<IActionResult> AddPictureProfile()
         {
             if (Request.Method != "GET")
@@ -244,6 +259,7 @@ namespace SocialWeave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> AddPictureProfile(string imageBytes)
         {
             try
@@ -312,6 +328,8 @@ namespace SocialWeave.Controllers
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(NotificationHelperActionFilter))]
+        [AllowAnonymous]
         public async Task<IActionResult> ShowAdmirers(Guid id) 
         {
             if (Request.Method != "GET")
@@ -330,6 +348,8 @@ namespace SocialWeave.Controllers
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(NotificationHelperActionFilter))]
+        [AllowAnonymous]
         public async Task<IActionResult> ShowAdmired(Guid id) 
         {
             if(Request.Method != "GET") 
