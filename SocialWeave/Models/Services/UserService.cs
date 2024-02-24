@@ -249,7 +249,8 @@ namespace SocialWeave.Models.Services
         {
             if (user == null) throw new UserException("User null!");
 
-            var userAdmired = await _context.Admirations.Where(x => x.UserAdmirerId == user.Id && x.UserAdmiredId != user.Id)
+            var userAdmired = await _context.Admirations
+                                            .Where(x => x.UserAdmirerId == user.Id && x.UserAdmiredId != user.Id)
                                             .Select(x => x.UserAdmired)
                                             .ToListAsync();
             return userAdmired;

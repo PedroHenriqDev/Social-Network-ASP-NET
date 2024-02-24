@@ -14,8 +14,17 @@ public class NotificationHelperActionFilter : IAsyncActionFilter
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        context.HttpContext.Items["HasNotifications"] = _notificationHelper;
-        await _notificationHelper.SetHasNotificationAsync();
-        await next();
+        try
+        {
+
+            context.HttpContext.Items["HasNotifications"] = _notificationHelper;
+            await _notificationHelper.SetHasNotificationAsync();
+            await next();
+        }
+        catch(Exception ex) 
+        {
+            var url = "/User/Login";
+            context.Result = new RedirectResult(url);
+        }
     }
 }

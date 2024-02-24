@@ -37,6 +37,10 @@ namespace SocialWeave.Controllers
                 Console.WriteLine(ex.Message);
                 return View("Index", "Home");
             }
+            catch (UserException) 
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpGet]

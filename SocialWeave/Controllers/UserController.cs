@@ -23,14 +23,23 @@ namespace SocialWeave.Controllers
         private readonly NotificationService _notificationService;
         private readonly UserService _userService;
         private readonly PostService _postService;
+        private readonly ProfilePictureService _profilePictureService;
         private readonly ApplicationDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserController(UserService userService, ApplicationDbContext context, PostService postService, NotificationService notificationService)
+        public UserController(UserService userService,
+            ApplicationDbContext context, 
+            PostService postService, 
+            NotificationService notificationService, 
+            ProfilePictureService profilePictureService,
+            IHttpContextAccessor httpContextAccessor)
         {
             _userService = userService;
             _context = context;
             _postService = postService;
             _notificationService = notificationService;
+            _profilePictureService = profilePictureService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IActionResult Login()
@@ -55,12 +64,26 @@ namespace SocialWeave.Controllers
             if (ModelState.IsValid && await _userService.ValidateUserCredentialsAsync(userVM))
             {
 
+                var claims = new List<Claim>();
                 User user = await _userService.FindUserByEmailAsync(userVM.Email);
+                string profilePictureUrl = await _profilePictureService.SaveProfilePictureAsync(user.PictureProfile, _httpContextAccessor.HttpContext.Request.PathBase);
+
                 // Create claims for the authenticated user
-                var claims = new List<Claim>()
+                if (user.PictureProfile != null)
                 {
-                    new Claim(ClaimTypes.Name, user.Name)
+                    claims = new List<Claim>()
+                {
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim("ProfilePictureUrl", profilePictureUrl)
                 };
+                }
+                else 
+                {
+                    claims = new List<Claim>()
+                {
+                    new Claim(ClaimTypes.Name, user.Name),
+                };
+                }
 
                 // Create a ClaimsIdentity and set authentication properties
                 var claimsIdentity = new ClaimsIdentity(claims,

@@ -397,4 +397,4 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 appsettings.Local.json
-/profile-pictures/
+SocialWeave/profile-pictures/*

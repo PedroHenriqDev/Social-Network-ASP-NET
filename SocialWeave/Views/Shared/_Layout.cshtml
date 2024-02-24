@@ -41,18 +41,18 @@
 
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <ul class="navbar-nav">
+                        <ul class="navbar-nav d-flex align-items-center">
                             @if (notificationHelper != null && notificationHelper.HasNotifications)
                             {
-                                <li class="nav-item my-auto">
+                                <li class="nav-item">
                                     <a class="nav-link text-light" asp-area="" asp-controller="Notification" asp-action="ShowNotifications">
-                                        <strong><i class="bi bi-bell-fill"></i> </strong>new
+                                        <strong><i class="bi bi-bell-fill"></i> new</strong>
                                     </a>
                                 </li>
                             }
                             else
                             {
-                                <li class="nav-item my-auto">
+                                <li class="nav-item">
                                     <a class="nav-link text-light" asp-area="" asp-controller="Notification" asp-action="ShowNotifications">
                                         <strong><i class="bi bi-bell"></i></strong>
                                     </a>
@@ -64,18 +64,29 @@
                             <li class="nav-item">
                                 <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="LogoutGet"><i class="bi bi-box-arrow-in-left mx-1"></i></a>
                             </li>
-                            <li class="nav-item my-auto">
+                            <li class="nav-item">
                                 <a class="nav-link text-light" asp-area="" asp-controller="Search" asp-action="PageOfSearch">
                                     <strong><i class="bi bi-search"></i></strong>
                                 </a>
                             </li>
-                            <li class="nav-item my-auto">
-                                <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="UserPage">
-                                    <strong><i class="bi bi-person-lines-fill"></i>@User.Identity.Name</strong>
-                                </a>
-                            </li>
+                            @if (User.HasClaim(c => c.Type == "ProfilePictureUrl"))
+                            {
+                                var profilePictureUrl = User.FindFirst("ProfilePictureUrl").Value;
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="UserPage">
+                                        <img src="@profilePictureUrl" alt="Profile Picture" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" />
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="UserPage">
+                                        <strong><i class="bi bi-person-lines-fill"></i>@User.Identity.Name</strong>
+                                    </a>
+                                </li>
+                            }
                         </ul>
-
                     }
                     else
                     {
