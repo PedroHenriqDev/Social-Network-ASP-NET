@@ -214,13 +214,13 @@
                                                                     <div class="comment-like ms-auto">
                                                                         @if (comment.Likes != null && comment.Likes.Count() != 0 && post.Likes.Any(l => l.User.Name == User.Identity.Name))
                                                                         {
-                                                                            <form method="post" asp-action="DislikeComment" asp-route-id="@comment.Id" asp-controller="Post">
+                                                                            <form method="post" asp-action="DislikeCommentInPageSearch" asp-route-id="@comment.Id" asp-controller="Post">
                                                                                 <button type="submit" class="btn btn-like-comment"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
                                                                             </form>
                                                                         }
                                                                         else
                                                                         {
-                                                                            <form method="post" asp-action="LikeComment" asp-route-id="@comment.Id" asp-controller="Post">
+                                                                            <form method="post" asp-action="LikeCommentInPageSearch" asp-route-id="@comment.Id" asp-controller="Post">
                                                                                 <button type="submit" class="btn btn-like-comment"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
                                                                             </form>
                                                                         }
@@ -275,7 +275,7 @@
                                             <button class="btn btn-outline-primary toggle-comments" data-post-id="@postImage.Id"><i class="bi bi-chat-left-text"></i></button>
                                             <div class="d-flex flex-column">
                                                 @if (postImage.Likes != null && postImage.Likes.Any(l => l.User.Name == User.Identity.Name))
-                                                {
+                                                { 
                                                     <form method="post" asp-action="DislikeInPageSearch" asp-route-id="@postImage.Id" asp-controller="Post" class="me-3">
                                                         <button class="text-xxl-end btn btn-like" type="submit"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@postImage.Likes.CountLikes()</span></button>
                                                     </form>
@@ -322,13 +322,13 @@
                                                                     <div class="comment-like ms-auto">
                                                                         @if (comment.Likes != null && comment.Likes.Count() != 0 && postImage.Likes.Any(l => l.User.Name == User.Identity.Name))
                                                                         {
-                                                                            <form method="post" asp-action="DislikeComment" asp-route-id="@comment.Id" asp-controller="Post">
+                                                                            <form method="post" asp-action="DislikeCommentInPageSearch" asp-route-id="@comment.Id" asp-controller="Post">
                                                                                 <button type="submit" class="btn btn-like"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
                                                                             </form>
                                                                         }
                                                                         else
                                                                         {
-                                                                            <form method="post" asp-action="LikeComment" asp-route-id="@comment.Id" asp-controller="Post">
+                                                                            <form method="post" asp-action="LikeCommentInPageSearch" asp-route-id="@comment.Id" asp-controller="Post">
                                                                                 <button type="submit" class="btn btn-like"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@comment.Likes.CountLikes()</span></button>
                                                                             </form>
                                                                         }
@@ -356,16 +356,16 @@
         </div>
     }
 </div>
-
+     
 @if (Model != null)
-{
+{   
     @if (Model.Users.Count() == 0 && Model.Posts.Count() == 0)
     {
         <div class="text-center">
             <strong>Nothing was found!</strong>
         </div>
     }
-}
+}    
 @section Scripts {
     <script>
         document.querySelectorAll('.toggle-comments').forEach(btn => {

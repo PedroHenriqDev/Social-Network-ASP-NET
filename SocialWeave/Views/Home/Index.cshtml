@@ -285,7 +285,7 @@
         @if (title == null)
         {
             <div class="text-center text-light">
-                <form asp-controller="Home" asp-action="SetAmountOfPosts" method="post">
+                <form asp-controller="Home" asp-action="SetAmountOfPosts" method="post" id="more-posts-form">
                     <input type="hidden" name="Amount" value="@amountOfPostsHelper.Amount" />
                     <button type="submit" class="btn text-primary" id="more-posts-button"><i class="bi bi-arrow-down-short"></i>More posts</button>
                 </form>
@@ -311,9 +311,29 @@ else
         });
 
         document.querySelectorAll('.btn-like-comment').forEach(btn => {
-            btn.addEventListener('click', (event) => {
+            btn.addEventListener('click', (event) => {  
                 event.stopPropagation();
             });
+        });
+
+        document.querySelectorAll('.btn-like').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const scrollPosition = window.pageYOffset;
+                sessionStorage.setItem('scrollPosition', scrollPosition);
+            });
+        });
+
+        window.onload = () => {
+            const scrollPosition = sessionStorage.getItem('scrollPosition');
+            if (scrollPosition) {
+                window.scrollTo(0, scrollPosition);
+                sessionStorage.removeItem('scrollPosition');
+            }
+        };
+
+        document.getElementById('more-posts-form').addEventListener('submit', () => {
+            const scrollPosition = window.pageYOffset;
+            sessionStorage.setItem('scrollPosition', scrollPosition);
         });
     </script>
 }

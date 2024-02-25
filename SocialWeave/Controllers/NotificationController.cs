@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SocialWeave.Exceptions;
 using SocialWeave.Helpers;
 using SocialWeave.Models.ConcreteClasses;
@@ -23,6 +24,8 @@ namespace SocialWeave.Controllers
             _notificationHelper = notificationHelper;
         }
 
+        [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> ShowNotifications()
         {
             try
@@ -44,6 +47,7 @@ namespace SocialWeave.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult HasNotifications()
         {
             bool hasNotifications = _notificationHelper.HasNotifications;

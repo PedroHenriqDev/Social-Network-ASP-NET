@@ -215,7 +215,7 @@ namespace SocialWeave.Controllers
 
                 await _postService.AddLikeInPostAsync(post, userLike);
                 await _notificationService.AddNotificationRelatedLikeAsync(userLike, userPost);
-                return RedirectToAction("UserPage", "User");
+                return RedirectToAction("PageOfSearch", "Search");
             }
             catch (NullReferenceException ex)
             {
@@ -341,6 +341,42 @@ namespace SocialWeave.Controllers
                 await _postService.AddLikeInCommentAsync(await _postService.FindCommentByIdAsync(id),
                     await _userService.FindUserByNameAsync(User.Identity.Name));
                 return RedirectToAction("Index", "Home");
+            }
+            catch (NullReferenceException ex)
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public async Task<IActionResult> LikeCommentInPageSearch(Guid id)
+        {
+            try
+            {
+                await _postService.AddLikeInCommentAsync(await _postService.FindCommentByIdAsync(id),
+                    await _userService.FindUserByNameAsync(User.Identity.Name));
+                return RedirectToAction("PageOfSearch", "Search");
+            }
+            catch (NullReferenceException ex)
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public async Task<IActionResult> DislikeCommentInPageSearch(Guid id)
+        {
+            try
+            {
+                await _postService.RemoveLikeInCommentAsync(await _postService.FindCommentByIdAsync(id),
+                    await _userService.FindUserByNameAsync(User.Identity.Name));
+                return RedirectToAction("PageOfSearch", "Search");
             }
             catch (NullReferenceException ex)
             {

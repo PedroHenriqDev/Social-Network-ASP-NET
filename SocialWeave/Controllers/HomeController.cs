@@ -41,6 +41,7 @@ namespace SocialWeave.Controllers
         /// Displays the home page with a list of posts authored by the logged-in user.
         /// </summary>
         /// <returns>The home page view.</returns>
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -87,6 +88,7 @@ namespace SocialWeave.Controllers
         /// Displays the About page.
         /// </summary>
         /// <returns>The About page view.</returns>
+        [HttpGet]
         public IActionResult About()
         {
             return View();
