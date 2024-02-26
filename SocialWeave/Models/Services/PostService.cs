@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SocialWeave.Data;
 using SocialWeave.Exceptions;
 using SocialWeave.Models.AbstractClasses;
@@ -95,13 +96,13 @@ namespace SocialWeave.Models.Services
                 if(imageFile.Length > 20 * 1024 * 1024) 
                 {
                     throw new ArgumentException("Image File size exceeds the limit of 20 MB");
-                }
+                }                                       
 
-                if (!IsImageFile(imageFile)) 
-                {
+                if (!IsImageFile(imageFile))               
+                {                                          
                     throw new ArgumentException("Invalid image file format.");
                 }
-
+                
                 using (var memoryStream = new MemoryStream())
                 {
                     await imageFile.CopyToAsync(memoryStream);
@@ -153,58 +154,87 @@ namespace SocialWeave.Models.Services
         /// <returns>The post with the specified ID.</returns>
         public async Task<Post> FindPostByIdAsync(Guid id)
         {
-            var resultPost = await _context.Posts.Include(x => x.User)
-                                                 .Include(x => x.Likes)
-                                                 .Include(x => x.Comments)
-                                                 .FirstOrDefaultAsync(x => x.Id == id);
+            try
+            {
+                var resultPost = await _context.Posts.Include(x => x.User)
+                                                     .Include(x => x.Likes)
+                                                     .Include(x => x.Comments)
+                                                     .FirstOrDefaultAsync(x => x.Id == id);
 
-            resultPost.Likes = await _context.Likes
-                                             .Include(x => x.User)
-                                             .Include(x => x.Post)
-                                             .Where(x => x.Post.Id == resultPost.Id)
-                                             .ToListAsync();
+                resultPost.Likes = await _context.Likes
+                                                 .Include(x => x.User)
+                                                 .Include(x => x.Post)
+                                                 .Where(x => x.Post.Id == resultPost.Id)
+                                                 .ToListAsync();
 
-            return resultPost;
+                _logger.LogInformation("Search completed successfully.");
+                return resultPost;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error ocurred while find post by id.");
+                throw;
+            }
         }
+
         public async Task<IEnumerable<Comment>> FindCommentsByUserAsync(User user)
         {
-            if (user == null)
+            try
             {
-                throw new UserException("Reference of user null!");
-            }
+                if (user == null)
+                {
+                    throw new UserException("Reference of user null!");
+                }
 
-            IEnumerable<Comment> comments = await _context.Comments
-                                                          .Include(x => x.User)
-                                                          .Include(x => x.Likes)
-                                                          .Include(x => x.Post)
-                                                          .Include(x => x.Post.User)
-                                                          .Where(x => x.User.Id == user.Id)
-                                                          .OrderByDescending(x => x.Likes.Count())
-                                                          .ToListAsync();
-            return comments;
+                IEnumerable<Comment> comments = await _context.Comments
+                                                              .Include(x => x.User)
+                                                              .Include(x => x.Likes)
+                                                              .Include(x => x.Post)
+                                                              .Include(x => x.Post.User)
+                                                              .Where(x => x.User.Id == user.Id)
+                                                              .OrderByDescending(x => x.Likes.Count())
+                                                              .ToListAsync();
+
+                _logger.LogInformation("Search completed successfully.");
+                return comments;
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error ocurred while find comment by user.");
+                throw;
+            }
         }
 
         public async Task CompletePostAsync(User user)
         {
-            if (user == null)
+            try
             {
-                throw new UserException("User null!");
+                if (user == null)
+                {
+                    throw new UserException("User null!");
+                }
+
+                foreach (var post in user.Posts)
+                {
+                    post.Likes = await _context.Likes
+                                               .Include(x => x.User)
+                                               .Include(x => x.Post)
+                                               .Where(x => x.Post.Id == post.Id)
+                                               .ToListAsync();
+
+                    post.Comments = await _context.Comments
+                                                  .Include(x => x.User)
+                                                  .Include(x => x.Likes)
+                                                  .Where(x => x.Post.Id == post.Id)
+                                                  .Take(20)
+                                                  .ToListAsync();
+
+                    _logger.LogInformation("Completed the post successfully.");
+                }
             }
-
-            foreach (var post in user.Posts)
+            catch (Exception ex) 
             {
-                post.Likes = await _context.Likes
-                                           .Include(x => x.User)
-                                           .Include(x => x.Post)
-                                           .Where(x => x.Post.Id == post.Id)
-                                           .ToListAsync();
-
-                post.Comments = await _context.Comments
-                                              .Include(x => x.User)
-                                              .Include(x => x.Likes)
-                                              .Where(x => x.Post.Id == post.Id)
-                                              .Take(20)
-                                              .ToListAsync();
+                _logger.LogError(ex, "Error ocurred while completed the post.");
             }
         }
 
@@ -214,15 +244,25 @@ namespace SocialWeave.Models.Services
         /// <param name="post">The post to remove.</param>
         public async Task DeletePostAsync(Post post)
         {
-            if (post == null)
+            try
             {
-                throw new PostException("It is not possible to delete a null post");
-            }
 
-            _context.Comments.RemoveRange(post.Comments);
-            _context.Likes.RemoveRange(post.Likes);
-            _context.Remove(post);
-            await _context.SaveChangesAsync();
+                if (post == null)
+                {
+                    throw new PostException("It is not possible to delete a null post");
+                }
+
+                _context.Comments.RemoveRange(post.Comments);
+                _context.Likes.RemoveRange(post.Likes);
+                _context.Remove(post);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Deleted post successfully.");
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error ocurred while deleted the post.");
+            }
         }
 
         /// <summary>
@@ -232,14 +272,23 @@ namespace SocialWeave.Models.Services
         /// <param name="user">The user who liked the post.</param>
         public async Task AddLikeInPostAsync(Post post, User user)
         {
-            if (post == null || user == null)
+            try
             {
-                throw new NullReferenceException("Post or user cannot be null");
-            }
+                if (post == null || user == null)
+                {
+                    throw new NullReferenceException("Post or user cannot be null");
+                }
 
-            Like like = new Like(Guid.NewGuid(), user, post);
-            await _context.Likes.AddAsync(like);
-            await _context.SaveChangesAsync();
+                Like like = new Like(Guid.NewGuid(), user, post);
+                await _context.Likes.AddAsync(like);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Like added with successfully.");
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error ocurred while added like in post.");
+            }
         }
 
         /// <summary>
@@ -249,104 +298,152 @@ namespace SocialWeave.Models.Services
         /// <param name="user">The user who liked the post.</param>
         public async Task RemoveLikeInPostAsync(Post post, User user)
         {
-            if (user == null || user == null)
+            try
             {
-                throw new NullReferenceException("User cannot be null");
+                if (user == null || user == null)
+                {
+                    throw new NullReferenceException("User cannot be null");
+                }
+
+                Like likeToRemove = await _context.Likes.FirstOrDefaultAsync(x => x.Post.Id == post.Id && x.User.Id == user.Id);
+
+                if (likeToRemove == null)
+                {
+                    throw new NullReferenceException("Object null!");
+                }
+
+                _context.Likes.Remove(likeToRemove);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Like removed with successfully.");
             }
-
-            Like likeToRemove = await _context.Likes.FirstOrDefaultAsync(x => x.Post.Id == post.Id && x.User.Id == user.Id);
-
-            if (likeToRemove == null)
+            catch (Exception ex) 
             {
-                throw new NullReferenceException("Object null!");
+                _logger.LogError(ex, "Error ocurred while removed like in post.");
             }
-
-            _context.Likes.Remove(likeToRemove);
-            await _context.SaveChangesAsync();
         }
 
         public async Task AddAdmirationAsync(User user, User currentUser)
         {
-            if (user == null || currentUser == null)
+            try
             {
-                throw new UserException("Impossible find this user!");
-            }
+                if (user == null || currentUser == null)
+                {
+                    throw new UserException("Impossible find this user!");
+                }
 
-            await _context.AddAsync(new Admiration(user, currentUser, new Guid()));
-            await _context.SaveChangesAsync();
+                await _context.AddAsync(new Admiration(user, currentUser, new Guid()));
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Admiration added done with successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error ocurred while added admiration.");
+            }
         }
 
         public async Task CreateCommentAsync(CommentViewModel commentVM, User user)
         {
-            if (commentVM == null || user == null)
+            try
             {
-                throw new NullReferenceException();
+                if (commentVM == null || user == null)
+                {
+                    throw new NullReferenceException();
+                }
+
+                Post post = await FindPostByIdAsync(commentVM.PostId);
+                Comment comment = new Comment()
+                {
+                    Id = new Guid(),
+                    User = user,
+                    Text = commentVM.Text,
+                    Post = post
+
+                };
+
+                if (comment == null)
+                {
+                    throw new NullReferenceException();
+                }
+
+                _context.Comments.Add(comment);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Comment created with successfully.");
             }
-
-            Post post = await FindPostByIdAsync(commentVM.PostId);
-            Comment comment = new Comment()
+            catch(Exception ex) 
             {
-                Id = new Guid(),
-                User = user,
-                Text = commentVM.Text,
-                Post = post
-
-            };
-
-            if (comment == null)
-            {
-                throw new NullReferenceException();
+                _logger.LogError(ex, "Error ocurred while comment creation");
             }
-
-            _context.Comments.Add(comment);
-            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteCommentAsync(Comment comment)
         {
-            if (comment == null)
+            try
             {
-                throw new PostException("Reference null!");
-            }
+                if (comment == null)
+                {
+                    throw new PostException("Reference null!");
+                }
 
-            _context.Comments.Remove(comment);
-            await _context.SaveChangesAsync();
+                _context.Comments.Remove(comment);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Comment deleted with successfully.");
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error ocurred while comment delete");
+            }
         }
 
         public async Task AddLikeInCommentAsync(Comment comment, User user)
         {
-            if (comment == null || user == null)
+            try
             {
-                throw new NullReferenceException("Object null!");
+                if (comment == null || user == null)
+                {
+                    throw new NullReferenceException("Object null!");
+                }
+
+                Like like = new Like()
+                {
+                    Id = new Guid(),
+                    User = user,
+                    Comment = comment
+                };
+
+                await _context.Likes.AddAsync(like);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Like added to the comment with successfully.");
             }
-
-            Like like = new Like()
+            catch (Exception ex) 
             {
-                Id = new Guid(),
-                User = user,
-                Comment = comment
-            };
-
-            await _context.Likes.AddAsync(like);
-            await _context.SaveChangesAsync();
+                _logger.LogError(ex, "Error ocurred while added like in comment");
+            }
         }
 
         public async Task RemoveLikeInCommentAsync(Comment comment, User user)
         {
-            if (comment == null || user == null)
+            try
             {
-                throw new NullReferenceException("Object null!");
+                if (comment == null || user == null)
+                {
+                    throw new NullReferenceException("Object null!");
+                }
+
+                Like likeToRemove = await _context.Likes.FirstOrDefaultAsync(x => x.Comment.Id == comment.Id && x.User.Id == user.Id);
+
+                if (likeToRemove == null)
+                {
+                    throw new NullReferenceException("Object null");
+                }
+
+                _context.Likes.Remove(likeToRemove);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Like removed to the comment with successfully.");
             }
-
-            Like likeToRemove = await _context.Likes.FirstOrDefaultAsync(x => x.Comment.Id == comment.Id && x.User.Id == user.Id);
-
-            if (likeToRemove == null)
+            catch (Exception ex) 
             {
-                throw new NullReferenceException("Object null");
+                _logger.LogError(ex, "Error ocurred while remove like from the comment");
             }
-
-            _context.Likes.Remove(likeToRemove);
-            await _context.SaveChangesAsync();
         }
 
         /// <summary>
@@ -356,48 +453,68 @@ namespace SocialWeave.Models.Services
         /// <returns>A collection of posts.</returns>
         public async Task<IEnumerable<Post>> FindPostsByGenerateTrendingAsync(User user, int quantityOfPost)
         {
-            if (user == null)
+            try
             {
-                throw new UserException("User cannot be null");
+                if (user == null)
+                {
+                    throw new UserException("User cannot be null");
+                }
+
+                IEnumerable<Post> posts = await _context.Posts
+                                                        .Include(x => x.User)
+                                                        .Include(x => x.Likes)
+                                                        .Include(x => x.User.Admirations)
+                                                        .Where(x => x.User.Id != user.Id)
+                                                        .ToListAsync();
+
+                if (posts.Count() == 0)
+                {
+                    throw new PostException("No posts found");
+                }
+
+                foreach (var post in posts)
+                {
+                    post.Comments = await _context.Comments
+                                                  .Include(x => x.User)
+                                                  .Include(x => x.Likes)
+                                                  .Where(x => x.Post.Id == post.Id)
+                                                  .ToListAsync();
+                }
+
+                _logger.LogInformation("Successful post generation.");
+                return await _generateTrending.GenerateTrendingPostsAsync(posts, quantityOfPost, user);
             }
-
-            IEnumerable<Post> posts = await _context.Posts
-                                                    .Include(x => x.User)
-                                                    .Include(x => x.Likes)
-                                                    .Include(x => x.User.Admirations)
-                                                    .Where(x => x.User.Id != user.Id)
-                                                    .ToListAsync();
-
-            if (posts.Count() == 0)
+            catch(Exception ex) 
             {
-                throw new PostException("No posts found");
+                _logger.LogError(ex, "Error ocurred while generated posts");
+                throw;
             }
-
-            foreach (var post in posts)
-            {
-                post.Comments = await _context.Comments
-                                              .Include(x => x.User)
-                                              .Include(x => x.Likes)
-                                              .Where(x => x.Post.Id == post.Id)
-                                              .ToListAsync();
-            }
-
-            return await _generateTrending.GenerateTrendingPostsAsync(posts, quantityOfPost, user);
         }
 
         public async Task<Comment> FindCommentByIdAsync(Guid id)
         {
-            if (id == null)
+            try
             {
-                throw new NullReferenceException("Object null!");
-            }
+                if (id == null)
+                {
+                    throw new NullReferenceException("Object null!");
+                }
 
-            return await _context.Comments
-                            .Include(x => x.User)
-                            .Include(x => x.Post)
-                            .Include(x => x.Post.User)
-                            .Include(x => x.Likes)
-                            .FirstOrDefaultAsync(x => x.Id == id);
+                var comments =  await _context.Comments
+                                .Include(x => x.User)
+                                .Include(x => x.Post)
+                                .Include(x => x.Post.User)
+                                .Include(x => x.Likes)
+                                .FirstOrDefaultAsync(x => x.Id == id);
+
+                _logger.LogInformation("Successful find comment by id.");
+                return comments;
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError("Error ocurred while find comment by id");
+                throw;
+            }
         }
     }
 }
