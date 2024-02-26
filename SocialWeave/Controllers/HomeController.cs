@@ -1,107 +1,73 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SocialWeave.Models.Services;
-using SocialWeave.Models.ViewModels;
-using System.Diagnostics;
 using SocialWeave.Exceptions;
-using SocialWeave.Models.ConcreteClasses;
-using SocialWeave.Models.AbstractClasses;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using SocialWeave.Helpers;
-using System.Globalization;
+using SocialWeave.Models.ConcreteClasses;
+using SocialWeave.Models.Services;
 
 namespace SocialWeave.Controllers
 {
-
+    /// <summary>
+    /// Controller responsible for managing notifications.
+    /// </summary>
     [ServiceFilter(typeof(NotificationHelperActionFilter))]
-    public class HomeController : Controller
+    public class NotificationController : Controller
     {
         private readonly UserService _userService;
-        private readonly PostService _postService;
-        private readonly AmountOfPostsHelper _amountOfPostsHelper;
-        private readonly SearchService _searchService;
         private readonly NotificationService _notificationService;
         private readonly NotificationHelper _notificationHelper;
 
-        public HomeController(UserService userService, 
-               PostService postService, 
-               AmountOfPostsHelper amountOfPostsHelper, 
-               SearchService searchService, NotificationService notificationService, 
-               NotificationHelper notificationHelper)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NotificationController"/> class.
+        /// </summary>
+        /// <param name="userService">The service for handling user-related operations.</param>
+        /// <param name="notificationService">The service for handling notification-related operations.</param>
+        /// <param name="notificationHelper">The helper for managing notification-related functionalities.</param>
+        public NotificationController(UserService userService, 
+            NotificationService notificationService, 
+            NotificationHelper notificationHelper) 
         {
             _userService = userService;
-            _postService = postService;
-            _amountOfPostsHelper = amountOfPostsHelper;
-            _searchService = searchService;
             _notificationService = notificationService;
             _notificationHelper = notificationHelper;
         }
 
         /// <summary>
-        /// Displays the home page with a list of posts authored by the logged-in user.
+        /// Displays the notifications for the current user.
         /// </summary>
-        /// <returns>The home page view.</returns>
+        /// <returns>The view displaying the notifications.</returns>
         [HttpGet]
-        public async Task<IActionResult> Index()
+        [AllowAnonymous]
+        public async Task<IActionResult> ShowNotifications()
         {
             try
             {
-                int amountOfPosts = _amountOfPostsHelper.ReturnAmountOfPosts();
-                User user = await _userService.FindUserByNameAsync(User.Identity.Name);
-                IEnumerable<Post> posts = await _postService.FindPostsByGenerateTrendingAsync(user, amountOfPosts);
-                ViewData["AmountOfPostsHelper"] = _amountOfPostsHelper;
-                return View(posts);
+                User currentUser = await _userService.FindUserByNameAsync(User.Identity.Name);
+                var notifications = await _notificationService.FindNotificationsByUserAsync(currentUser);
+                await _notificationHelper.SetHasNotificationAsync();
+                return View(notifications);
             }
-            catch (PostException)
+            catch (NotificationException ex)
             {
-                return View();
+                Console.WriteLine(ex.Message);
+                return View("Index", "Home");
             }
-            catch (UserException)
+            catch (UserException) 
             {
-                return View();
+                return RedirectToAction("Index", "Home");
             }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> IndexWithPostsAdmired() 
-        {
-            int amountPosts = _amountOfPostsHelper.ReturnAmountOfPosts();
-            ViewData["PostAdmired"] = "Post from someone you admire";
-            var user = await _userService.FindUserByNameAsync(User.Identity.Name);
-            var posts = await _searchService.SearchPostByAdmiredAsync(user);
-            return View("Index", posts);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult SetAmountOfPosts(int amount) 
-        {
-            if(Request.Method != "POST") 
-            {
-                return NotFound();
-            }
-            _amountOfPostsHelper.SetAmountOfPosts(amount);
-            return RedirectToAction("Index");
         }
 
         /// <summary>
-        /// Displays the About page.
+        /// Checks if the current user has notifications.
         /// </summary>
-        /// <returns>The About page view.</returns>
+        /// <returns>A JSON result indicating whether the user has notifications.</returns>
         [HttpGet]
-        public IActionResult About()
+        [AllowAnonymous]
+        public IActionResult HasNotifications()
         {
-            return View();
-        }
-
-        /// <summary>
-        /// Displays the error page with the error details.
-        /// </summary>
-        /// <returns>The error page view.</returns>
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error(string message)
-        {
-            return View(new ErrorViewModel { Message = message, RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            bool hasNotifications = _notificationHelper.HasNotifications;
+            return Json(hasNotifications);
         }
     }
 }
