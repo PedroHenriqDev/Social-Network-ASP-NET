@@ -1,57 +1,127 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SocialWeave.Exceptions;
-using SocialWeave.Helpers;
-using SocialWeave.Models.ConcreteClasses;
+﻿using Microsoft.AspNetCore.Mvc;
 using SocialWeave.Models.Services;
+using SocialWeave.Models.ViewModels;
+using System.Diagnostics;
+using SocialWeave.Exceptions;
+using SocialWeave.Models.ConcreteClasses;
+using SocialWeave.Models.AbstractClasses;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using SocialWeave.Helpers;
+using System.Globalization;
 
 namespace SocialWeave.Controllers
 {
+    /// <summary>
+    /// Controller responsible for managing home-related functionalities.
+    /// </summary>
     [ServiceFilter(typeof(NotificationHelperActionFilter))]
-    public class NotificationController : Controller
+    public class HomeController : Controller
     {
-
         private readonly UserService _userService;
+        private readonly PostService _postService;
+        private readonly AmountOfPostsHelper _amountOfPostsHelper;
+        private readonly SearchService _searchService;
         private readonly NotificationService _notificationService;
         private readonly NotificationHelper _notificationHelper;
 
-        public NotificationController(UserService userService, 
-            NotificationService notificationService, 
-            NotificationHelper notificationHelper) 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HomeController"/> class.
+        /// </summary>
+        /// <param name="userService">The service for handling user-related operations.</param>
+        /// <param name="postService">The service for handling post-related operations.</param>
+        /// <param name="amountOfPostsHelper">The helper for managing the amount of posts to display.</param>
+        /// <param name="searchService">The service for handling search-related operations.</param>
+        /// <param name="notificationService">The service for handling notification-related operations.</param>
+        /// <param name="notificationHelper">The helper for managing notification-related functionalities.</param>
+        public HomeController(UserService userService,
+               PostService postService,
+               AmountOfPostsHelper amountOfPostsHelper,
+               SearchService searchService,
+               NotificationService notificationService,
+               NotificationHelper notificationHelper)
         {
             _userService = userService;
+            _postService = postService;
+            _amountOfPostsHelper = amountOfPostsHelper;
+            _searchService = searchService;
             _notificationService = notificationService;
             _notificationHelper = notificationHelper;
         }
-
+        /// <summary>
+        /// Displays the home page with a list of posts authored by the logged-in user.
+        /// </summary>
+        /// <returns>The home page view.</returns>
         [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> ShowNotifications()
+        public async Task<IActionResult> Index()
         {
             try
             {
-                User currentUser = await _userService.FindUserByNameAsync(User.Identity.Name);
-                var notifications = await _notificationService.FindNotificationsByUserAsync(currentUser);
-                await _notificationHelper.SetHasNotificationAsync();
-                return View(notifications);
+                int amountOfPosts = _amountOfPostsHelper.ReturnAmountOfPosts();
+                User user = await _userService.FindUserByNameAsync(User.Identity.Name);
+                IEnumerable<Post> posts = await _postService.FindPostsByGenerateTrendingAsync(user, amountOfPosts);
+                ViewData["AmountOfPostsHelper"] = _amountOfPostsHelper;
+                return View(posts);
             }
-            catch (NotificationException ex)
+            catch (PostException)
             {
-                Console.WriteLine(ex.Message);
-                return View("Index", "Home");
+                return View();
             }
-            catch (UserException) 
+            catch (UserException)
             {
-                return RedirectToAction("Index", "Home");
+                return View();
             }
         }
 
+        /// <summary>
+        /// Displays the home page with posts admired by the logged-in user.
+        /// </summary>
+        /// <returns>The home page view with admired posts.</returns>
         [HttpGet]
-        [AllowAnonymous]
-        public IActionResult HasNotifications()
+        public async Task<IActionResult> IndexWithPostsAdmired()
         {
-            bool hasNotifications = _notificationHelper.HasNotifications;
-            return Json(hasNotifications);
+            int amountPosts = _amountOfPostsHelper.ReturnAmountOfPosts();
+            ViewData["PostAdmired"] = "Post from someone you admire";
+            var user = await _userService.FindUserByNameAsync(User.Identity.Name);
+            var posts = await _searchService.SearchPostByAdmiredAsync(user);
+            return View("Index", posts);
+        }
+
+        /// <summary>
+        /// Sets the amount of posts to display on the home page.
+        /// </summary>
+        /// <param name="amount">The amount of posts to set.</param>
+        /// <returns>Redirects to the home page.</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SetAmountOfPosts(int amount)
+        {
+            if (Request.Method != "POST")
+            {
+                return NotFound();
+            }
+            _amountOfPostsHelper.SetAmountOfPosts(amount);
+            return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// Displays the About page.
+        /// </summary>
+        /// <returns>The About page view.</returns>
+        [HttpGet]
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Displays the error page with the error details.
+        /// </summary>
+        /// <returns>The error page view.</returns>
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error(string message)
+        {
+            return View(new ErrorViewModel { Message = message, RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
