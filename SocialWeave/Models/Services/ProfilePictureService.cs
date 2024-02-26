@@ -8,6 +8,7 @@ namespace SocialWeave.Models.Services
     {
         public async Task<string> SaveProfilePictureAsync(byte[] pictureData, string webRootPath)
         {
+            string profilePictureUrl = string.Empty;
             string profilePicturesDirectory = Path.Combine(webRootPath, "profile-pictures");
             if (!Directory.Exists(profilePicturesDirectory))
             {
@@ -16,27 +17,31 @@ namespace SocialWeave.Models.Services
 
             string fileExtension = ".jpg";
 
-            // Detect the image format
-            if (IsWebPImage(pictureData))
+            if (pictureData != null)
             {
-                fileExtension = ".webp";
+
+                // Detect the image format
+                if (IsWebPImage(pictureData))
+                {
+                    fileExtension = ".webp";
+                }
+                else if (IsJpegImage(pictureData))
+                {
+                    fileExtension = ".jpeg";
+                }
+                else if (IsPngImage(pictureData))
+                {
+                    fileExtension = ".png";
+                }
+
+                string fileName = $"{Guid.NewGuid()}{fileExtension}";
+
+                string filePath = Path.Combine(profilePicturesDirectory, fileName);
+
+                await File.WriteAllBytesAsync(filePath, pictureData);
+
+                profilePictureUrl = $"/profile-pictures/{fileName}";
             }
-            else if (IsJpegImage(pictureData))
-            {
-                fileExtension = ".jpeg";
-            }
-            else if (IsPngImage(pictureData))
-            {
-                fileExtension = ".png";
-            }
-
-            string fileName = $"{Guid.NewGuid()}{fileExtension}";
-
-            string filePath = Path.Combine(profilePicturesDirectory, fileName);
-
-            await File.WriteAllBytesAsync(filePath, pictureData);
-
-            string profilePictureUrl = $"/profile-pictures/{fileName}";
 
             return profilePictureUrl;
         }
