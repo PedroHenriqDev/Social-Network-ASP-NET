@@ -29,7 +29,7 @@ namespace SocialWeave.Controllers
             try
             {
                 ViewBag.Query = query;
-                return View("PageOfSearch", await _searchService.SearchUserByQueryAsync(query, await _userService.FindUserByNameAsync(User.Identity.Name)));
+                return View("PageOfSearch", await _searchService.SearchUsersAndPostsByQueryAsync(query, await _userService.FindUserByNameAsync(User.Identity.Name)));
             }
             catch (SearchException ex) 
             {
