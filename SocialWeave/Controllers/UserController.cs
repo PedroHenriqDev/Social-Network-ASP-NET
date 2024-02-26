@@ -151,6 +151,9 @@ namespace SocialWeave.Controllers
             }
         }
 
+        [ServiceFilter(typeof(NotificationHelperActionFilter))]
+        [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> LogoutGet()
         {
             try
