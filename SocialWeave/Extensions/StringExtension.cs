@@ -46,6 +46,14 @@ namespace SocialWeave.Extensions
             }
         }
 
+        /// <summary>
+        /// Provides an extension method for cutting a string to a maximum length of 100 characters.
+        /// </summary>
+        /// <param name="thisString">The string instance to be cut.</param>
+        /// <returns>
+        /// Returns the original string if its length is less than or equal to 100 characters; otherwise, returns a truncated string
+        /// with the first 100 characters followed by an ellipsis ("...").
+        /// </returns>
         public static string CutComment(this string thisString)
         {
             if (thisString.Length <= 100)
@@ -57,6 +65,5 @@ namespace SocialWeave.Extensions
                 return thisString.Substring(0, 100) + "...";
             }
         }
-
     }
 }
