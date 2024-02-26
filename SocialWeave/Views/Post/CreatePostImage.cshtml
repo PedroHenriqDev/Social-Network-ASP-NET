@@ -74,6 +74,11 @@
         color: #FF5252;
     }
 
+    .strong-red {
+        background-color: #dc3545;
+        color: #fff;
+    }
+
     #imagePreview {
         margin-top: 10px;
     }
@@ -86,6 +91,13 @@
         margin-bottom: 20px;
     }
 </style>
+
+@if (TempData["CreateError"] != null)
+{
+    <div class="alert alert-danger strong-red" role="alert">
+        @TempData["CreateError"]
+    </div>
+}
 
 <div class="container">
     <div class="custom-border" style="margin-top: 20px"></div>

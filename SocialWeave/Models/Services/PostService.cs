@@ -18,11 +18,13 @@ namespace SocialWeave.Models.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly GenerateTrendingPostsService _generateTrending;
+        private readonly ILogger<PostService> _logger;
 
-        public PostService(ApplicationDbContext context, GenerateTrendingPostsService generateTrending)
+        public PostService(ApplicationDbContext context, GenerateTrendingPostsService generateTrending, ILogger<PostService> logger)
         {
             _context = context;
             _generateTrending = generateTrending;
+            _logger = logger;   
         }
 
         /// <summary>
@@ -32,62 +34,116 @@ namespace SocialWeave.Models.Services
         /// <param name="user">The user creating the post.</param>
         public async Task CreatePostAsync(PostViewModel postVM, User user)
         {
-            if (postVM == null || user == null)
+            try
             {
-                throw new NullReferenceException("It is not possible to create a null post");
+                if (postVM == null || user == null)
+                {
+                    throw new NullReferenceException("It is not possible to create a null post");
+                }
+
+                PostWithoutImage post = new PostWithoutImage()
+                {
+                    Date = DateTime.Now,
+                    User = user,
+                    Description = postVM.Description,
+                    Id = Guid.NewGuid(),
+                    Score = 1
+                };
+
+                await _context.AddAsync(post);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Post created with successfully.");
             }
-
-            PostWithoutImage post = new PostWithoutImage()
+            catch (Exception ex) 
             {
-                Date = DateTime.Now,
-                User = user,
-                Description = postVM.Description,
-                Id = Guid.NewGuid(),
-                Score = 1
-            };
-
-            await _context.AddAsync(post);
-            await _context.SaveChangesAsync();
+                _logger.LogError(ex, "Error ocurred while creating post.");
+                throw;
+            }
         }
 
         public async Task EditPostByDescriptionAsync(string newDescription, Post post)
         {
-            if (newDescription == null || post == null || post.Description == newDescription)
+            try
             {
-                throw new PostException("An brutal error ocurred in edition!");
-            }
+                if (newDescription == null || post == null || post.Description == newDescription)
+                {
+                    throw new PostException("An brutal error ocurred in edition!");
+                }
 
-            post.Score = 1;
-            post.Description = newDescription;
-            _context.Posts.Update(post);
-            await _context.SaveChangesAsync();
+                post.Score = 1;
+                post.Description = newDescription;
+                _context.Posts.Update(post);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Post created with successfully.");
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error ocurred while editing post.");
+                throw;
+            }
         }
 
         public async Task CreatePostAsync(PostImageViewModel postImageVM, User user, IFormFile imageFile)
         {
-            if (postImageVM == null || user == null || imageFile == null)
+            try
             {
-                throw new NullReferenceException("It is not possible to create a null post");
-            }
-
-            using (var memoryStream = new MemoryStream())
-            {
-                await imageFile.CopyToAsync(memoryStream);
-                byte[] imageBytes = memoryStream.ToArray();
-
-                PostWithImage post = new PostWithImage()
+                if (postImageVM == null || user == null || imageFile == null)
                 {
-                    Date = DateTime.Now,
-                    User = user,
-                    Description = postImageVM.Description,
-                    Id = Guid.NewGuid(),
-                    Image = imageBytes,
-                    Score = 1
-                };
+                    throw new NullReferenceException("It is not possible to create a null post");
+                }
 
-                await _context.Posts.AddAsync(post);
-                await _context.SaveChangesAsync();
+                if(imageFile.Length > 20 * 1024 * 1024) 
+                {
+                    throw new ArgumentException("Image File size exceeds the limit of 20 MB");
+                }
+
+                if (!IsImageFile(imageFile)) 
+                {
+                    throw new ArgumentException("Invalid image file format.");
+                }
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    await imageFile.CopyToAsync(memoryStream);
+                    byte[] imageBytes = memoryStream.ToArray();
+
+                    string fileName = SanitizeFileName(imageFile.Name);
+
+                    PostWithImage post = new PostWithImage()
+                    {
+                        Date = DateTime.Now,
+                        User = user,
+                        Description = postImageVM.Description,
+                        Id = Guid.NewGuid(),
+                        Image = imageBytes,
+                        Score = 1
+                    };
+
+                    await _context.Posts.AddAsync(post);
+                    await _context.SaveChangesAsync();
+                    _logger.LogInformation("Post created with successfully.");
+                }
             }
+            catch(Exception ex) 
+            {
+                _logger.LogError(ex, "Error ocurred while creating post with image.");
+                throw;
+            }
+        }
+
+        private bool IsImageFile(IFormFile file)
+        {
+            if (file == null)
+                return false;
+
+            string[] permittedImageTypes = { "image/webp", "image/png", "image/jpeg", "image/jpg" };
+
+            return permittedImageTypes.Contains(file.ContentType);
+        }
+
+        private string SanitizeFileName(string fileName) 
+        {
+            return Path.GetFileNameWithoutExtension(fileName);
         }
 
         /// <summary>

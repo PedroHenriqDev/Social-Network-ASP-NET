@@ -46,6 +46,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/User/Login";
     });
 
+builder.Services.AddLogging(builder =>
+{
+    builder.AddConsole();
+});
+
 var app = builder.Build();
 
 // Create the directory for profile pictures

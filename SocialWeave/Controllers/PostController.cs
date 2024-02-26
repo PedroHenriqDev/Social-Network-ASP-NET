@@ -143,6 +143,11 @@ namespace SocialWeave.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
+            catch (ArgumentException ex)
+            {
+                TempData["CreateError"] = ex.ToString();
+                return View(postVM);
+            }
         }
 
         [HttpPost]
@@ -165,6 +170,11 @@ namespace SocialWeave.Controllers
             catch (NullReferenceException ex)
             {
                 return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
+            catch(ArgumentException ex) 
+            {
+                TempData["CreateError"] = ex.Message;
+                return View(postImageVM);
             }
         }
 
