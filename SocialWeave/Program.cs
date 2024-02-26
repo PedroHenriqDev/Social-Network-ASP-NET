@@ -1,11 +1,15 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using SocialWeave.Data;
 using SocialWeave.Models.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using SocialWeave.Helpers;
-using Microsoft.AspNetCore.CookiePolicy;
-using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +48,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 var app = builder.Build();
 
+// Create the directory for profile pictures
+string profilePicturesDirectory = Path.Combine(app.Environment.ContentRootPath, "profile-pictures");
+if (!Directory.Exists(profilePicturesDirectory))
+{
+    Directory.CreateDirectory(profilePicturesDirectory);
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -53,6 +64,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseSession();
 app.UseRouting();
 app.UseAuthorization();
@@ -63,8 +75,7 @@ app.MapControllerRoute(
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), "profile-pictures")),
+    FileProvider = new PhysicalFileProvider(profilePicturesDirectory),
     RequestPath = "/profile-pictures"
 });
 

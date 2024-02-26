@@ -16,13 +16,11 @@
 # Users can create posts to share their thoughts, photos, videos, and links with their followers. They also have the option to comment on and like posts from other users.
 # News Feed:
 
-# The news feed displays the most recent posts from users that the user is following, keeping them updated on the activities of their friends and connections on the platform.
 # Social Interaction:
 
 # Users can connect with other users by sending friend requests, following profiles, and interacting through comments and likes on posts.
 # Direct Messages:
 
-# The direct messaging functionality allows users to send private messages to each other, facilitating private communication and interaction among users.
 # User and Content Search:
 
 # Users can search for other users and content on the platform using an advanced search function, allowing them to find friends, posts, and topics of interest.
