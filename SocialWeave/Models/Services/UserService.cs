@@ -5,7 +5,10 @@ using SocialWeave.Data;
 using SocialWeave.Exceptions;
 using SocialWeave.Models.ConcreteClasses;
 using SocialWeave.Models.ViewModels;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Net.Mail;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
@@ -32,13 +35,25 @@ namespace SocialWeave.Models.Services
         private readonly IUrlHelperFactory _urlHelperFactory;
         private readonly IConfiguration _configuration;
         private readonly PostService _postService;
+        private readonly ILogger<UserService> _logger;
 
+        /// <summary>
+        /// Constructor for UserService.
+        /// </summary>
+        /// <param name="context">The application database context.</param>
+        /// <param name="actionContextAccessor">Accessor for action context.</param>
+        /// <param name="httpContextAccessor">Accessor for HTTP context.</param>
+        /// <param name="urlHelperFactory">Factory for URL helper.</param>
+        /// <param name="configuration">Configuration options.</param>
+        /// <param name="postService">Service for managing posts.</param>
+        /// <param name="logger">The logger to log information, warnings, and errors.</param>
         public UserService(ApplicationDbContext context,
                IActionContextAccessor actionContextAccessor,
                IHttpContextAccessor httpContextAccessor,
                IUrlHelperFactory urlHelperFactory,
                IConfiguration configuration,
-               PostService postService)
+               PostService postService,
+               ILogger<UserService> logger)
         {
             _context = context;
             _actionContextAccessor = actionContextAccessor;
@@ -46,83 +61,183 @@ namespace SocialWeave.Models.Services
             _urlHelperFactory = urlHelperFactory;
             _configuration = configuration;
             _postService = postService;
+            _logger = logger;
         }
 
         /// <summary>
-        /// Finds a user by email asynchronously.'
+        /// Finds a user by email asynchronously.
         /// </summary>
+        /// <param name="email">The email address of the user.</param>
+        /// <returns>The user with the specified email, or null if not found.</returns>
         public async Task<User> FindUserByEmailAsync(string email)
         {
-            return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+            try
+            {
+                User user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+                _logger.LogInformation("User search for email successfully completed");
+                return user;
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "An error occurred when searching for the user by email");
+                throw;
+            }
         }
 
         /// <summary>
         /// Finds a user by name asynchronously.
         /// </summary>
+        /// <param name="name">The name of the user.</param>
+        /// <returns>The user with the specified name, or null if not found.</returns>
         public async Task<User> FindUserByNameAsync(string name)
         {
-            User user = await _context.Users
-                                      .Include(x => x.Posts)
-                                      .Include(x => x.Admirations)
-                                      .FirstOrDefaultAsync(x => x.Name == name);
+            try
+            {
+                User user = await _context.Users
+                                          .Include(x => x.Posts)
+                                          .Include(x => x.Admirations)
+                                          .FirstOrDefaultAsync(x => x.Name == name);
 
-            await _postService.CompletePostAsync(user);
-            return user;
+                await _postService.CompletePostAsync(user);
+                _logger.LogInformation("User search for name successfully completed");
+                return user;
+            }
+            catch(Exception ex) 
+            {
+                _logger.LogError(ex, "An error occurred when searching for the user by name");
+                throw;
+            }
         }
 
+        /// <summary>
+        /// Retrieves users admired by the specified user.
+        /// </summary>
+        /// <param name="user">The user whose admirers are to be retrieved.</param>
+        /// <returns>A collection of users admired by the specified user.</returns>
         public async Task<IEnumerable<User>> ReturnAdmiredFromUserAsync(User user)
         {
-            var users = await _context.Admirations
-                                      .Include(x => x.UserAdmired)
-                                      .Include(x => x.UserAdmired.Posts)
-                                      .Where(x => x.UserAdmiredId != user.Id && x.UserAdmirerId == user.Id)
-                                      .Select(x => x.UserAdmired)
-                                      .ToListAsync();
+            try
+            {
 
-            return users;
+                var users = await _context.Admirations
+                                          .Include(x => x.UserAdmired)
+                                          .Include(x => x.UserAdmired.Posts)
+                                          .Where(x => x.UserAdmiredId != user.Id && x.UserAdmirerId == user.Id)
+                                          .Select(x => x.UserAdmired)
+                                          .ToListAsync();
+
+                _logger.LogInformation("Successfully returning admired users.");
+                return users;
+            }
+            catch(Exception ex) 
+            {
+                _logger.LogError(ex, "Error ocurred in return admired users");
+                throw;
+            }
         }
 
-        public async Task<bool> CheckNameExistsAsync(string name) 
+        /// <summary>
+        /// Checks if a user with the specified name already exists.
+        /// </summary>
+        /// <param name="name">The name to check.</param>
+        /// <returns>True if a user with the specified name exists; otherwise, false.</returns>
+        public async Task<bool> CheckNameExistsAsync(string name)
         {
-            return await _context.Users.AnyAsync(x => x.Name == name);
+            try
+            {
+                bool nameExist = await _context.Users.AnyAsync(x => x.Name == name);
+                _logger.LogInformation("Checking whether the name exists successfully.");
+                return nameExist;
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error occurred when checking if the name exists");
+                throw;
+            }
         }
 
+        /// <summary>
+        /// Checks if a user with the specified email already exists.
+        /// </summary>
+        /// <param name="email">The email to check.</param>
+        /// <returns>True if a user with the specified email exists; otherwise, false.</returns>
         public async Task<bool> CheckEmailExistsAsync(string email)
         {
-            return await _context.Users.AnyAsync(x => x.Email == email);
+            try
+            {
+                bool emailExist = await _context.Users.AnyAsync(x => x.Email == email);
+                _logger.LogInformation("Checking whether the email exists successfully.");
+                return emailExist;
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error occurred when checking if the email exists");
+                throw;
+            }
         }
 
         /// <summary>
         /// Finds a user by id asynchronously.
         /// </summary>
+        /// <param name="id">The id of the user.</param>
+        /// <returns>The user with the specified id, or null if not found.</returns>
         public async Task<User> FindUserByIdAsync(Guid id)
         {
-            return await _context.Users
-                                 .Include(x => x.Posts)
-                                 .Include(x => x.Admirations)
-                                 .FirstOrDefaultAsync(x => x.Id == id);
+            try
+            {
+                User user = await _context.Users
+                                     .Include(x => x.Posts)
+                                     .Include(x => x.Admirations)
+                                     .FirstOrDefaultAsync(x => x.Id == id);
+
+                _logger.LogInformation("User search by id successful");
+                return user;
+            }
+            catch(Exception ex) 
+            {
+                _logger.LogError(ex, "Error ocurred while the user search took place");
+                throw;
+            }
         }
 
+        /// <summary>
+        /// Finds an admiration record between two users asynchronously.
+        /// </summary>
+        /// <param name="userAdmired">The user admired.</param>
+        /// <param name="userAdmirer">The user admirer.</param>
+        /// <returns>The admiration record between the specified users, or null if not found.</returns>
         public async Task<Admiration> FindAdmirationByUserIdAsync(User userAdmired, User userAdmirer)
         {
-            return await _context.Admirations
-                                 .FirstOrDefaultAsync(x => x.UserAdmiredId == userAdmired.Id && x.UserAdmirerId == userAdmirer.Id);
+            try
+            {
+                Admiration admiration = await _context.Admirations
+                                     .FirstOrDefaultAsync(x => x.UserAdmiredId == userAdmired.Id && x.UserAdmirerId == userAdmirer.Id);
+
+                _logger.LogInformation("Search for admiration by user id done successfully.");
+                return admiration;
+            }
+            catch(Exception ex) 
+            {
+                _logger.LogError(ex, "Error ocurred while the search for admiration for the user id happenede");
+                throw;
+            }
         }
 
         /// <summary>
         /// Sets the encrypted password for a user using BCrypt.
         /// </summary>
-        public void SetCryptPassword(User user)
+        /// <param name="user">The user for whom the password is to be set.</param>
+        private void SetCryptPassword(User user)
         {
             user.Salt = BCrypt.Net.BCrypt.GenerateSalt();
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, user.Salt);
         }
 
         /// <summary>
-        /// Validates user credentials asynchronously, checking if the provided password matches the hashed password in the database.
+        /// Validates user credentials asynchronously.
         /// </summary>
-        /// <param name="user">The user with the credentials to be validated.</param>
-        /// <returns>True if credentials are valid, False otherwise.</returns>
+        /// <param name="userVM">The user view model containing the credentials to validate.</param>
+        /// <returns>True if the credentials are valid; otherwise, false.</returns>
         public async Task<bool> ValidateUserCredentialsAsync(UserViewModel userVM)
         {
             User userDb = await FindUserByEmailAsync(userVM.Email);
@@ -130,25 +245,26 @@ namespace SocialWeave.Models.Services
             {
                 return false;
             }
+
             return BCrypt.Net.BCrypt.Verify(userVM.Password, userDb.Password);
         }
 
         /// <summary>
         /// Creates a new user asynchronously in the database.
         /// </summary>
-        /// <param name="user">The user to be created.</param>
-        /// <exception cref="UserException">Exception thrown if there is an error creating the user.</exception>
-        /// <exception cref="IntegrityException">Exception thrown if a concurrency error occurs in the database.</exception>
+        /// <param name="userCreateVM">The view model containing the user information.</param>
+        /// <exception cref="UserException">Thrown if there is an error creating the user.</exception>
+        /// <exception cref="IntegrityException">Thrown if a concurrency error occurs in the database.</exception>
         public async Task CreateUserAsync(UserCreateViewModel userCreateVM)
         {
             try
             {
-                if (await CheckEmailExistsAsync(userCreateVM.Email)) 
+                if (await CheckEmailExistsAsync(userCreateVM.Email))
                 {
                     throw new UserException("Existing email");
                 }
 
-                if (await CheckNameExistsAsync(userCreateVM.Name)) 
+                if (await CheckNameExistsAsync(userCreateVM.Name))
                 {
                     throw new UserException("Existing name");
                 }
@@ -166,201 +282,365 @@ namespace SocialWeave.Models.Services
                 SetCryptPassword(user);
                 await _context.AddAsync(user);
                 await _context.SaveChangesAsync();
+                _logger.LogInformation("User creation successful.");
             }
-            catch (DBConcurrencyException e)
+            catch (DBConcurrencyException ex)
             {
-                throw new IntegrityException(e.Message);
+                throw new IntegrityException(ex.Message);
+            }
+            catch(Exception ex) 
+            {
+                _logger.LogError(ex, "Error occurred when creating user");
             }
         }
 
+        /// <summary>
+        /// Adds a profile picture to the user asynchronously.
+        /// </summary>
+        /// <param name="imageBytes">The byte representation of the image.</param>
+        /// <param name="user">The user to whom the picture is to be added.</param>
+        /// <exception cref="UserException">Thrown if there is an error adding the picture.</exception>
         public async Task AddPictureProfileAsync(string imageBytes, User user)
         {
-            if (imageBytes == null || user == null)
+            try
             {
-                throw new UserException("An error ocurred with reference null!");
+                const int MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+
+                if (imageBytes == null || user == null)
+                {
+                    throw new UserException("An error occurred with a null reference!");
+                }
+
+                if (imageBytes.Length > MAX_IMAGE_SIZE_BYTES)
+                {
+                    throw new UserException("Image size exceeds the maximum allowed size.");
+                }
+
+                var byteStrings = imageBytes.Split(',');
+                var bytes = byteStrings.Select(s => byte.Parse(s)).ToArray();
+                user.PictureProfile = bytes;
+
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Successfully changing picture profile");
             }
-
-            var byteStrings = imageBytes.Split(',');
-            var bytes = byteStrings.Select(s => byte.Parse(s)).ToArray();
-            user.PictureProfile = bytes;
-
-            _context.Update(user);
-            await _context.SaveChangesAsync();
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error ocurred in changing your profile photo");
+            }
         }
 
+        /// <summary>
+        /// Changes the description of a user asynchronously.
+        /// </summary>
+        /// <param name="description">The new description for the user.</param>
+        /// <param name="user">The user whose description is being changed.</param>
+        /// <returns>A Task representing the asynchronous operation.</returns>
         public async Task ChangeDescriptionAsync(string description, User user)
         {
-            if (description == null || user == null)
+            try
             {
-                throw new UserException("An error ocurred with reference null!");
-            }
+                if (description == null || user == null)
+                {
+                    throw new UserException("An error occurred with reference null!");
+                }
 
-            user.Description = description;
-            _context.Update(user);
-            await _context.SaveChangesAsync();
+                user.Description = description;
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Description change made successfully.");
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error ocurred while in change description");
+            }
         }
 
-        public async Task RemoveAdmirationAsync(User userAdmirer, User userAdmired) 
+        /// <summary>
+        /// Removes admiration from one user to another asynchronously.
+        /// </summary>
+        /// <param name="userAdmirer">The user who admired.</param>
+        /// <param name="userAdmired">The user who was admired.</param>
+        /// <returns>A Task representing the asynchronous operation.</returns>
+        public async Task RemoveAdmirationAsync(User userAdmirer, User userAdmired)
         {
-            if(userAdmired == null || userAdmirer == null) 
+            try
             {
-                throw new UserException("An error ocurred, null reference!");
-            }
+                if (userAdmired == null || userAdmirer == null)
+                {
+                    throw new UserException("An error occurred, null reference!");
+                }
 
-            Admiration admirationToRemove = await FindAdmirationByUserIdAsync(userAdmired, userAdmirer);
-            _context.Admirations.Remove(admirationToRemove);
-            await _context.SaveChangesAsync();
+                Admiration admirationToRemove = await FindAdmirationByUserIdAsync(userAdmired, userAdmirer);
+                _context.Admirations.Remove(admirationToRemove);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Admiration deletion done successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error ocurred while the deletion of admiration happened");
+            }
         }
 
+        /// <summary>
+        /// Adds admiration from one user to another asynchronously.
+        /// </summary>
+        /// <param name="userAdmirer">The user who admires.</param>
+        /// <param name="userAdmired">The user who is admired.</param>
+        /// <returns>A Task representing the asynchronous operation.</returns>
         public async Task AddAdmirationAsync(User userAdmirer, User userAdmired)
         {
-            if (userAdmired == null || userAdmirer == null)
+            try
             {
-                throw new UserException("An error ocurred, null reference!");
+                if (userAdmired == null || userAdmirer == null)
+                {
+                    throw new UserException("An error occurred, null reference!");
+                }
+
+                Admiration admiration = new Admiration()
+                {
+                    Id = Guid.NewGuid(),
+                    UserAdmiredId = userAdmired.Id,
+                    UserAdmired = userAdmired,
+                    UserAdmirerId = userAdmirer.Id,
+                    UserAdmirer = userAdmirer
+                };
+
+                await _context.Admirations.AddAsync(admiration);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Admiration deletion done successfully.");
             }
-
-            Admiration admiration = new Admiration()
+            catch (Exception ex)
             {
-                Id = new Guid(),
-                UserAdmiredId = userAdmired.Id,
-                UserAdmired = userAdmired,
-                UserAdmirerId = userAdmirer.Id,
-                UserAdmirer = userAdmirer
-            };
-
-            await _context.Admirations.AddAsync(admiration);
-            await _context.SaveChangesAsync();
+                _logger.LogError(ex, "Error ocurred while the deletion of admiration happened");
+            }
         }
 
-        public async Task<IEnumerable<User>> FindAdmirersOfUserAsync(User user) 
+        /// <summary>
+        /// Finds users who admire the provided user asynchronously.
+        /// </summary>
+        /// <param name="user">The user whose admirers are being found.</param>
+        /// <returns>A Task representing the asynchronous operation, yielding a collection of users who admire the provided user.</returns>
+        public async Task<IEnumerable<User>> FindAdmirersOfUserAsync(User user)
         {
-            if (user == null) throw new UserException("User null!");
+            try
+            {
+                if (user == null) throw new UserException("User null!");
 
-            var userAdmirers = await _context.Admirations
-                                             .Where(x => x.UserAdmirerId != user.Id && x.UserAdmiredId == user.Id)
-                                             .Include(x => x.UserAdmirer.Posts)
-                                             .Include(x => x.UserAdmirer.Admirations)
-                                             .Select(x => x.UserAdmirer)
-                                             .ToListAsync();
-            return userAdmirers;
+                var userAdmirers = await _context.Admirations
+                                                 .Where(x => x.UserAdmirerId != user.Id && x.UserAdmiredId == user.Id)
+                                                 .Include(x => x.UserAdmirer.Posts)
+                                                 .Include(x => x.UserAdmirer.Admirations)
+                                                 .Select(x => x.UserAdmirer)
+                                                 .ToListAsync();
+
+                _logger.LogInformation("Search for admirers done successfully");
+                return userAdmirers;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred when searching for admirers");
+                throw;
+            }
         }
 
-        public async Task<IEnumerable<User>> FindAdmiredByUserAsnyc(User user) 
+        /// <summary>
+        /// Finds users whom the provided user admires asynchronously.
+        /// </summary>
+        /// <param name="user">The user whose admired users are being found.</param>
+        /// <returns>A Task representing the asynchronous operation, yielding a collection of users whom the provided user admires.</returns>
+        public async Task<IEnumerable<User>> FindAdmiredByUserAsnyc(User user)
         {
-            if (user == null) throw new UserException("User null!");
+            try
+            {
+                if (user == null) throw new UserException("User null!");
 
-            var userAdmired = await _context.Admirations
-                                            .Where(x => x.UserAdmirerId == user.Id && x.UserAdmiredId != user.Id)
-                                            .Select(x => x.UserAdmired)
-                                            .ToListAsync();
-            return userAdmired;
+                var userAdmired = await _context.Admirations
+                                                .Where(x => x.UserAdmirerId == user.Id && x.UserAdmiredId != user.Id)
+                                                .Select(x => x.UserAdmired)
+                                                .ToListAsync();
+                
+                _logger.LogInformation("Search for admired done successfully");
+                return userAdmired;
+            }
+            catch(Exception ex) 
+            {
+                _logger.LogError(ex, "Error ocurred when searching for admired");
+                throw;
+            }
         }
 
+        /// <summary>
+        /// Formats a number asynchronously.
+        /// </summary>
+        /// <param name="count">The number to be formatted.</param>
+        /// <returns>A Task representing the asynchronous operation, yielding the formatted number.</returns>
         public async Task<string> FormatNumberAsync(int count)
         {
-            if (count < 999)
+            if (count < 0)
+            {
+                throw new ArgumentException("Count cannot be negative.");
+            }
+
+            if (count < 1000)
             {
                 return count.ToString();
             }
-            else if (count < 9999)
+            else if (count < 1000000)
             {
-                return (count / 1000.0).ToString("0.#") + " K";
-            }
-            else if (count < 99999)
-            {
-                return (count / 1000.0).ToString("0.##") + " K";
-            }
-            else if (count < 999999)
-            {
-                return (count / 1000.0).ToString("0.#") + " K";
+                double formattedCount;
+                string suffix;
+
+                if (count < 10000)
+                {
+                    formattedCount = count / 1000.0;
+                    suffix = "K";
+                }
+                else
+                {
+                    formattedCount = count / 1000000.0;
+                    suffix = "M";
+                }
+
+                return $"{formattedCount:0.##} {suffix}";
             }
             else
             {
-                return (count / 1000000.0).ToString("0.#") + " M";
+                return $"{count / 1000000.0:0.#} M";
             }
         }
 
-        public async Task<string> CountAdmiredAsync(User user)
-        {
-            if (user == null)
-            {
-                throw new UserException("User is null!");
-            }
-
-            var amountOfAdmired = await _context.Admirations
-                .Where(x => x.UserAdmirerId == user.Id)
-                .CountAsync();
-
-            return await FormatNumberAsync(amountOfAdmired);
-        }
-
+        /// <summary>
+        /// Counts the number of users who admire the provided user asynchronously.
+        /// </summary>
+        /// <param name="user">The user whose admirers are being counted.</param>
+        /// <returns>A Task representing the asynchronous operation, yielding the count of admirers.</returns>
         public async Task<string> CountAdmirersAsync(User user)
         {
-            if (user == null)
+            try
             {
-                throw new UserException("User is null!");
+                if (user == null)
+                {
+                    throw new UserException("User is null!");
+                }
+
+                var amountOfAdmirers = await _context.Admirations
+                    .Where(x => x.UserAdmirerId != user.Id && x.UserAdmiredId == user.Id)
+                    .CountAsync();
+
+                _logger.LogInformation("Success in counting admirers.");
+                return await FormatNumberAsync(amountOfAdmirers);
             }
-
-            var amountOfAdmirers = await _context.Admirations
-                .Where(x => x.UserAdmirerId != user.Id && x.UserAdmiredId == user.Id)
-                .CountAsync();
-
-            return await FormatNumberAsync(amountOfAdmirers);
+            catch(Exception ex) 
+            {
+                _logger.LogError("Error ocurred while the count of admirers took place");
+                throw;
+            }
         }
 
+        /// <summary>
+        /// Counts the number of users admired by the provided user asynchronously.
+        /// </summary>
+        /// <param name="user">The user whose admired users are being counted.</param>
+        /// <returns>A Task representing the asynchronous operation, yielding the count of admired users.</returns>
+        public async Task<string> CountAdmiredAsync(User user)
+        {
+            try
+            {
+                if (user == null)
+                {
+                    throw new UserException("User is null!");
+                }
+
+                var amountOfAdmired = await _context.Admirations
+                    .Where(x => x.UserAdmirerId == user.Id)
+                    .CountAsync();
+
+                _logger.LogInformation("Success in counting admired.");
+                return await FormatNumberAsync(amountOfAdmired);
+            }
+            catch(Exception ex) 
+            {
+                _logger.LogError(ex, "Error ocurred while the count of admired took place.");
+                throw;
+            }
+        }
 
         #region Send Email
         /// <summary>
-        /// Sends a password reset email to the user with the provided email address.
+        /// Sends a password reset email to the user with the provided email address asynchronously.
         /// </summary>
         /// <param name="email">The email address of the user.</param>
         /// <returns>True if the password reset email was sent successfully; otherwise, false.</returns>
         public async Task<bool> SendPasswordResetEmailAsync(string email)
         {
-            // Find the user by email
-            var user = await FindUserByEmailAsync(email);
-
-            // If the user doesn't exist, return false
-            if (user == null)
+            try
             {
-                return false;
+                // Find the user by email
+                var user = await FindUserByEmailAsync(email);
+
+                // If the user doesn't exist, return false
+                if (user == null)
+                {
+                    return false;
+                }
+
+                // Generate a password reset token manually
+                var token = Guid.NewGuid().ToString();
+
+                // Set the password reset token for the user
+                await SetPasswordResetTokenAsync(user, token);
+
+                var callbackUrl = GeneratePasswordResetCallbackUrl(user.Email, token);
+
+                _logger.LogInformation("Email sent successfully.");
+                return true;
             }
-
-            // Generate a password reset token manually
-            var token = Guid.NewGuid().ToString();
-
-            // Set the password reset token for the user
-            await SetPasswordResetTokenAsync(user, token);
-
-            // Generate the callback URL for resetting the password
-            var callbackUrl = GeneratePasswordResetCallbackUrl(user.Email, token);
-
-            // ... (código de envio de e-mail, conforme fornecido anteriormente)
-
-            return true;
+            catch(Exception ex) 
+            {
+                _logger.LogError("Error sending email");
+                throw;
+            }
         }
 
-        // This method generates the callback URL for resetting the password
+        // Generate the callback URL for resetting the password
         private string GeneratePasswordResetCallbackUrl(string email, string token)
         {
-            var urlHelper = _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
-            return urlHelper.Action("ResetPassword", "User", new { token = token, email = email }, protocol: _httpContextAccessor.HttpContext.Request.Scheme);
+            try
+            {
+                var urlHelper = _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
+                _logger.LogInformation("Callback generate successfully.");
+                return urlHelper.Action("ResetPassword", "User", new { token = token, email = email }, protocol: _httpContextAccessor.HttpContext.Request.Scheme);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error generating the call back");
+                throw;
+            }
         }
 
-
         /// <summary>
-        /// Sets the password reset token for the user.
+        /// Sets the password reset token for the user asynchronously.
         /// </summary>
         /// <param name="user">The user for whom the token is being set.</param>
         /// <param name="token">The password reset token to be set.</param>
         private async Task SetPasswordResetTokenAsync(User user, string token)
         {
-            user.ResetToken = token;
-            await _context.SaveChangesAsync();
+            try
+            {
+                user.ResetToken = token;
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Reset token generated successfully");
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error generating a reset token");
+            }
         }
         #endregion
     }
 }
+
 
 
 

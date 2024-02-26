@@ -215,6 +215,10 @@ namespace SocialWeave.Controllers
             {
                 return RedirectToAction(nameof(Error), new { message = ex.Message });
             }
+            catch(ArgumentException ex) 
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
         }
 
         [HttpGet]
@@ -243,6 +247,10 @@ namespace SocialWeave.Controllers
             {
                 return RedirectToAction(nameof(Error), new { message = ex.Message });
 
+            }
+            catch(ArgumentException ex) 
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
             }
         }
 
