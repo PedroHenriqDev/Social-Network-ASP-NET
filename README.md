@@ -1,7 +1,7 @@
 # Social Weave
 
 ## Description:
-Social Weave is a fully functional social network developed by a single developer using ASP.NET. This platform was created with the aim of providing an engaging and intuitive social media experience for users.
+Social Weave is a fully functional social network developed by a single developer using ASP.NET.
 
 ## Key Features:
 
