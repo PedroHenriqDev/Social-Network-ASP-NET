@@ -275,6 +275,7 @@ namespace SocialWeave.Models.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while completing the post.");
+                throw;
             }
         }
 
@@ -302,6 +303,7 @@ namespace SocialWeave.Models.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while deleting the post.");
+                throw;
             }
         }
 
@@ -328,6 +330,7 @@ namespace SocialWeave.Models.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while adding like to post.");
+                throw;
             }
         }
 
@@ -359,6 +362,7 @@ namespace SocialWeave.Models.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while removing like from post.");
+                throw;
             }
         }
 
@@ -383,6 +387,7 @@ namespace SocialWeave.Models.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while adding admiration.");
+                throw;
             }
         }
 
@@ -422,6 +427,7 @@ namespace SocialWeave.Models.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while creating comment.");
+                throw;
             }
         }
 
@@ -445,6 +451,7 @@ namespace SocialWeave.Models.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while deleting comment.");
+                throw;
             }
         }
 
@@ -476,6 +483,7 @@ namespace SocialWeave.Models.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while adding like to comment.");
+                throw;
             }
         }
 
@@ -507,6 +515,7 @@ namespace SocialWeave.Models.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while removing like from the comment.");
+                throw;
             }
         }
 

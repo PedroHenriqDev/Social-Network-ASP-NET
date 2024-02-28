@@ -156,6 +156,7 @@ namespace SocialWeave.Models.Services
             catch (Exception ex) 
             {
                 _logger.LogError("Error in score calculation");
+                throw;
             }
         }
     }

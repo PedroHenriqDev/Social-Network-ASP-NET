@@ -72,6 +72,7 @@ namespace SocialWeave.Models.Services
             catch (Exception ex) 
             {
                 _logger.LogError(ex, "Error ocurred while creating notification related admiration");
+                throw;
             }
         }
 
@@ -116,6 +117,7 @@ namespace SocialWeave.Models.Services
             catch (Exception ex) 
             {
                 _logger.LogError(ex, "Error ocurred while creating notification related to a new post");
+                throw;
             }
         }
 
@@ -158,6 +160,7 @@ namespace SocialWeave.Models.Services
             catch (Exception ex) 
             {
                 _logger.LogError(ex, "Error ocurred while creating notification related like");
+                throw;
             }
         }
 
@@ -200,6 +203,7 @@ namespace SocialWeave.Models.Services
             catch (Exception ex) 
             {
                 _logger.LogError(ex, "Error ocurred while creating notification related comment");
+                throw;
             }
         }
 

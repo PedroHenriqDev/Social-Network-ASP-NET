@@ -1,4 +1,8 @@
-﻿using SocialWeave.Models.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SocialWeave.Data;
+using SocialWeave.Exceptions;
+using SocialWeave.Models.ConcreteClasses;
+using SocialWeave.Models.Interfaces;
 using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
@@ -11,11 +15,49 @@ namespace SocialWeave.Models.Services
     public class ProfilePictureService : IProfilePictureService
     {
         private readonly ILogger<ProfilePictureService> _logger;
-
+        private readonly ApplicationDbContext _context;
         /// <param name="logger">The logger to log information, warnings, and errors.</param>
-        public ProfilePictureService(ILogger<ProfilePictureService> logger) 
+        public ProfilePictureService(ILogger<ProfilePictureService> logger, ApplicationDbContext context) 
         {
             _logger = logger;
+            _context = context;
+        }
+
+
+        /// <summary>
+        /// Adds a profile picture to the user asynchronously.
+        /// </summary>
+        /// <param name="imageBytes">The byte representation of the image.</param>
+        /// <param name="user">The user to whom the picture is to be added.</param>
+        /// <exception cref="UserException">Thrown if there is an error adding the picture.</exception>
+        public async Task AddPictureProfileAsync(string imageBytes, User user)
+        {
+            try
+            {
+                const int MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+
+                if (imageBytes == null || user == null)
+                {
+                    throw new UserException("An error occurred with a null reference!");
+                }
+
+                if (imageBytes.Length > MAX_IMAGE_SIZE_BYTES)
+                {
+                    throw new UserException("Image size exceeds the maximum allowed size.");
+                }
+
+                var byteStrings = imageBytes.Split(',');
+                var bytes = byteStrings.Select(s => byte.Parse(s)).ToArray();
+                user.PictureProfile = bytes;
+
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Successfully changing picture profile");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error ocurred in changing your profile photo");
+            }
         }
 
         /// <summary>

@@ -32,6 +32,8 @@ namespace SocialWeave.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly NotificationHelper _notificationHelper;
+        private readonly RegisterService _registerService;
+        private readonly LoginService _loginService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserController"/> class.
@@ -43,13 +45,15 @@ namespace SocialWeave.Controllers
         /// <param name="profilePictureService">The service responsible for profile picture-related operations.</param>
         /// <param name="httpContextAccessor">The HTTP context accessor.</param>
         /// <param name="notificationHelper">The helper class for managing notifications.</param>
+        /// <param name="registerService">The service responsible for user registration.</param>
+        /// <param name="loginService">The service responsible for user access</param>
         public UserController(UserService userService,
             ApplicationDbContext context,
             PostService postService,
             NotificationService notificationService,
             ProfilePictureService profilePictureService,
             IHttpContextAccessor httpContextAccessor,
-            NotificationHelper notificationHelper)
+            NotificationHelper notificationHelper, RegisterService registerService, LoginService loginService)
         {
             _userService = userService;
             _context = context;
@@ -58,6 +62,8 @@ namespace SocialWeave.Controllers
             _profilePictureService = profilePictureService;
             _httpContextAccessor = httpContextAccessor;
             _notificationHelper = notificationHelper;
+            _registerService = registerService;
+            _loginService = loginService;
         }
 
         /// <summary>
@@ -83,7 +89,7 @@ namespace SocialWeave.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(UserViewModel userVM)
         {
-            if (ModelState.IsValid && await _userService.ValidateUserCredentialsAsync(userVM))
+            if (ModelState.IsValid && await _loginService.ValidateUserCredentialsAsync(userVM))
             {
                 var claims = new List<Claim>();
                 User user = await _userService.FindUserByEmailAsync(userVM.Email);
@@ -145,7 +151,7 @@ namespace SocialWeave.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await _userService.CreateUserAsync(userCreateVM);
+                    await _registerService.RegisterUserAsync(userCreateVM);
                     TempData["SuccessMessage"] = "User created successfully";
                     return RedirectToAction(nameof(Login)); // Redirect to login page after successful registration
                 }
@@ -153,7 +159,7 @@ namespace SocialWeave.Controllers
             }
             catch (UserException ex)
             {
-                TempData["ErrorMessage"] = "Existing user or email try another";
+                TempData["ErrorMessage"] = ex.Message;
                 return View(userCreateVM); // Redirect back to registration page with error message
             }
             catch (IntegrityException ex)
@@ -315,7 +321,7 @@ namespace SocialWeave.Controllers
                     return NotFound(); // Return not found if request method is not POST
                 }
 
-                await _userService.AddPictureProfileAsync(imageBytes, await _userService.FindUserByNameAsync(User.Identity.Name));
+                await _profilePictureService.AddPictureProfileAsync(imageBytes, await _userService.FindUserByNameAsync(User.Identity.Name));
                 return RedirectToAction(nameof(UserPage));
             }
             catch (UserException)
