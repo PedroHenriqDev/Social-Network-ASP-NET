@@ -1,6 +1,6 @@
-﻿using SocialWeave.Models.AbstractClasses;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
+using SocialWeave.Models.AbstractClasses;
 
 namespace SocialWeave.Models.ConcreteClasses
 {

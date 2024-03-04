@@ -16,7 +16,6 @@
   <ItemGroup>
     <None Remove="Controllers\HomeController.cs~RF2479900.TMP" />
     <None Remove="Extensions\DateTimeExtension.cs~RF15a3768.TMP" />
-    <None Remove="Models\AbstractClasses\Post.cs~RFedd6b.TMP" />
     <None Remove="Models\ConcreteClasses\xwrtydjj.ucc~" />
     <None Remove="Models\Services\GenerateTrendingPostsService.cs~RF15b8b02.TMP" />
     <None Remove="Program.cs~RF3a1bab.TMP" />

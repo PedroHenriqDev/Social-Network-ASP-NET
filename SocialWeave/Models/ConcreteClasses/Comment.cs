@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using SocialWeave.Models.Interfaces;
 using SocialWeave.Models.AbstractClasses;
+using SocialWeave.Models.Interfaces;
 
 namespace SocialWeave.Models.ConcreteClasses
 {

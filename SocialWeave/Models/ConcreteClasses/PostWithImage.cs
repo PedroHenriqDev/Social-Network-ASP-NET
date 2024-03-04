@@ -1,5 +1,5 @@
-﻿using SocialWeave.Models.AbstractClasses;
-using System;
+﻿using System;
+using SocialWeave.Models.AbstractClasses;
 
 namespace SocialWeave.Models.ConcreteClasses
 {

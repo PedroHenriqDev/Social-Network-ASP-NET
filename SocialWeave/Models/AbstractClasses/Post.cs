@@ -1,14 +1,14 @@
-﻿using SocialWeave.Models.ConcreteClasses;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using SocialWeave.Models.ConcreteClasses;
 
 namespace SocialWeave.Models.AbstractClasses
 {
     /// <summary>
     /// Abstract class representing a post.
     /// </summary>
-    public abstract class Post
+    public class Post
     {
         /// <summary>
         /// Gets or sets the ID of the post.
