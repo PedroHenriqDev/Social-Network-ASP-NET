@@ -1,6 +1,7 @@
-﻿@    using SocialWeave.Extensions
-@    using SocialWeave.Models.ConcreteClasses
-@    using SocialWeave.Helpers;
+﻿@using SocialWeave.Extensions;
+@using SocialWeave.Helpers;
+@using SocialWeave.Models.AbstractClasses;
+@using SocialWeave.Models.ConcreteClasses;
 
 @model IEnumerable<Post>
 
@@ -182,7 +183,7 @@
                                 <div class="text-xxl-start">
                                     <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                                         <input type="hidden" name="name" value="@postImage.User.Name" />
-                                        <button type="submit" class="btn text-light"><i class="bi bi-person-circle me-2"></i>@postImage.User.Name.CutName()</button>
+                                        <button type="submit"    class="btn text-light"><i class="bi bi-person-circle me-2"></i>@postImage.User.Name.CutName()</button>
                                     </form>
                                 </div>
                             }

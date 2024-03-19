@@ -128,7 +128,7 @@ The notification system keeps users informed about relevant activities, new admi
 ![Image](https://github.com/PedroHenriqDev/Images/blob/main/Captura%20de%20Tela%20(30).png)
 <hr/>
 
-### Criação de postagens:
+### Post Creation:
 The user has two post options.
 <br/>
 
