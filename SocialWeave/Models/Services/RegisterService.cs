@@ -22,10 +22,11 @@ namespace SocialWeave.Models.Services
         /// </summary>
         /// <param name="context">The application database context.</param>
         /// <param name="userService">The user service for checking user information.</param>
-        public RegisterService(ApplicationDbContext context, UserService userService)
+        public RegisterService(ApplicationDbContext context, UserService userService, ILogger<RegisterService> logger)
         {
             _context = context;
             _userService = userService;
+            _logger = logger;
         }
 
         /// <summary>

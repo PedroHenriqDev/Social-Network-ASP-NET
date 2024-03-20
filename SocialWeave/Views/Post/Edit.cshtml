@@ -15,7 +15,7 @@
                 <div class="text-xxl-start">
                     <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                         <input type="hidden" name="name" value="@Model.User.Name" />
-                        <button type="submit" class="btn text-light"><i class="bi bi-person-circle me-2"></i>@Model.User.Name.CutName()</button>
+                        <button type="submit" class="btn text-dark"><i class="bi bi-person-circle me-2"></i>@Model.User.Name.CutName()</button>
                     </form>
                 </div>
             }
@@ -35,7 +35,7 @@
                 <form id="editForm" asp-action="Edit" asp-controller="Post" onsubmit="return false;">
                     <label asp-for="Description" class="form-label">Description:</label>
                     <input type="hidden" name="postId" value="@Model.Id" />
-                    <textarea id="descriptionInput" class="form-control bg-black text-light text-center" rows="5" asp-for="Description"></textarea>
+                    <textarea id="descriptionInput" class="form-control bg-light text-dark text-center" rows="5" asp-for="Description"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </form>
             </div>
@@ -85,7 +85,7 @@
                                             {
                                                 <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                                                     <input type="hidden" name="name" value="@Model.User.Name" />
-                                                    <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @Model.User.Name.CutName():</button>
+                                                    <button class="btn text-dark"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @Model.User.Name.CutName():</button>
                                                     <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
                                                 </form>
                                             }
@@ -136,7 +136,7 @@ else
                 <div class="text-xxl-start">
                     <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                         <input type="hidden" name="name" value="@postImage.User.Name" />
-                        <button type="submit" class="btn text-light"><i class="bi bi-person-circle me-2"></i>@postImage.User.Name.CutName()</button>
+                        <button type="submit" class="btn text-dark"><i class="bi bi-person-circle me-2"></i>@postImage.User.Name.CutName()</button>
                     </form>
                 </div>
             }
@@ -144,7 +144,7 @@ else
             {
                 <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                     <input type="hidden" name="name" value="@Model.User.Name" />
-                    <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(postImage.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @Model.User.Name.CutName()</button>
+                    <button class="btn text-dark"><img src="data:image/png;base64,@(Convert.ToBase64String(postImage.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @Model.User.Name.CutName()</button>
                 </form>
             }
             <div class="post-meta" style="margin-right: 20px">
@@ -156,7 +156,7 @@ else
                 <form id="editForm" asp-action="Edit" asp-controller="Post" onsubmit="return false;">
                     <label asp-for="Description" class="form-label">Description:</label>
                     <input type="hidden" name="postId" value="@Model.Id" />
-                    <textarea id="descriptionInput" class="form-control bg-black text-light text-center" rows="5" asp-for="Description"></textarea>
+                    <textarea id="descriptionInput" class="form-control bg-light text-dark text-center" rows="5" asp-for="Description"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </form>
             </div>
@@ -206,7 +206,7 @@ else
                                             {
                                                 <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                                                     <input type="hidden" name="name" value="@Model.User.Name" />
-                                                    <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @comment.User.Name.CutName():</button>
+                                                    <button class="btn text-dark"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @comment.User.Name.CutName():</button>
                                                     <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
                                                 </form>
                                             }

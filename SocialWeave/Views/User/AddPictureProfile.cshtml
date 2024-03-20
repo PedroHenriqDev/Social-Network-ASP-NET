@@ -43,7 +43,7 @@
     }
 
     .custom-file-input {
-        display: none; 
+        display: none;
     }
 
     .btn-primary {
@@ -56,13 +56,23 @@
         cursor: pointer;
     }
 
-        .btn-primary:hover {
-            background-color: #7B1FA2;
-        }
+    .body {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-bottom: 80px;
+    }
 
-        .btn-primary:focus {
-            box-shadow: none;
-        }
+    .btn-primary:hover {
+        background-color: #7B1FA2;
+    }
+
+    .btn-primary:focus {
+        box-shadow: none;
+    }
 
     .text-danger {
         color: #FF5252;
@@ -76,17 +86,16 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card">
+            <div class="body">
                 <h2 class="text-center mb-4">@ViewData["Title"]</h2>
                 <div class="text-center mb-4">
-                  
                 </div>
                 <form id="postForm" asp-action="AddPictureProfile" asp-controller="User" method="post">
                     <div class="mb-3 text-center">
-                        <label for="formFile" class="form-label">Choose Image:</label>
+                        <label for="formFile" class="form-label text-dark">Choose Image:</label>
                         <div class="custom-file">
                             <input type="file" class="form-control custom-file-input" id="formFile" name="ImageFile" accept="image/*" onchange="previewImage(event)">
-                            <label class="custom-file-label" for="formFile"><i class="bi bi-images"></i></label>
+                            <label class="custom-file-label text-primary" for="formFile"><i class="bi bi-images"></i></label>
                         </div>
                         <div id="imagePreview"></div>
                     </div>

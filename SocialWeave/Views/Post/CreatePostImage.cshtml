@@ -16,13 +16,13 @@
     }
 
     .form-label {
-        color: #fff;
+        color: black;
     }
+
 
     .form-control {
         background-color: rgba(255, 255, 255, 0.2);
-        color: #fff;
-        border: none;
+        color: white border: none;
         border-radius: 10px;
         padding: 12px;
         margin-bottom: 20px;
@@ -34,7 +34,7 @@
 
     .custom-file-label {
         background-color: rgba(255, 255, 255, 0.2);
-        color: #fff;
+        color: black;
         border: none;
         border-radius: 10px;
         padding: 12px;
@@ -42,7 +42,7 @@
     }
 
     .custom-file-input {
-        display: none; 
+        display: none;
     }
 
     .btn-primary {
@@ -62,13 +62,13 @@
         margin: 40px 0;
     }
 
-        .btn-primary:hover {
-            background-color: #7B1FA2;
-        }
+    .btn-primary:hover {
+        background-color: #7B1FA2;
+    }
 
-        .btn-primary:focus {
-            box-shadow: none;
-        }
+    .btn-primary:focus {
+        box-shadow: none;
+    }
 
     .text-danger {
         color: #FF5252;
@@ -81,6 +81,16 @@
 
     #imagePreview {
         margin-top: 10px;
+    }
+
+    .body {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-bottom: 80px;
     }
 
     .info-text {
@@ -115,12 +125,12 @@
                         <label for="formFile" class="form-label">Choose Image:</label>
                         <div class="custom-file">
                             <input type="file" class="form-control custom-file-input" id="formFile" name="ImageFile" accept="image/*" onchange="previewImage(event)">
-                            <label class="custom-file-label" for="formFile"><i class="bi bi-images"></i></label>
+                            <label class="custom-file-label text-primary" for="formFile"><i class="bi bi-images"></i></label>
                         </div>
                         <div id="imagePreview"></div>
                     </div>
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                 
+
                     <div class="text-center">
                         <button type="submit" class="btn btn-outline-primary" onclick="submitForm()"><i class="bi bi-exposure"></i> Add</button>
                     </div>

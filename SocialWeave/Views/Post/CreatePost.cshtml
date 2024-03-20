@@ -13,12 +13,12 @@
     }
 
     .form-label {
-        color: #fff;
+        color: black;
     }
 
     .form-control {
         background-color: rgba(255, 255, 255, 0.2);
-        color: #fff;
+        color: white
         border: none;
         border-radius: 10px;
         padding: 12px;
@@ -63,6 +63,16 @@
         padding: 10px 20px;
         margin-bottom: 20px;
     }
+
+    .body {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-bottom: 80px;
+    }
 </style>
 
 @if(TempData["CreateError"] != null)
@@ -81,7 +91,7 @@
                 <form asp-action="CreatePost" asp-controller="Post" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="mb-3">
-                        <label asp-for="Description" class="form-label">Description:</label>
+                        <label asp-for="Description" class="text-black">Description:</label>
                         <textarea class="form-control" rows="5" asp-for="Description"></textarea>
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>

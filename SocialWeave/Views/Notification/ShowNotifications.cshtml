@@ -68,7 +68,7 @@
                 <div class="text-xxl-start">
                     <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                         <input type="hidden" name="name" value="@notification.InvolvedUser.Name" />
-                        <button type="submit" class="btn text-light"><i class="bi bi-person-circle me-2"></i>@notification.Content</button>
+                        <button type="submit" class="btn text-dark"><i class="bi bi-person-circle me-2"></i>@notification.Content</button>
                     </form>
                 </div>
             }
@@ -76,7 +76,7 @@
             {
                 <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                     <input type="hidden" name="name" value="@notification.InvolvedUser.Name" />
-                    <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(notification.InvolvedUser.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @notification.Content</button>
+                    <button class="btn text-dark"><img src="data:image/png;base64,@(Convert.ToBase64String(notification.InvolvedUser.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @notification.Content</button>
                 </form>
             }
         </div>

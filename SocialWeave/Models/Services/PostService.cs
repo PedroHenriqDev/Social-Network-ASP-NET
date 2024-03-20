@@ -555,6 +555,14 @@ namespace SocialWeave.Models.Services
                                                   .ToListAsync();
                 }
 
+                foreach(var post in posts) 
+                {
+                    post.Likes = await _context.Likes
+                                                .Include(x => x.User)
+                                                .Where(x => x.Post.Id == post.Id)
+                                                .ToListAsync();
+                }
+
                 _logger.LogInformation("Posts generated successfully.");
                 return await _generateTrending.GenerateTrendingPostsAsync(posts, quantityOfPost, user);
             }

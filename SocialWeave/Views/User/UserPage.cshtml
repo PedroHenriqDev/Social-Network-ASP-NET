@@ -90,7 +90,7 @@
                 <div class="description-container text-center mx-auto" style="width: 50%;">
                     <div class="description-text">
                         <label asp-for="User.Description" class="form-label">Description:</label>
-                        <textarea id="descriptionTextArea" class="form-control bg-black text-light" rows="5" name="description">@Model.User.Description.CutDescription()</textarea>
+                        <textarea id="descriptionTextArea" class="form-control bg-light text-dark" rows="5" name="description">@Model.User.Description.CutDescription()</textarea>
                         <span asp-validation-for="User.Description" class="text-danger"></span>
                     </div>
                 </div>
@@ -107,8 +107,8 @@
                 <div class="description-birthdate-container">
                     <div class="description-container text-center">
                         <label asp-for="User.Description" class="form-label">Description:</label>
-                        <div class="description-text bg-black text-light p-10" style="margin-left: auto; margin-right: auto;">
-                            <div class="form-control bg-black text-light" style="word-wrap: break-word;" readonly>
+                        <div class="description-text bg-light text-dark p-10" style="margin-left: auto; margin-right: auto;">
+                            <div class="form-control bg-light text-dark" style="word-wrap: break-word;" readonly>
                                 @Html.Raw(Model.User.Description.CutDescription())
                             </div>
                         </div>
@@ -162,11 +162,11 @@
                     <div class="post-header">
                         @if (post.User.PictureProfile == null)
                         {
-                            <button class="btn text-light" asp-action="UserPage" asp-controller="User"><h5><i class="bi bi-person-circle me-2"></i>@post.User.Name.CutName()</h5></button>
+                            <button class="btn text-dark" asp-action="UserPage" asp-controller="User"><h5><i class="bi bi-person-circle me-2"></i>@post.User.Name.CutName()</h5></button>
                         }
                         else
                         {
-                            <button class="btn text-light" style="margin-right: 20" asp-action="UserPage" asp-controller="User"><img src="data:image/png;base64,@(Convert.ToBase64String(post.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
+                            <button class="btn text-dark" style="margin-right: 20" asp-action="UserPage" asp-controller="User"><img src="data:image/png;base64,@(Convert.ToBase64String(post.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
                         }
                         <div style="margin-right: 20px">
                             <p>@post.Date.Duration()</p>
@@ -217,7 +217,7 @@
                                                         {
                                                             <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                                                                 <input type="hidden" name="name" value="@post.User.Name" />
-                                                                <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName():</button>
+                                                                <button class="btn text-dark"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName():</button>
                                                                 <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
                                                             </form>
                                                         }
@@ -269,7 +269,7 @@
                             <div class="text-xxl-start">
                                 <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                                     <input type="hidden" name="name" value="@postImage.User.Name" />
-                                    <button type="submit" class="btn text-light"><i class="bi bi-person-circle me-2"></i>@postImage.User.Name.CutName()</button>
+                                    <button type="submit" class="btn text-dark"><i class="bi bi-person-circle me-2"></i>@postImage.User.Name.CutName()</button>
                                 </form>
                             </div>
                         }
@@ -277,7 +277,7 @@
                         {
                             <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                                 <input type="hidden" name="name" value="@post.User.Name" />
-                                <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(postImage.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
+                                <button class="btn text-dark"><img src="data:image/png;base64,@(Convert.ToBase64String(postImage.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
                             </form>
                         }
 
@@ -336,7 +336,7 @@
                                                         {
                                                             <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                                                                 <input type="hidden" name="name" value="@post.User.Name" />
-                                                                <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @comment.User.Name.CutName():</button>
+                                                                <button class="btn text-dark"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @comment.User.Name.CutName():</button>
                                                                 <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
                                                             </form>
                                                         }
@@ -399,7 +399,7 @@
                     {
                         <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                             <input type="hidden" name="name" value="@comment.Post.User.Name" />
-                            <button class="btn text-light"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @comment.User.Name.CutName():</button>
+                            <button class="btn text-dark"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @comment.User.Name.CutName():</button>
                             <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
                         </form>
                     }
@@ -475,7 +475,7 @@
     }
 
     .description-container {
-        background-color: black;
+        background-color: white;
         width: 100%;
         text-align: center;
     }

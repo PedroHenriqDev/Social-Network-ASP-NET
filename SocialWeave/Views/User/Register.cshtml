@@ -19,37 +19,37 @@
             <div class="login-container">
                 <div class="mb-3">
                     <label for="Name" class="form-label">Name:</label>
-                    <input type="text" class="form-control bg-dark text-light" asp-for="Name" id="Name" placeholder="Enter your name">
+                    <input type="text" class="form-control bg-white text-dark" asp-for="Name" id="Name" placeholder="Enter your name">
                     <span class="text-danger" asp-validation-for="Name"></span>
                 </div>
                 <div class="mb-3">
                     <label for="Email" class="form-label">Email:</label>
-                    <input type="email" class="form-control bg-dark text-light" asp-for="Email" id="Email" placeholder="Enter your email">
+                    <input type="email" class="form-control bg-white text-black" asp-for="Email" id="Email" placeholder="Enter your email">
                     <span class="text-danger" asp-validation-for="Email"></span>
                 </div>
                 <div class="mb-3">
                     <label for="BirthDate" class="form-label">Birth Date:</label>
-                    <input type="date" class="form-control bg-dark text-light" asp-for="BirthDate" id="BirthDate">
+                    <input type="date" class="form-control bg-white text-black" asp-for="BirthDate" id="BirthDate">
                     <span class="text-danger" asp-validation-for="BirthDate"></span>
                 </div>
                 <div class="mb-3">
                     <label for="Password" class="form-label">Password:</label>
-                    <input type="password" class="form-control bg-dark text-light" asp-for="Password" id="Password" placeholder="Enter your password">
+                    <input type="password" class="form-control bg-white text-black" asp-for="Password" id="Password" placeholder="Enter your password">
                     <span class="text-danger" asp-validation-for="Password"></span>
                 </div>
 
                 <div class="mb-3">
                     <label for="ConfirmPassword" class="form-label">Confirm Password: </label>
-                    <input type="password" class="form-control bg-dark text-light" id="ConfirmPassword" placeholder="Confirm your password">
+                    <input type="password" class="form-control bg-white text-black" id="ConfirmPassword" placeholder="Confirm your password">
                     <span class="text-danger" id="confirmPasswordError"></span>
                 </div>
                 <div class="mb-3">
                     <label for="PhoneNumber" class="form-label">Phone Number:</label>
-                    <input type="tel" class="form-control bg-dark text-light" asp-for="PhoneNumber" id="PhoneNumber" placeholder="Optional">
+                    <input type="tel" class="form-control bg-white text-black" asp-for="PhoneNumber" id="PhoneNumber" placeholder="Optional">
                     <span class="text-danger" asp-validation-for="PhoneNumber"></span>
                 </div>
                 <div class="text-center" style="margin-top: 60px">
-                    <button type="submit" class="btn btn-outline-success w-50">Register</button>
+                    <button type="submit" class="btn btn-success w-50">Register</button>
                 </div>
                 <a class="w-50" asp-controller="User" asp-action="Login">Login</a>
             </div>

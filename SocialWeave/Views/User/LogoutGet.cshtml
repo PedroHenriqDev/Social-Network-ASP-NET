@@ -6,29 +6,33 @@
 }
 
 <style>
-    .purple-gradient {
-        background: linear-gradient(135deg, #4B0082, #000000);
-        border-radius: 15px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    }
-
     .btn-custom {
         border-radius: 10px;
         padding: 12px 30px;
         font-size: 18px;
     }
+
+    .body {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-bottom: 80px;
+    }
 </style>
 
-<div class="container purple-gradient p-5 rounded-5">
+<div class="container body p-5 rounded-5">
     <div class="mb-5 text-center">
-        <h1 class="text-light">@ViewData["title"]<i class="bi bi-door-open mx-2"></i></h1>
-        <h3 class="text-light">
+        <h1 class="text-dark">@ViewData["title"]<i class="bi bi-door-open mx-2"></i></h1>
+        <h3 class="text-dark">
             Are you sure you want to leave @Model.Name.CutName()?
         </h3>
     </div>
     <form method="post" asp-controller="User" asp-action="LogoutPost">
         <div class="d-flex justify-content-center">
-            <button type="submit" class="btn btn-outline-danger text-light btn-custom mr-2">Logout</button>
+            <button type="submit" class="btn btn-outline-danger text-dark btn-custom mr-2">Logout</button>
         </div>
     </form>
 </div>

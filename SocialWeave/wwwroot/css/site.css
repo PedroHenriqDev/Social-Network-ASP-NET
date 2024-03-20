@@ -1,9 +1,9 @@
 body {
     font-size: 14px;
-    color: white;
+    color: black;
     position: relative;
     min-height: 100%;
-    background-color: black;
+    background-color: white;
     margin-bottom: 60px;
 }
 
