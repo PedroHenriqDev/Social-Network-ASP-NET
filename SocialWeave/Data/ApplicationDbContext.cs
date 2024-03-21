@@ -41,6 +41,8 @@ namespace SocialWeave.Data
         /// </summary>
         public DbSet<Post> Posts { get; set; }
 
+        public DbSet<SavedPost> SavedPosts {  get; set; }
+
         /// <summary>
         /// Represents the Likes table in the database.
         /// </summary>
@@ -63,6 +65,24 @@ namespace SocialWeave.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+
+            modelBuilder.Entity<SavedPost>()
+                .HasKey(sp => new { sp.UserId, sp.PostId });
+
+            modelBuilder.Entity<SavedPost>()
+                .HasOne(sp => sp.User)
+                .WithMany(u => u.SavedPosts)
+                .HasForeignKey(sp => sp.UserId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            modelBuilder.Entity<SavedPost>()
+                .HasOne(sp => sp.Post)
+                .WithMany()
+                .HasForeignKey(sp => sp.PostId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Configure the Notification entity
             modelBuilder.Entity<Notification>()

@@ -84,6 +84,6 @@ app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(profilePicturesDirectory),
     RequestPath = "/profile-pictures"
-});
+}); 
 
 app.Run();

@@ -455,6 +455,34 @@ namespace SocialWeave.Models.Services
             }
         }
 
+        public async Task SavePostAsync(Post post, User currentUser) 
+        {
+            try 
+            {
+                if(post == null || currentUser == null) 
+                {
+                    throw new PostException("Error in save post!");
+                }
+
+                SavedPost savedPost = new SavedPost
+                {
+                    User = currentUser,
+                    UserId = currentUser.Id,
+                    Post = post,
+                    PostId = post.Id
+                };
+
+                await _context.SavedPosts.AddAsync(savedPost);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Post saved successfully");
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error ocurred while saving from the post");
+                throw;
+            }
+        }
+
         /// <summary>
         /// Adds a like to a comment asynchronously.
         /// </summary>

@@ -505,6 +505,24 @@ namespace SocialWeave.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public async Task<IActionResult> SavePost(Guid id) 
+        {
+            try 
+            {
+                User currentUser = await _userService.FindUserByNameAsync(User.Identity.Name);
+                Post post = await _postService.FindPostByIdAsync(id);
+                await _postService.SavePostAsync(post, currentUser);
+                return RedirectToAction("Index", "Home");
+            }
+            catch(PostException ex) 
+            {
+                return RedirectToAction(nameof(Error), new { error = ex.Message });
+            }
+        }
+
         /// <summary>
         /// Displays the error page with the error details.
         /// </summary>

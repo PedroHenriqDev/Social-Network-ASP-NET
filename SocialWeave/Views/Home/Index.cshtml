@@ -8,6 +8,7 @@
 @{
     var amountOfPostsHelper = ViewData["AmountOfPostsHelper"] as AmountOfPostsHelper;
     var title = ViewData["PostAdmired"];
+    User user = (User)ViewData["CurrentUser"];
 }
 
 <style>
@@ -72,6 +73,23 @@
                 if (post is PostWithoutImage)
                 {
                     <div class="post" style="margin-bottom: 80px;">
+                        @if (user.SavedPosts == null || !user.SavedPosts.Any(x => x.PostId == post.Id))
+                        {
+                            <div class="text-xxl-center">
+                                <form asp-action="SavePost" asp-controller="Post" asp-route-id="@post.Id" method="post">
+                                    <button type="submit" class="btn text-black"><i class="bi bi-bookmark"></i></button>
+                                </form>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-xxl-center">
+                                <form asp-action="RemoveSavePost" asp-controller="Post" asp-route-id="@post.Id" method="post">
+                                    <input type="hidden" name="name" value="@post" />
+                                    <button type="submit" class="btn text-black"><i class="bi bi-bookmark-fill"></i></button>
+                                </form>
+                            </div>
+                        }
                         <div class="post-header">
                             @if (post.User.PictureProfile == null)
                             {
@@ -177,6 +195,23 @@
                 {
                     PostWithImage postImage = post as PostWithImage;
                     <div class="post" style="margin-bottom: 80px;">
+                        @if (user.SavedPosts == null || !user.SavedPosts.Any(x => x.PostId == post.Id))
+                        {
+                            <div class="text-xxl-center">
+                                <form asp-action="SavePost" asp-controller="Post" asp-route-id="@post.Id" method="post">
+                                    <button type="submit" class="btn text-black"><i class="bi bi-bookmark"></i></button>
+                                </form>
+                            </div>
+                            
+                        }
+                        else
+                        {
+                            <div class="text-xxl-center">
+                                <form asp-action="RemoveSavePost" asp-controller="RemoveSavePost" asp-route-id="@post.Id" method="post">
+                                    <button type="submit" class="btn text-black"><i class="bi bi-bookmark-fill"></i></button>
+                                </form>
+                            </div>
+                        }
                         <div class="post-header">
                             @if (postImage.User.PictureProfile == null)
                             {
@@ -312,7 +347,7 @@ else
         });
 
         document.querySelectorAll('.btn-like-comment').forEach(btn => {
-            btn.addEventListener('click', (event) => {  
+            btn.addEventListener('click', (event) => {
                 event.stopPropagation();
             });
         });

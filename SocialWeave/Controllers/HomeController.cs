@@ -60,6 +60,7 @@ namespace SocialWeave.Controllers
                 int amountOfPosts = _amountOfPostsHelper.ReturnAmountOfPosts();
                 User user = await _userService.FindUserByNameAsync(User.Identity.Name);
                 IEnumerable<Post> posts = await _postService.FindPostsByGenerateTrendingAsync(user, amountOfPosts);
+                ViewData["CurrentUser"] = user;
                 ViewData["AmountOfPostsHelper"] = _amountOfPostsHelper;
                 return View(posts);
             }

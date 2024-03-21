@@ -96,6 +96,7 @@ namespace SocialWeave.Models.Services
                 User user = await _context.Users
                                           .Include(x => x.Posts)
                                           .Include(x => x.Admirations)
+                                          .Include(x => x.SavedPosts)
                                           .FirstOrDefaultAsync(x => x.Name == name);
 
                 await _postService.CompletePostAsync(user);

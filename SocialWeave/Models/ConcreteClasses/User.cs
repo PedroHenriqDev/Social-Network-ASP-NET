@@ -86,6 +86,8 @@ namespace SocialWeave.Models.ConcreteClasses
         /// </summary>
         public List<Post>? Posts { get; set; }
 
+        public List<SavedPost>? SavedPosts { get; set; }
+
         /// <summary>
         /// The list of users admired by the current user.
         /// </summary>
