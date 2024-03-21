@@ -8,15 +8,9 @@ using SocialWeave.Exceptions;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Data;
-using SocialWeave.Models.AbstractClasses;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using System.Reflection.Metadata.Ecma335;
 using SocialWeave.Data;
-using SocialWeave.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using SocialWeave.Helpers;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace SocialWeave.Controllers
 {

@@ -22,6 +22,7 @@ namespace SocialWeave.Controllers
         private readonly PostService _postService;
         private readonly NotificationService _notificationService;
         private readonly UserService _userService;
+        private readonly SavePostService _savePostService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PostController"/> class.
@@ -29,11 +30,15 @@ namespace SocialWeave.Controllers
         /// <param name="postService">The service for handling post-related operations.</param>
         /// <param name="userService">The service for handling user-related operations.</param>
         /// <param name="notificationService">The service for handling notification-related operations.</param>
-        public PostController(PostService postService, UserService userService, NotificationService notificationService)
+        public PostController(
+            PostService postService, 
+            UserService userService, NotificationService notificationService,
+            SavePostService savePostService)
         {
             _postService = postService;
             _userService = userService;
             _notificationService = notificationService;
+            _savePostService = savePostService;
         }
 
         /// <summary>
@@ -514,7 +519,7 @@ namespace SocialWeave.Controllers
             {
                 User currentUser = await _userService.FindUserByNameAsync(User.Identity.Name);
                 Post post = await _postService.FindPostByIdAsync(id);
-                await _postService.SavePostAsync(post, currentUser);
+                await _savePostService.SavePostAsync(post, currentUser);
                 return RedirectToAction("Index", "Home");
             }
             catch(PostException ex) 
@@ -522,6 +527,25 @@ namespace SocialWeave.Controllers
                 return RedirectToAction(nameof(Error), new { error = ex.Message });
             }
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public async Task<IActionResult> RemoveSavedPost(Guid id) 
+        {
+            try 
+            {
+                User currentUser = await _userService.FindUserByNameAsync(User.Identity.Name);
+                Post post = await _postService.FindPostByIdAsync(id);
+                await _savePostService.RemoveSavedPostAsync(post, currentUser);
+                return RedirectToAction("Index", "Home");
+            }
+            catch(PostException ex) 
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
+        }
+
 
         /// <summary>
         /// Displays the error page with the error details.

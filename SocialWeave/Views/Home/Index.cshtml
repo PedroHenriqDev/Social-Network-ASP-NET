@@ -84,7 +84,7 @@
                         else
                         {
                             <div class="text-xxl-center">
-                                <form asp-action="RemoveSavePost" asp-controller="Post" asp-route-id="@post.Id" method="post">
+                                <form asp-action="RemoveSavedPost" asp-controller="Post" asp-route-id="@post.Id" method="post">
                                     <input type="hidden" name="name" value="@post" />
                                     <button type="submit" class="btn text-black"><i class="bi bi-bookmark-fill"></i></button>
                                 </form>
@@ -207,7 +207,7 @@
                         else
                         {
                             <div class="text-xxl-center">
-                                <form asp-action="RemoveSavePost" asp-controller="RemoveSavePost" asp-route-id="@post.Id" method="post">
+                                <form asp-action="RemoveSavedPost" asp-controller="RemoveSavePost" asp-route-id="@post.Id" method="post">
                                     <button type="submit" class="btn text-black"><i class="bi bi-bookmark-fill"></i></button>
                                 </form>
                             </div>

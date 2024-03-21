@@ -1,13 +1,8 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using SocialWeave.Data;
 using SocialWeave.Models.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.FileProviders;
-using System.IO;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using SocialWeave.Helpers;
 
@@ -15,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<SavePostService>();
 builder.Services.AddScoped<ProfilePictureService>();
 builder.Services.AddScoped<RegisterService>();
 builder.Services.AddScoped<LoginService>();
