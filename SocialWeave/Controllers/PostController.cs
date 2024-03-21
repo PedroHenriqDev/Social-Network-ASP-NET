@@ -510,6 +510,11 @@ namespace SocialWeave.Controllers
             }
         }
 
+        /// <summary>
+        /// Saves a post for the current user.
+        /// </summary>
+        /// <param name="id">The unique identifier of the post to be saved.</param>
+        /// <returns>A redirection to the home page upon successful saving of the post.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
@@ -517,17 +522,30 @@ namespace SocialWeave.Controllers
         {
             try
             {
+                // Fetch the current user
                 User currentUser = await _userService.FindUserByNameAsync(User.Identity.Name);
+
+                // Find the post by its unique identifier
                 Post post = await _postService.FindPostByIdAsync(id);
+
+                // Save the post for the current user
                 await _savePostService.SavePostAsync(post, currentUser);
+
+                // Redirect to the home page
                 return RedirectToAction("Index", "Home");
             }
             catch (SavePostException ex)
             {
+                // Redirect to the error page with the error message
                 return RedirectToAction(nameof(Error), new { error = ex.Message });
             }
         }
 
+        /// <summary>
+        /// Removes a saved post for the current user.
+        /// </summary>
+        /// <param name="id">The unique identifier of the post to be removed from saved.</param>
+        /// <returns>A redirection to the home page upon successful removal of the saved post.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
@@ -535,29 +553,47 @@ namespace SocialWeave.Controllers
         {
             try
             {
+                // Fetch the current user
                 User currentUser = await _userService.FindUserByNameAsync(User.Identity.Name);
+
+                // Find the post by its unique identifier
                 Post post = await _postService.FindPostByIdAsync(id);
+
+                // Remove the saved post for the current user
                 await _savePostService.RemoveSavedPostAsync(post, currentUser);
+
+                // Redirect to the home page
                 return RedirectToAction("Index", "Home");
             }
             catch (SavePostException ex)
             {
+                // Redirect to the error page with the error message
                 return RedirectToAction(nameof(Error), new { message = ex.Message });
             }
         }
 
+        /// <summary>
+        /// Displays the saved posts for the current user.
+        /// </summary>
+        /// <returns>A view displaying the saved posts.</returns>
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> ShowSavedPosts()
         {
             try
             {
+                // Fetch the current user
                 User user = await _userService.FindUserByNameAsync(User.Identity.Name);
+
+                // Complete the saved posts by fetching their corresponding post details
                 await _savePostService.CompleteSavedPostsAsync(user.SavedPosts);
+
+                // Return a view displaying the saved posts
                 return View(user.SavedPosts);
             }
             catch (SavePostException ex)
             {
+                // Redirect to the error page with the error message
                 return RedirectToAction(nameof(Error), new { message = ex.Message });
             }
         }

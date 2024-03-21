@@ -3,52 +3,81 @@ using SocialWeave.Data;
 using SocialWeave.Exceptions;
 using SocialWeave.Models.AbstractClasses;
 using SocialWeave.Models.ConcreteClasses;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace SocialWeave.Models.Services
 {
+    /// <summary>
+    /// Service class responsible for managing saved posts.
+    /// </summary>
     public class SavePostService
     {
-
         private readonly ApplicationDbContext _context;
         private readonly PostService _postService;
         private readonly ILogger<SavePostService> _logger;
 
+        /// <summary>
+        /// Constructor for SavePostService.
+        /// </summary>
+        /// <param name="context">The database context.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="postService">The post service.</param>
         public SavePostService(
             ApplicationDbContext context,
             ILogger<SavePostService> logger,
-            PostService postService) 
+            PostService postService)
         {
             _context = context;
             _logger = logger;
             _postService = postService;
         }
 
+        /// <summary>
+        /// Finds a saved post by its unique identifiers asynchronously.
+        /// </summary>
+        /// <param name="postId">The unique identifier of the post.</param>
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <returns>The saved post if found, otherwise null.</returns>
         public async Task<SavedPost> FindSavedPostByKeysAsync(Guid postId, Guid userId)
         {
-            if(postId == null || userId == null) 
+            if (postId == Guid.Empty || userId == Guid.Empty)
             {
-                throw new SavePostException("Error occurred while fetching the SavedPost object is taking place, and ");
+                throw new SavePostException("Error occurred while fetching the SavedPost object.");
             }
             return await _context.SavedPosts.FirstOrDefaultAsync(x => x.PostId == postId && x.UserId == userId);
         }
 
-        public async Task<IEnumerable<SavedPost>> FindSavedPostsByUserIdAsync(Guid userId) 
+        /// <summary>
+        /// Finds saved posts by user's unique identifier asynchronously.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <returns>A collection of saved posts.</returns>
+        public async Task<IEnumerable<SavedPost>> FindSavedPostsByUserIdAsync(Guid userId)
         {
-            if (userId == null) 
+            if (userId == Guid.Empty)
             {
-                throw new SavePostException("Error occurred in finding saved posts");
+                throw new SavePostException("Error occurred in finding saved posts.");
             }
 
             return await _context.SavedPosts.Where(x => x.UserId == userId).ToListAsync();
         }
 
+        /// <summary>
+        /// Saves a post asynchronously.
+        /// </summary>
+        /// <param name="post">The post to be saved.</param>
+        /// <param name="currentUser">The current user.</param>
         public async Task SavePostAsync(Post post, User currentUser)
         {
             try
             {
                 if (post == null || currentUser == null)
                 {
-                    throw new SavePostException("Error in save post!");
+                    throw new SavePostException("Error in saving post.");
                 }
 
                 SavedPost savedPost = new SavedPost
@@ -65,29 +94,38 @@ namespace SocialWeave.Models.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error ocurred while saving from the post");
+                _logger.LogError(ex, "Error occurred while saving the post.");
                 throw;
             }
         }
 
-        public async Task CompleteSavedPostsAsync(IEnumerable<SavedPost> savedPosts) 
+        /// <summary>
+        /// Completes saved posts asynchronously by fetching their corresponding post details.
+        /// </summary>
+        /// <param name="savedPosts">The collection of saved posts to be completed.</param>
+        public async Task CompleteSavedPostsAsync(IEnumerable<SavedPost> savedPosts)
         {
             if (savedPosts.Any())
             {
-                foreach (var savedPost in savedPosts) 
+                foreach (var savedPost in savedPosts)
                 {
                     savedPost.Post = await _postService.FindPostByIdAsync(savedPost.PostId);
                 }
             }
         }
 
+        /// <summary>
+        /// Removes a saved post asynchronously.
+        /// </summary>
+        /// <param name="post">The post to be removed from saved.</param>
+        /// <param name="currentUser">The current user.</param>
         public async Task RemoveSavedPostAsync(Post post, User currentUser)
         {
             try
             {
                 if (post == null || currentUser == null)
                 {
-                    throw new SavePostException("Error in remove saved post");
+                    throw new SavePostException("Error in removing saved post.");
                 }
 
                 SavedPost savedPost = await FindSavedPostByKeysAsync(post.Id, currentUser.Id);
@@ -98,7 +136,7 @@ namespace SocialWeave.Models.Services
             }
             catch (SavePostException ex)
             {
-                _logger.LogError(ex, "Error ocurred while remove saved post");
+                _logger.LogError(ex, "Error occurred while removing saved post.");
                 throw;
             }
         }
