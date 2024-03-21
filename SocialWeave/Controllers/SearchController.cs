@@ -47,7 +47,9 @@ namespace SocialWeave.Controllers
             {
                 ViewBag.Query = query; // Set the query in ViewBag for access in the view
                 // Search users and posts based on the query and the currently logged-in user
-                return View("PageOfSearch", await _searchService.SearchUsersAndPostsByQueryAsync(query, await _userService.FindUserByNameAsync(User.Identity.Name)));
+                ViewData["CurrentUser"] = await _userService.FindUserByNameAsync(User.Identity.Name);
+                var resultOfQuery = await _searchService.SearchUsersAndPostsByQueryAsync(query, await _userService.FindUserByNameAsync(User.Identity.Name));
+                return View("PageOfSearch", resultOfQuery);
             }
             catch (SearchException ex)
             {

@@ -91,13 +91,16 @@ namespace SocialWeave.Models.Services
                     throw new SearchException("The search query cannot be null.");
                 }
 
-                var users = await _context.Users.Where(x => x.Name.ToLower().Contains(query.ToLower()))
+                var users = await _context.Users.Where(x => x.Name.ToLower()
+                                                .Contains(query.ToLower()))
+                                                .Include(x => x.SavedPosts)
                                                 .ToListAsync();
 
                 var posts = await _context.Posts.Where(x => x.Description.ToLower().Contains(query.ToLower()))
                                                 .Include(x => x.User)
                                                 .Include(x => x.Likes)
                                                 .Include(x => x.Comments)
+
                                                 .ToListAsync();
 
                 foreach (var post in posts)

@@ -82,9 +82,10 @@ namespace SocialWeave.Controllers
         public async Task<IActionResult> IndexWithPostsAdmired()
         {
             int amountPosts = _amountOfPostsHelper.ReturnAmountOfPosts();
-            ViewData["PostAdmired"] = "Post from someone you admire";
             var user = await _userService.FindUserByNameAsync(User.Identity.Name);
             var posts = await _searchService.SearchPostByAdmiredAsync(user);
+            ViewData["PostAdmired"] = "Post from someone you admire";
+            ViewData["CurrentUser"] = user;
             return View("Index", posts);
         }
 

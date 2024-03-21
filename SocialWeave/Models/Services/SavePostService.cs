@@ -10,12 +10,17 @@ namespace SocialWeave.Models.Services
     {
 
         private readonly ApplicationDbContext _context;
+        private readonly PostService _postService;
         private readonly ILogger<SavePostService> _logger;
 
-        public SavePostService(ApplicationDbContext context, ILogger<SavePostService> logger) 
+        public SavePostService(
+            ApplicationDbContext context,
+            ILogger<SavePostService> logger,
+            PostService postService) 
         {
             _context = context;
             _logger = logger;
+            _postService = postService;
         }
 
         public async Task<SavedPost> FindSavedPostByKeysAsync(Guid postId, Guid userId)
@@ -25,6 +30,16 @@ namespace SocialWeave.Models.Services
                 throw new SavePostException("Error occurred while fetching the SavedPost object is taking place, and ");
             }
             return await _context.SavedPosts.FirstOrDefaultAsync(x => x.PostId == postId && x.UserId == userId);
+        }
+
+        public async Task<IEnumerable<SavedPost>> FindSavedPostsByUserIdAsync(Guid userId) 
+        {
+            if (userId == null) 
+            {
+                throw new SavePostException("Error occurred in finding saved posts");
+            }
+
+            return await _context.SavedPosts.Where(x => x.UserId == userId).ToListAsync();
         }
 
         public async Task SavePostAsync(Post post, User currentUser)
@@ -52,6 +67,17 @@ namespace SocialWeave.Models.Services
             {
                 _logger.LogError(ex, "Error ocurred while saving from the post");
                 throw;
+            }
+        }
+
+        public async Task CompleteSavedPostsAsync(IEnumerable<SavedPost> savedPosts) 
+        {
+            if (savedPosts.Any())
+            {
+                foreach (var savedPost in savedPosts) 
+                {
+                    savedPost.Post = await _postService.FindPostByIdAsync(savedPost.PostId);
+                }
             }
         }
 

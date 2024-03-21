@@ -20,7 +20,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Social Weave<i class="bi bi-flower2 mx-2"></i></a>
+                <a class="navbar-brand orange-text" asp-area="" asp-controller="Home" asp-action="Index">Social Weave<i class="bi bi-flower2 mx-2"></i></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -38,7 +38,6 @@
                             <li class="nav-item">
                                 <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="IndexWithPostsAdmired"><i class="bi bi-people-fill me-2"></i>Posts</a>
                             </li>
-                       
                         }
                     </ul>
 
@@ -61,6 +60,11 @@
                                     </a>
                                 </li>
                             }
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Post" asp-action="ShowSavedPosts">
+                                    <strong><i class="bi bi-bookmarks"></i></strong>
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-light" asp-area="" asp-controller="Post" asp-action="ChoosePostType"><i class="bi bi-plus-circle-dotted mx-1"></i></a>
                             </li>
@@ -112,8 +116,6 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

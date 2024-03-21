@@ -31,7 +31,7 @@ namespace SocialWeave.Controllers
         /// <param name="userService">The service for handling user-related operations.</param>
         /// <param name="notificationService">The service for handling notification-related operations.</param>
         public PostController(
-            PostService postService, 
+            PostService postService,
             UserService userService, NotificationService notificationService,
             SavePostService savePostService)
         {
@@ -513,16 +513,16 @@ namespace SocialWeave.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public async Task<IActionResult> SavePost(Guid id) 
+        public async Task<IActionResult> SavePost(Guid id)
         {
-            try 
+            try
             {
                 User currentUser = await _userService.FindUserByNameAsync(User.Identity.Name);
                 Post post = await _postService.FindPostByIdAsync(id);
                 await _savePostService.SavePostAsync(post, currentUser);
                 return RedirectToAction("Index", "Home");
             }
-            catch(PostException ex) 
+            catch (SavePostException ex)
             {
                 return RedirectToAction(nameof(Error), new { error = ex.Message });
             }
@@ -531,21 +531,36 @@ namespace SocialWeave.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public async Task<IActionResult> RemoveSavedPost(Guid id) 
+        public async Task<IActionResult> RemoveSavedPost(Guid id)
         {
-            try 
+            try
             {
                 User currentUser = await _userService.FindUserByNameAsync(User.Identity.Name);
                 Post post = await _postService.FindPostByIdAsync(id);
                 await _savePostService.RemoveSavedPostAsync(post, currentUser);
                 return RedirectToAction("Index", "Home");
             }
-            catch(PostException ex) 
+            catch (SavePostException ex)
             {
                 return RedirectToAction(nameof(Error), new { message = ex.Message });
             }
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ShowSavedPosts()
+        {
+            try
+            {
+                User user = await _userService.FindUserByNameAsync(User.Identity.Name);
+                await _savePostService.CompleteSavedPostsAsync(user.SavedPosts);
+                return View(user.SavedPosts);
+            }
+            catch (SavePostException ex)
+            {
+                return RedirectToAction(nameof(Error), new { message = ex.Message });
+            }
+        }
 
         /// <summary>
         /// Displays the error page with the error details.

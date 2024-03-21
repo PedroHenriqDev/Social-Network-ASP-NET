@@ -3,13 +3,7 @@
 @using SocialWeave.Models.AbstractClasses;
 @using SocialWeave.Models.ConcreteClasses;
 
-@model IEnumerable<Post>
-
-@{
-    var amountOfPostsHelper = ViewData["AmountOfPostsHelper"] as AmountOfPostsHelper;
-    var title = ViewData["PostAdmired"];
-    User user = (User)ViewData["CurrentUser"];
-}
+@model IEnumerable<SavedPost>
 
 <style>
     .custom-border {
@@ -18,6 +12,7 @@
         background: linear-gradient(to right, #FFA500, #FF4500);
         margin: 40px 0;
     }
+
     .info-text {
         background: linear-gradient(to right, #FFA500, #FF4500);
         -webkit-background-clip: text;
@@ -26,8 +21,9 @@
         margin-bottom: 20px;
     }
 
+
     .post {
-        border: 1px solid #FF4500;
+        border: 1px solid#FF4500;
         border-radius: 8px;
         padding: 20px;
         margin-bottom: 0px;
@@ -49,100 +45,85 @@
     }
 </style>
 
-@if (title != null)
-{
-    <div class="info-text text-center"><h2>@title.ToString()</h2></div>
-    <div class="custom-border"></div>
-}
+<div class="info-text text-center"><h2>Your saved posts</h2></div>
+<div class="custom-border"></div>
 
 @if (User.Identity.IsAuthenticated)
 {
     @if (Model == null || Model.Count() == 0)
     {
         <div class="text-center">
-            <h4><strong>No new posts</strong></h4>
+            <h4><strong>No posts saved</strong></h4>
             <a asp-action="Index" asp-controller="Home"><i class="bi bi-arrow-clockwise"></i></a>
         </div>
     }
     else
     {
         <div class="container text-center">
-            @foreach (var post in Model)
+            @foreach (var savedPost in Model)
             {
-                if (post is PostWithoutImage)
+                if (savedPost.Post is PostWithoutImage)
                 {
                         <div class="post-header">
-                            @if (post.User.PictureProfile == null)
+                            @if (savedPost.User.PictureProfile == null)
                             {
                                 <div class="text-xxl-start">
                                     <form asp-action="UserPageWithParams" asp-controller="User" method="get">
-                                        <input type="hidden" name="name" value="@post.User.Name" />
-                                        <button type="submit" class="btn text-black"><i class="bi bi-person-circle me-2"></i>@post.User.Name.CutName()</button>
+                                        <input type="hidden" name="name" value="@savedPost.User.Name" />
+                                        <button type="submit" class="btn text-black"><i class="bi bi-person-circle me-2"></i>@savedPost.User.Name.CutName()</button>
                                     </form>
                                 </div>
                             }
                             else
                             {
                                 <form asp-action="UserPageWithParams" asp-controller="User" method="get">
-                                    <input type="hidden" name="name" value="@post.User.Name" />
-                                    <button class="btn text-black"><img src="data:image/png;base64,@(Convert.ToBase64String(post.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
+                                    <input type="hidden" name="name" value="@savedPost.User.Name" />
+                                    <button class="btn text-black"><img src="data:image/png;base64,@(Convert.ToBase64String(savedPost.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @savedPost.Post.User.Name.CutName()</button>
                                 </form>
                             }
                             <div style="margin-right: 20px">
-                                <p>@post.Date.Duration()</p>
+                                <p>@savedPost.Post.Date.Duration()</p>
                             </div>
                         </div>
                         <div class="post-content text-xxl-center">
                         <div class="post" style="margin-bottom: 80px;">
-                            @if (user.SavedPosts == null || !user.SavedPosts.Any(x => x.PostId == post.Id))
-                            {
-                                <div class="text-xxl-center">
-                                    <form asp-action="SavePost" asp-controller="Post" asp-route-id="@post.Id" method="post">
-                                        <button type="submit" class="btn text-black"><i class="bi bi-bookmark"></i></button>
-                                    </form>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="text-xxl-center">
-                                    <form asp-action="RemoveSavedPost" asp-controller="Post" asp-route-id="@post.Id" method="post">
-                                        <input type="hidden" name="name" value="@post" />
-                                        <button type="submit" class="btn text-black"><i class="bi bi-bookmark-fill"></i></button>
-                                    </form>
-                                </div>
-                            }
-                            <p>@post.Description.CutDescription()</p>
+                            <div class="text-xxl-center">
+                                <form asp-action="RemoveSavedPost" asp-controller="Post" asp-route-id="@savedPost.PostId" method="post">
+                                    <button type="submit" class="btn text-black"><i class="bi bi-bookmark-fill"></i></button>
+                                </form>
+                            </div>
+                            <p>@savedPost.Post.Description.CutDescription()</p>
                             <div class="d-flex justify-content-between mb-3">
-                                <button class="btn btn-outline-primary toggle-comments" data-post-id="@post.Id"><i class="bi bi-chat-left-text"></i></button>
+                                <button class="btn btn-outline-primary toggle-comments" data-post-id="@savedPost.PostId"><i class="bi bi-chat-left-text"></i></button>
                                 <div class="d-flex flex-column">
-                                    @if (post.Likes != null && post.Likes.Count() != 0 && post.Likes.Any(l => l.User.Name == User.Identity.Name))
+                                    @if (savedPost.Post.Likes != null && savedPost.Post.Likes.Count() != 0 && savedPost.Post.Likes.Any(l => l.User.Name == User.Identity.Name))
                                     {
-                                        <form method="post" asp-action="Dislike" asp-route-id="@post.Id" asp-controller="Post" class="me-3">
-                                            <button class="text-xxl-end btn btn-like" type="submit"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@post.Likes.CountLikes()</span></button>
+                                        <form method="post" asp-action="Dislike" asp-route-id="@savedPost.PostId" asp-controller="Post" class="me-3">
+                                            <button class="text-xxl-end btn btn-like" type="submit"><i class="bi bi-heart-fill text-danger"></i> <span class="m-0 text-danger">@savedPost.Post.Likes.CountLikes()</span></button>
                                         </form>
                                     }
                                     else
                                     {
-                                        <form method="post" asp-action="Like" asp-route-id="@post.Id" asp-controller="Post" class="me-3">
-                                            <button type="submit" class="btn btn-like"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@post.Likes.CountLikes()</span></button>
+                                        <form method="post" asp-action="Like" asp-route-id="@savedPost.PostId" asp-controller="Post" class="me-3">
+                                            <button type="submit" class="btn btn-like"><i class="bi bi-heart text-danger"></i> <span class="m-0 text-danger">@savedPost.Post.Likes.CountLikes()</span></button>
                                         </form>
                                     }
                                 </div>
                             </div>
                             <div class="text-xxl">
-                                <div class="post-comments" data-post-id="@post.Id" style="display: none;">
+                                <div class="post-comments" data-post-id="@savedPost.PostId" style="display: none;">
                                     <div class="comment">
                                         <div class="custom-border"></div>
                                         <p class="text-center text-primary">Comments</p>
                                         <div class="custom-border"></div>
-                                        @if (post.Comments == null || !post.Comments.Any())
+                                        @if (savedPost.Post.Comments == null || !savedPost.Post.Comments.Any())
                                         {
                                             <h6 class="text-center">No exist comments in this post</h6>
                                         }
                                         else
                                         {
                                             <div class="text-center">
-                                                @foreach (var comment in post.Comments)
+                                                @foreach (var comment in savedPost.Post.Comments)
                                                 {
                                                     <div class="comment-container d-flex align-items-center mb-3">
                                                         <div class="comment-details">
@@ -154,7 +135,7 @@
                                                             else
                                                             {
                                                                 <form asp-action="UserPageWithParams" asp-controller="User" method="get">
-                                                                    <input type="hidden" name="name" value="@post.User.Name" />
+                                                                    <input type="hidden" name="name" value="@savedPost.Post.User.Name" />
                                                                     <button class="btn text-black"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @comment.User.Name.CutName():</button>
                                                                     <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
                                                                 </form>
@@ -179,7 +160,7 @@
                                                 }
                                             </div>
                                         }
-                                        <a class="btn btn-outline-primary text-xxl-center mb-3" asp-route-id="@post.Id" asp-action="CreateComment" asp-controller="Post"><i class="bi bi-chat-left text-primary"></i> Add Comment</a>
+                                        <a class="btn btn-outline-primary text-xxl-center mb-3" asp-route-id="@savedPost.PostId" asp-action="CreateComment" asp-controller="Post"><i class="bi bi-chat-left text-primary"></i> Add Comment</a>
                                     </div>
                                     <form class="add-comment-form" style="display: none;">
                                         <input type="text" class="form-control mb-3" placeholder="Add a comment..." />
@@ -192,7 +173,8 @@
                 }
                 else
                 {
-                    PostWithImage postImage = post as PostWithImage;
+                    PostWithImage postImage = savedPost.Post as PostWithImage;
+                       
                         <div class="post-header">
                             @if (postImage.User.PictureProfile == null)
                             {
@@ -206,8 +188,8 @@
                             else
                             {
                                 <form asp-action="UserPageWithParams" asp-controller="User" method="get">
-                                    <input type="hidden" name="name" value="@post.User.Name" />
-                                    <button class="btn text-dark"><img src="data:image/png;base64,@(Convert.ToBase64String(postImage.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @post.User.Name.CutName()</button>
+                                    <input type="hidden" name="name" value="@savedPost.Post.User.Name" />
+                                    <button class="btn text-dark"><img src="data:image/png;base64,@(Convert.ToBase64String(postImage.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @savedPost.Post.User.Name.CutName()</button>
                                 </form>
                             }
                             <div class="post-meta" style="margin-right: 20px">
@@ -215,24 +197,12 @@
                             </div>
                         </div>
                         <div class="post-content text-xxl-center">
-                        <div class="post" style="margin-bottom: 80px;">
-                            @if (user.SavedPosts == null || !user.SavedPosts.Any(x => x.PostId == post.Id))
-                            {
-                                <div class="text-xxl-center">
-                                    <form asp-action="SavePost" asp-controller="Post" asp-route-id="@post.Id" method="post">
-                                        <button type="submit" class="btn text-black"><i class="bi bi-bookmark"></i></button>
-                                    </form>
-                                </div>
-
-                            }
-                            else
-                            {
-                                <div class="text-xxl-center">
-                                    <form asp-action="RemoveSavedPost" asp-controller="Post" asp-route-id="@post.Id" method="post">
-                                        <button type="submit" class="btn text-black"><i class="bi bi-bookmark-fill"></i></button>
-                                    </form>
-                                </div>
-                            }
+                    <div class="post" style="margin-bottom: 80px;">
+                            <div class="text-xxl-center">
+                                <form asp-action="RemoveSavedPost" asp-controller="Post" asp-route-id="@savedPost.PostId" method="post">
+                                    <button type="submit" class="btn text-black"><i class="bi bi-bookmark-fill"></i></button>
+                                </form>
+                            </div>
                             <p>@postImage.Description.CutDescription()</p>
                             <div class="post-content text-xxl-center">
                                 <img src="data:image/png;base64,@(Convert.ToBase64String(postImage.Image))" class="img-fluid" style="max-width: 70%; height: auto;" />
@@ -279,7 +249,7 @@
                                                             else
                                                             {
                                                                 <form asp-action="UserPageWithParams" asp-controller="User" method="get">
-                                                                    <input type="hidden" name="name" value="@post.User.Name" />
+                                                                    <input type="hidden" name="name" value="@savedPost.Post.User.Name" />
                                                                     <button class="btn text-dark"><img src="data:image/png;base64,@(Convert.ToBase64String(comment.User.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @comment.User.Name.CutName():</button>
                                                                     <p class="d-inline-block mx-2">@comment.Text.CutComment()</p>
                                                                 </form>
@@ -317,15 +287,6 @@
                 }
             }
         </div>
-        @if (title == null)
-        {
-            <div class="text-center text-dark">
-                <form asp-controller="Home" asp-action="SetAmountOfPosts" method="post" id="more-posts-form">
-                    <input type="hidden" name="Amount" value="@amountOfPostsHelper.Amount" />
-                    <button type="submit" class="btn text-primary" id="more-posts-button"><i class="bi bi-arrow-down-short"></i>More posts</button>
-                </form>
-            </div>
-        }
     }
 }
 else
