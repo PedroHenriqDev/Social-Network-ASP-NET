@@ -3,11 +3,6 @@ using SocialWeave.Data;
 using SocialWeave.Exceptions;
 using SocialWeave.Models.AbstractClasses;
 using SocialWeave.Models.ConcreteClasses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace SocialWeave.Models.Services
 {

@@ -43,37 +43,40 @@
 </div>
 <div class="custom-border"></div>
 
-@if(Model.Count() != 0){
-@foreach (User user in Model)
+@if (Model.Count() != 0)
 {
-    <div class="text-center">
-        <div class="user">
-            @if (user.PictureProfile == null)
-            {
-                <div class="text-xxl-start">
+    @foreach (User user in Model)
+    {
+        <div class="text-center">
+            <div class="user">
+                @if (user.PictureProfile == null)
+                {
+                    <div class="text-xxl-start">
+                        <form asp-action="UserPageWithParams" asp-controller="User" method="get">
+                            <input type="hidden" name="name" value="@user.Name" />
+                            <button type="submit" class="btn text-dark"><i class="bi bi-person-circle me-2"></i>@user.Name.CutName()</button>
+                        </form>
+                    </div>
+                    <p>Description: @user.Description.CutDescription()</p>
+                }
+                else
+                {
                     <form asp-action="UserPageWithParams" asp-controller="User" method="get">
                         <input type="hidden" name="name" value="@user.Name" />
-                        <button type="submit" class="btn text-dark"><i class="bi bi-person-circle me-2"></i>@user.Name.CutName()</button>
+                        <button class="btn text-dark"><img src="data:image/png;base64,@(Convert.ToBase64String(user.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @user.Name.CutName()</button>
                     </form>
-                </div>
-            }
-            else
-            {
-                <form asp-action="UserPageWithParams" asp-controller="User" method="get">
-                    <input type="hidden" name="name" value="@user.Name" />
-                    <button class="btn text-dark"><img src="data:image/png;base64,@(Convert.ToBase64String(user.PictureProfile))" class="img-fluid rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" /> @user.Name.CutName()</button>
-                </form>
-            }
+                    <p>Description: @user.Description.CutDescription()</p>
+                }
+            </div>
         </div>
-    </div>
-}
+    }
 }
 else
 {
-<div class="text-center">
-    <h7>
-        @User.Name.CutName()
-        is not admire by anyone
-    </h7>
-</div>
+    <div class="text-center">
+        <h7>
+            @User.Name.CutName()
+            is not admire by anyone
+        </h7>
+    </div>
 }

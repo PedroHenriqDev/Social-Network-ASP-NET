@@ -294,6 +294,7 @@ namespace SocialWeave.Models.Services
                 }
 
                 _context.Comments.RemoveRange(post.Comments);
+                _context.SavedPosts.RemoveRange(await _context.SavedPosts.Where(x => x.PostId == post.Id).ToListAsync());
                 _context.Likes.RemoveRange(post.Likes);
                 _context.Remove(post);
                 await _context.SaveChangesAsync();
