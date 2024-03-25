@@ -17,7 +17,7 @@ namespace SocialWeave.Models.Services
         private readonly ILogger<ProfilePictureService> _logger;
         private readonly ApplicationDbContext _context;
         /// <param name="logger">The logger to log information, warnings, and errors.</param>
-        public ProfilePictureService(ILogger<ProfilePictureService> logger, ApplicationDbContext context) 
+        public ProfilePictureService(ILogger<ProfilePictureService> logger, ApplicationDbContext context)
         {
             _logger = logger;
             _context = context;
@@ -109,13 +109,9 @@ namespace SocialWeave.Models.Services
                         // Write the picture data to the file asynchronously
                         await File.WriteAllBytesAsync(filePath, pictureData);
 
-                        // Set the profile picture URL
-                        profilePictureUrl = $"/profile-pictures/{fileName}";
                     }
-                    else
-                    {
-                        profilePictureUrl = $"/profile-pictures/{fileName}";
-                    }
+                    // Set the profile picture URL
+                    profilePictureUrl = $"/profile-pictures/{fileName}";
                 }
 
                 _logger.LogInformation("Successful process of saving the profile picture on the server");
@@ -129,7 +125,7 @@ namespace SocialWeave.Models.Services
         }
 
         // Method to calculate the hash of the picture data
-        private string GetFileHash(byte[] data) 
+        private string GetFileHash(byte[] data)
         {
             using (var sha256 = SHA256.Create())
             {
